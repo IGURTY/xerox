@@ -1,0 +1,6 @@
+<?php
+/*
+Copyright (c) 2024 Jumptec
+Se quiser obter a licença para esse produto, acesse https://www.jumptec.com.br
+*/
+ include(__DIR__ . '/../includes/configuracoes.php');   $v3456919727e2=explode(',',substr($_POST["num_ids"],1));$v9c342ac2a36e=f42e3f489802e($_POST["iddesenho"], 'int'); for ($va16d2280393c=0;$va16d2280393c<count($v3456919727e2);$va16d2280393c++){ $va10a626f2c2c="DELETE FROM desenho_camada WHERE `id`='".f42e3f489802e($v3456919727e2[$va16d2280393c], 'int')."';"; $vb153b7cc7a98=mysqli_query($connection, $va10a626f2c2c) or die(mysqli_error($connection));} if ($vb153b7cc7a98){ $v9a609c93335a="SELECT * FROM desenho_camada WHERE iddesenho='".$v9c342ac2a36e."' ORDER BY id ASC"; $v49c87e303d60=mysqli_query($connection, $v9a609c93335a) or die(mysqli_error($connection)); $v3e33e017cd76=1; $v352d4608381d=count($v3456919727e2); $va16d2280393c=1; while ($v5620b2cfc520=mysqli_fetch_array($v49c87e303d60)){ $v30fc5dd07e66="UPDATE desenho_camada SET camada='".$v3e33e017cd76."' WHERE `id`='".$v5620b2cfc520['id']."';"; $v179fa5c90d98=mysqli_query($connection, $v30fc5dd07e66) or die(mysqli_error($connection));   if ($va16d2280393c % $v352d4608381d==0){  $v3e33e017cd76++;}   $va16d2280393c++;}  if ($v5620b2cfc520) echo "ok";}  mysqli_close($connection);?>

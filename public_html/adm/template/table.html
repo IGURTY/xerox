@@ -1,0 +1,570 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>{TITULO}</title>
+		<link rel="stylesheet" href="../css/screen.css" type="text/css" media="screen" title="default" />
+		<link rel="shortcut icon" href="../../img/logo_icone.png" type="image/x-icon" />
+		<!--[if IE]>
+		<link rel="stylesheet" media="all" type="text/css" href="../css/pro_dropline_ie.css" />
+		<![endif]-->
+
+		<script type="text/javascript" src="../../biblioteca/apprise-1.5.min.js"></script>
+		<link rel="stylesheet" href="../../biblioteca/css/apprise.min.css" type="text/css" />
+
+		<!--  jquery core -->
+		<script src="../js/jquery/jquery-1.4.1.min.js" type="text/javascript"></script>
+
+		<!--  checkbox styling script -->
+		<script src="../js/jquery/ui.core.js" type="text/javascript"></script>
+		<script src="../js/jquery/ui.checkbox.js" type="text/javascript"></script>
+		<script src="../js/jquery/jquery.bind.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(function(){
+				$('input').checkBox();
+				$('#toggle-all').click(function(){
+					$('#toggle-all').toggleClass('toggle-checked');
+					$('#mainform input[type=checkbox]').checkBox('toggle');
+					return false;
+				});
+			});
+
+			function acao_lote(acao){
+				
+				var valores = '';
+				
+				$('input[type=checkbox]').each( function() {
+					if( $(this).is(':checked') ) {
+						valores = valores + "," + $(this).val();
+					}
+				})
+				
+				window.location.href = 'acao.php?acao='+acao+'&ids='+valores+'&tabela={NOME_TABELA}';
+			}
+		</script>  
+		
+		<link type="text/css" rel="stylesheet" href="../css/jquery.selectBox.css" />
+		<script src="../js/jquery/jquery.selectBox.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready( function() {
+				$("SELECT").selectBox();
+			});
+		</script>
+
+		<!--  styled file upload script  -->
+		<script src="../js/jquery/jquery.filestyle.js" type="text/javascript"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+				$("input.file_1").filestyle({ 
+					image: "images/forms/choose-file.gif",
+					imageheight : 21,
+					imagewidth : 78,
+					width : 310
+				});
+			});
+		</script>
+
+		<!-- Custom jquery scripts -->
+		<script src="../js/jquery/custom_jquery.js" type="text/javascript"></script>
+ 
+		<!-- Tooltips -->
+		<script src="../js/jquery/jquery.tooltip.js" type="text/javascript"></script>
+		<script src="../js/jquery/jquery.dimensions.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(function() {
+				$('a.info-tooltip ').tooltip({
+					track: true,
+					delay: 0,
+					fixPNG: true, 
+					showURL: false,
+					showBody: " - ",
+					top: -35,
+					left: 5
+				});
+				
+				$('.trregistro').mouseover(function() {
+					$(this).css('background','#FFFFC8');
+				});
+				$('.trregistro').mouseout(function() {
+					$(this).css('background','#FFFFFF');
+				});
+				$('.trregistro td:contains("Mescla")').next().css("background-image", "url('../../img/textura_mescla.webp')");
+			});
+		</script> 
+
+		<!--  date picker script -->
+		<link rel="stylesheet" href="../css/datePicker.css" type="text/css" />
+		<script src="../js/jquery/date.js" type="text/javascript"></script>
+		<script src="../js/jquery/jquery.datePicker.js" type="text/javascript"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(function(){
+
+				// initialise the "Select date" link
+				$('#date-pick')
+					.datePicker(
+						// associate the link with a date picker
+						{
+							createButton:false,
+							startDate:'01/01/2005',
+							endDate:'31/12/2020'
+						}
+					).bind(
+						// when the link is clicked display the date picker
+						'click',
+						function()
+						{
+							updateSelects($(this).dpGetSelected()[0]);
+							$(this).dpDisplay();
+							return false;
+						}
+					).bind(
+						// when a date is selected update the SELECTs
+						'dateSelected',
+						function(e, selectedDate, $td, state)
+						{
+							updateSelects(selectedDate);
+						}
+					).bind(
+						'dpClosed',
+						function(e, selected)
+						{
+							updateSelects(selected[0]);
+						}
+					);
+	
+				var updateSelects = function (selectedDate)
+					{
+						var selectedDate = new Date(selectedDate);
+						$('#d option[value=' + selectedDate.getDate() + ']').attr('selected', 'selected');
+						$('#m option[value=' + (selectedDate.getMonth()+1) + ']').attr('selected', 'selected');
+						$('#y option[value=' + (selectedDate.getFullYear()) + ']').attr('selected', 'selected');
+					}
+
+				// listen for when the selects are changed and update the picker
+
+				$('.bt_excluir').click(function() {
+					var redireciona = $(this).attr('rel');
+					apprise('Tem certeza que deseja excluir este registro?', {'verify':true}, function(r) {
+						if(r) {
+							window.location.href = redireciona;
+						} else { 
+							return false;
+						}
+					});
+				});
+
+				$('#d, #m, #y')
+					.bind(
+						'change',
+						function()
+						{
+							var d = new Date(
+									$('#y').val(),
+									$('#m').val()-1,
+									$('#d').val()
+								);
+							$('#date-pick').dpSetSelected(d.asString());
+						}
+					);
+
+				// default the position of the selects to today
+				var today = new Date();
+				updateSelects(today.getTime());
+
+				// and update the datePicker to reflect it...
+				$('#d').trigger('change');
+			});
+		</script>
+
+		<!-- MUST BE THE LAST SCRIPT IN <HEAD></HEAD></HEAD> png fix -->
+		<script src="../js/jquery/jquery.pngFix.pack.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$(document).pngFix( );
+
+				if ("{NOME_TABELA}" == "desenho") {
+					$("#product-table img").dblclick(function() {
+						var slug_modal = $(this).closest(".trregistro").find("input[name='slug_modal']").val();
+						var cod_modelo = $(this).closest(".trregistro").find("input[name='cod_modelo']").val();
+						var peca_modelo = $(this).closest(".trregistro").find("input[name='peca']").val();
+						var modelo_link = '{SIMULADOR_LINK}/'+slug_modal+'?inicial='+cod_modelo;
+
+						if (peca_modelo != "") {
+							var peca = peca_modelo.split('-');
+							modelo_link += '&'+peca[0]+'='+peca[1];
+						}	
+						window.open(modelo_link, '_target'); 
+					});
+				}
+			});
+
+			function atualizaCampo(tabela, campo, valor, id) {
+				$.get("../procedimentos/atualizaRegistro.php?tabela="+tabela+"&campo="+campo+"&valor="+valor+"&id="+id, function(data){
+					if(data) {
+						apprise("Erro: "+data);
+					}
+					else {
+						$('img[rel=ok_'+id+']').attr('src','../images/shared/ok_2.png');
+					}
+				});
+			}
+
+			function atualizaSimulador($target) {
+				$('#bt_refresh-simulador').hide();
+				$.post("../procedimentos/atualizaSimulador.php");
+			}
+		</script>
+	</head>
+	<body> 
+	
+		{TOPO}
+		
+		<!--  start nav-outer -->
+		</div>
+
+		<!--  start nav-outer-repeat -->
+
+		<div class="clear"></div>
+ 
+		<!-- start content-outer -->
+		<div id="content-outer">
+			<!-- start content -->
+			<div id="content">
+
+				<!--  start page-heading -->
+				<div id="page-heading">
+					<div class="box-text">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td>
+									<h1>Listagem de {TITULO_TABELA}</h1>
+									<!-- BEGIN BLOCK_TOTAL_REGISTROS -->
+									<h4>Registros encontrados: {TOTAL_REGISTROS}
+										<a href="formulario.php?tabela={NOME_TABELA}&amp;acao=cadastrar"></a>
+									</h4> 
+									<!-- END BLOCK_TOTAL_REGISTROS -->
+								</td>
+								<td valign="bottom">
+									<!-- BEGIN BLOCK_BT_NOVO -->
+									<a href="formulario.php?tabela={NOME_TABELA}&amp;acao=cadastrar">
+										<img src="../images/table/novo.jpg" border="0" />
+									</a>
+									<!-- END BLOCK_BT_NOVO -->
+									<!-- BEGIN BLOCK_BUSCA_DATA -->
+									<div>
+										<form id="formData" method="post" action="listar.php?tabela=orcamento">
+											<table width="350" border="0" align="center" cellpadding="0" cellspacing="0">
+												<tr>
+													<td align="left">
+														<strong style="float:left;"><label for="de">De:</label></strong>
+														<input name="de" type="text" class="inp-form-int" id="de" value="{DATA_INICIAL}" size="8" maxlength="25" />
+													</td>
+													<td align="left">
+														<strong style="float:left;"><label for="ate">Até:</label></strong>	
+														<input name="ate" type="text" class="inp-form-int" id="ate" value="{DATA_FINAL}" size="8" maxlength="25" />
+													</td>
+													<td align="left">
+														<input type="submit" name="button" id="button" value="Buscar" class="bt_buscar" />
+													</td>
+												</tr>
+											</table>
+										</form>
+									</div>
+									<!-- END BLOCK_BUSCA_DATA -->
+								</td>
+							</tr>
+						</table>
+           
+						<a href="formulario.php?tabela={NOME_TABELA}&acao=cadastrar"></a>
+					</div>
+					<div class="box-form">
+						<form action="listar.php?tabela={NOME_TABELA}" method="post">
+							Busca:<br />
+							<input name="busca_valor" maxlength="50" value="{VALOR_BUSCA}" type="text" class="inp-form" style="float:left;" />
+							<select id="idcampo_busca" name="busca_campo" class="styledselect_form_3" style="float:left; margin-left:10px;" >
+								<!-- BEGIN BLOCK_CAMPO_BUSCAR -->
+								<option value="{CAMPO_FLAG}">{CAMPO}</option>
+								<!-- END BLOCK_CAMPO_BUSCAR -->
+							</select>
+							<input name="enviabusca" maxlength="50" value="" type="submit" class="submit-login" style="float:right;" />
+						</form>
+					</div>
+				</div>
+				<!-- end page-heading -->
+
+				<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
+					<tr>
+						<th rowspan="3" class="sized">
+							<img src="../images/shared/side_shadowleft.jpg" width="20" height="300" alt="" />
+						</th>
+						<th class="topleft"></th>
+						<td id="tbl-border-top">&nbsp;</td>
+						<th class="topright"></th>
+						<th rowspan="3" class="sized">
+							<img src="../images/shared/side_shadowright.jpg" width="20" height="300" alt="" />
+						</th>
+					</tr>
+					<tr>
+						<td id="tbl-border-left"></td>
+						<td>
+							<!--  start content-table-inner -->
+							<div id="content-table-inner">
+		
+								<!--  start table-content  -->
+								<div id="table-content">
+			
+									<!--  BEGIN BLOCK_MENSAGEM -->
+									<div id="message-yellow">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td class="yellow-left">Voc&ecirc; tem uma nova mensagem.</td>
+												<td class="yellow-right">
+													<a class="close-yellow">
+														<img src="../images/table/icon_close_yellow.gif"   alt="" />
+													</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<!--  END BLOCK_MENSAGEM -->
+				
+									<!--  BEGIN BLOCK_ERRO -->
+									<div id="message-red">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td class="red-left">
+													Ocorreu um erro. <a href="">Tente novamente mais tarde.</a>
+												</td>
+												<td class="red-right">
+													<a class="close-red">
+														<img src="../images/table/icon_close_red.gif"   alt="" />
+													</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<!--  END BLOCK_ERRO -->
+				
+									<!--  BEGIN BLOCK_AVISO -->
+									<div id="message-blue">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td class="blue-left">Nenhum registro foi encontrado.</td>
+												<td class="blue-right">
+													<a class="close-blue">
+														<img src="../images/table/icon_close_blue.gif"   alt="" />
+													</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<!--  END BLOCK_AVISO -->
+			
+									<!--  BEGIN BLOCK_MSG_CADASTRADO -->
+									<div id="message-green">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td class="green-left">
+													{TITULO_TABELA} cadastrad{TIPO_SUBSTANTIVO_TABELA} com sucesso! 
+													<a href="formulario.php?tabela={NOME_TABELA}&acao=cadastrar" target="_self">Adicionar mais.</a>
+												</td>
+												<td class="green-right">
+													<a class="close-green">
+														<img src="../images/table/icon_close_green.gif"   alt="" />
+													</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<!--  END BLOCK_MSG_CADASTRADO -->
+                
+									<!--  BEGIN BLOCK_MSG_ALTERADO -->
+									<div id="message-green">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td class="green-left">
+													{TITULO_TABELA} alterad{TIPO_SUBSTANTIVO_TABELA} com sucesso!
+												</td>
+												<td class="green-right">
+													<a class="close-green">
+														<img src="../images/table/icon_close_green.gif"   alt="" />
+													</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<!--  END BLOCK_MSG_ALTERADO -->
+                
+									<!--  BEGIN BLOCK_MSG_EXCLUIDO -->
+									<div id="message-green">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td class="green-left">
+													{TITULO_TABELA} excluíd{TIPO_SUBSTANTIVO_TABELA} com sucesso!
+												</td>
+												<td class="green-right">
+													<a class="close-green">
+														<img src="../images/table/icon_close_green.gif"   alt="" />
+													</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<!--  END BLOCK_MSG_EXCLUIDO -->
+		
+		 
+									<!--  start product-table -->
+									<form id="mainform" action="">
+										<table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">
+											<!-- BEGIN BLOCK_TITULOS_CAMPOS_TABELA -->
+											<tr>
+												<th class="table-header-check"><a id="toggle-all" ></a> </th>
+												<!--  BEGIN BLOCK_CAMPO -->
+												<th class="table-header-repeat line-left minwidth-1"><a href="listar.php?tabela={NOME_TABELA}&acao=listar&ordem={CAMPO_FLAG}&pg={PG_ANTERIOR}&ord={ORD}&busca_campo={BUSCA_CAMPO}&busca_valor={BUSCA_VALOR}">{CAMPO}</a>	</th>
+												<!--  END BLOCK_CAMPO -->
+												<th class="table-header-options line-left"><a href="">Opções</a></th>
+											</tr>
+											<!-- END BLOCK_TITULOS_CAMPOS_TABELA -->
+											
+											<!-- BEGIN BLOCK_REGISTRO -->
+											<tr class="trregistro">
+												<input name="slug_modal" value="{SLUG_MODALIDADE}" type="hidden"/>
+												<input name="cod_modelo" value="{COD_MODELO}" type="hidden"/>
+												<input name="peca" value="{PECA_MODELO}" type="hidden"/>
+												<td><input name="itens[]" value="{ID_REGISTRO}" type="checkbox"/></td>
+												<!--  BEGIN BLOCK_VALOR -->
+												<td {FUNDO_VALOR}>
+													<!--  BEGIN BLOCK_REGISTRO_NAO_LIDO -->
+													<b>
+														<!--  END BLOCK_REGISTRO_NAO_LIDO -->
+					
+														<!--  BEGIN BLOCK_STRING -->
+														{VALOR}
+														<!--  END BLOCK_STRING -->
+							
+														<!-- BEGIN BLOCK_SELECT -->
+														<select id="{NOME_CAMPO}" name="{NOME_CAMPO}" onchange="javascript:atualizaCampo('{NOME_TABELA}','{NOME_CAMPO}', this.value, '{ID_VALOR_REGISTRO}')">
+															<option value="0">SELECIONE</option>
+															<!-- BEGIN BLOCK_SELECT_ITEM -->
+															<option value="{VALOR}" rel="{NOME}" {SELECTED}>{NOME}</option>
+															<!-- END BLOCK_SELECT_ITEM -->
+														</select>
+														<!-- END BLOCK_SELECT -->
+							
+														<!-- BEGIN BLOCK_CAMPO_OBJETO -->
+														<input id="{NOME_CAMPO}{ID_VALOR_REGISTRO}" name="{NOME_CAMPO}" class="inp-form" type="text" value="{VALOR}" maxlength="80" style="float:left" />
+														<img style="float:left;margin-left:10px;cursor:pointer;" src="../images/shared/ok.png" onclick="javascript:atualizaCampo('pedido_entrega', '{NOME_CAMPO}', $('#{NOME_CAMPO}{ID_VALOR_REGISTRO}').val(), '{ID_VALOR_REGISTRO}')" rel="ok_{ID_VALOR_REGISTRO}" />
+														<!-- END BLOCK_CAMPO_OBJETO -->
+							
+														<!--  BEGIN BLOCK_FOTO -->
+															<img src="../../imagens/{NOME_TABELA}/{FOTO}" style="max-width:120px;" />
+														<!--  END BLOCK_FOTO -->
+							
+														<!--  BEGIN BLOCK_REGISTRO_NAO_LIDO_CLOSE -->
+													</b>
+													<!--  END BLOCK_REGISTRO_NAO_LIDO_CLOSE -->
+												</td>
+												<!--  END BLOCK_VALOR -->
+						
+												<td class="options-width">
+												
+													<!-- BEGIN BLOCK_ICONE_ALTERAR -->
+													<a href="formulario.php?tabela={NOME_TABELA}&acao=alterar&id={ID_REGISTRO}" target="_self" title="Alterar" class="icon-1 info-tooltip"></a>
+													<!-- END BLOCK_ICONE_ALTERAR -->
+													
+													<!-- BEGIN BLOCK_ICONE_EXCLUIR -->
+													<a rel="acao.php?tabela={NOME_TABELA}&acao=excluir&id={ID_REGISTRO}" target="_self" title="Excluir" class="icon-2 info-tooltip bt_excluir"></a>
+													<!-- END BLOCK_ICONE_EXCLUIR -->
+													
+													<!--<a href="" target="_self" title="Edit" class="icon-3 info-tooltip"></a>
+													<a href="" target="_self" title="Edit" class="icon-4 info-tooltip"></a>
+													<a href="" target="_self" title="Edit" class="icon-5 info-tooltip"></a>-->
+												</td>
+											</tr>
+					
+											<!--  END BLOCK_REGISTRO -->
+										</table>
+										<!--  end product-table --> 
+									</form>
+								</div>
+								<!--  end content-table  -->
+		
+								<!-- BEGIN BLOCK_LISTA_REMESSA -->
+								<div style="clear:both;display:table; margin:5px 0px 10px 10px;">
+									<select name="lista_remessa" id="lista_remessa" onchange="javascript:window.location.href='?tabela=pedido&expedicao=objeto&entrega='+$(this).val();">
+										<option value="">Lista de Envio</option>
+										<option value="1">PAC</option>
+										<option value="2">Sedex</option>
+										<option value="3">E-Sedex</option>
+										<option value="0">Todos</option>
+									</select>
+								</div>
+								<!-- END BLOCK_LISTA_REMESSA -->
+				
+								<!-- BEGIN BLOCK_ACAO_LOTE -->
+								<div id="actions-box">
+									<a href="" class="action-slider"></a>
+									<div id="actions-box-slider">
+										<a href="javascript:acao_lote('duplicar_lote');" class="action-edit">Duplicar</a>
+										<a href="javascript:acao_lote('excluir_lote');" class="action-delete">Excluir</a>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<!-- END BLOCK_ACAO_LOTE -->
+			
+								<!-- BEGIN BLOCK_PAGINACAO  -->
+								<table width="370" border="0" cellpadding="0" cellspacing="0" id="paging-table">
+									<tr>
+										<td width="174" align="right">
+											<!-- BEGIN BLOCK_PG_ANTERIOR -->
+											<a href="listar.php?tabela={NOME_TABELA}&acao=listar&busca_campo={BUSCA_CAMPO}&busca_valor={BUSCA_VALOR}&ordem={ORDEM}&ord={ORD_GET}&pg={PG_ANTERIOR}" class="page-left"></a>
+											<!-- END BLOCK_PG_ANTERIOR -->
+											
+											<div id="page-info">Página <strong>{PG_ATUAL}</strong> / {PG_TOTAL}</div>
+											
+											<!-- BEGIN BLOCK_PG_PROXIMA -->
+											<a href="listar.php?tabela={NOME_TABELA}&acao=listar&busca_campo={BUSCA_CAMPO}&busca_valor={BUSCA_VALOR}&ordem={ORDEM}&ord={ORD_GET}&pg={PG_PROXIMA}" class="page-right"></a>
+											<!-- END BLOCK_PG_PROXIMA -->
+										</td>
+										<td>
+											<select id="listapgs" class="styledselect_pages" onchange="if(this.value > 0) {window.location.href='listar.php?tabela={NOME_TABELA}&acao=listar&busca_campo={BUSCA_CAMPO}&busca_valor={BUSCA_VALOR}&ordem={ORDEM}&pg='+( this.value - 1 );}">
+												<option value="0">Página</option>
+												<!-- BEGIN BLOCK_LISTA_PG -->
+												<option value="{PG}" {SELECT_PG}>{PG}</option>
+												<!-- END BLOCK_LISTA_PG -->
+											</select>
+										</td>
+									</tr>
+								</table>
+								<!--  END BLOCK_PAGINACAO -->
+			
+								<div class="clear"></div>
+		 
+							</div>
+							<!--  end content-table-inner -->
+						</td>
+						<td id="tbl-border-right"></td>
+					</tr>
+					<tr>
+						<th class="sized bottomleft"></th>
+						<td id="tbl-border-bottom">&nbsp;</td>
+						<th class="sized bottomright"></th>
+					</tr>
+				</table>
+	
+				<div class="clear">&nbsp;</div>
+
+				<div id="bt_refresh-simulador" onclick="atualizaSimulador();">LIMPAR CACHE</div>
+				<a href="{SIMULADOR_LINK}" target="_blank" id="bt_abrir-simulador">ACESSAR SIMULADOR</a>
+			</div>
+			<!--  end content -->
+		
+			<div class="clear">&nbsp;</div>
+
+		</div>
+		<!--  end content-outer -->
+    
+		{RODAPE}
+ 
+	</body>
+</html>

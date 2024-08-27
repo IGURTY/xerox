@@ -1,0 +1,111 @@
+<!-- BEGIN BLOCK_ITEM_PRECO -->
+<table width="100%" data-id="{IDTIPO_ITEM_PRECO}" class="table-item_precos">
+	<tr class="bg-titulos">
+		<input name="pacote_item_preco_idtipo_item[]" type="hidden" value="{IDTIPO_ITEM_PRECO}" />
+		<th colspan="3">Item: {TIPO_ITEM_PRECO}</th>
+	</tr>
+	<tr>
+		<!--  BEGIN BLOCK_CAMPO_ITEM_PRECO -->
+		<td height="20" align="left" valign="middle"><strong>{CAMPO_ITEM_PRECO}</strong></td>
+		<!-- END BLOCK_CAMPO_ITEM_PRECO -->
+		<td height="20" align="left" valign="middle">
+			<strong>Excluir</strong>
+		</td>
+	</tr>
+	<!--  BEGIN BLOCK_LISTA_VALORES_ITEM_PRECO -->
+	<input name="pacote_item_preco_id[{IDTIPO_ITEM_PRECO}][]" type="hidden" value="{IDREGISTRO_ITEM_PRECO}" />
+	<tr id="idreg{IDREGISTRO_ITEM_PRECO}">
+		<!--  BEGIN BLOCK_VALOR_ITEM_PRECO -->
+		<td height="12" align="left" valign="middle">
+			<!--  BEGIN BLOCK_VARCHAR_VALOR_ITEM_PRECO -->
+			<input name="pacote_item_preco_{NOMECAMPO_ITEM_PRECO}[{IDTIPO_ITEM_PRECO}][]" type="text" value="{VALOR_ITEM_PRECO}" 
+			class="inpt-{NOMECAMPO_ITEM_PRECO} inp-form-int" />
+			<!-- END BLOCK_VARCHAR_VALOR_ITEM_PRECO -->
+		</td>
+		<!-- END BLOCK_VALOR_ITEM_PRECO -->
+
+		<td height="12" align="left" valign="middle">
+			<!--$('#idreg{IDREGISTRO_ITEM}').remove();-->
+			<!--class="icon-2 info-tooltip"-->
+			<!--<span class="icone-excluir" onclick="javascript: if (window.confirm('Deseja excluir este registro?')) { $('#idreg{IDREGISTRO_ITEM_PRECO}').fadeOut('slow', function(){
+$.get('acao.php?tabela=pacote_item_preco&id={IDREGISTRO_ITEM_PRECO}&acao=excluir', function() {});
+}); }" title="Excluir"></span>-->
+			<span class="icone-excluir" onclick="excluirRegistro('{IDREGISTRO_ITEM_PRECO}')" title="Excluir"></span>
+		</td>
+	</tr>
+	<!-- END BLOCK_LISTA_VALORES_ITEM_PRECO -->
+	<tr class="button">
+		<td onclick="addPreco(this)">Adicionar PREÇO</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+<!-- END BLOCK_ITEM_PRECO -->
+
+<style>
+	#tbl-itens_preco {
+		display: none;
+		padding-top: 2px;
+		font-size: 12px;
+		color: #000;
+	}
+	.table-item_precos .bg-titulos {
+		cursor: pointer;
+	}
+	.table-item_precos tr th, .table-item_precos tr td {
+		padding: 5px 10px!important;
+	}
+	.button td {
+		cursor: pointer;
+	}
+	.button td:hover {
+		text-decoration: underline;
+	}
+</style>
+<script type="text/javascript">
+	$('.bg-titulos').click(function() {
+		$(this).parent().find("tr:not(.bg-titulos)").toggle();
+	});
+
+	function excluirRegistro(reg){
+		apprise('Deseja excluir este registro?', {'verify':true}, function(r) {
+			if (r) {
+				$('#idreg'+reg).fadeOut('slow', function(){
+					$.get('acao.php?tabela=pacote_item_preco&id='+reg+'&acao=excluir', function() {});
+				}); 
+			}
+			else { 
+				return false;
+			}	
+		});	
+	}
+
+	function excluirPreco(elemento){
+		var tr_elemento = $(elemento).parent().parent();
+		if (window.confirm('Deseja excluir este registro?')) { 
+			tr_elemento.fadeOut('slow');
+			tr_elemento.remove();
+		}
+	}
+	function addPreco(elemento){
+		var idtipo_item = $(elemento).parent().parent().parent().attr("data-id");
+		var trvazia = "<tr>";
+		<!--  BEGIN BLOCK_VALOR_VAZIO_ITEM_PRECO -->
+		trvazia += '<td height="12" align="left" valign="middle">';
+			<!--  BEGIN BLOCK_VARCHAR_VALOR_VAZIO_ITEM_PRECO -->
+			trvazia += '<input name="pacote_item_preco_{NOMECAMPO_VAZIO_ITEM_PRECO}['+idtipo_item+'][]" type="text" class="inpt-{NOMECAMPO_VAZIO_ITEM_PRECO} inp-form-int" />';
+			<!-- END BLOCK_VARCHAR_VALOR_VAZIO_ITEM_PRECO -->
+		trvazia += '</td>';
+		<!-- END BLOCK_VALOR_VAZIO_ITEM_PRECO -->
+		trvazia += '<td height="12" align="left" valign="middle">';
+			trvazia += '<span class="icone-excluir" onclick="excluirPreco(this)" title="Excluir"></span>';
+		trvazia += '</td>';
+		trvazia += "</tr>";
+
+		$(elemento).parent().parent().find(".button").before(trvazia);
+
+		initSelects();
+		initClasses();
+		return false;
+	}
+</script>

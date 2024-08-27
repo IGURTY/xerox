@@ -1,0 +1,39 @@
+<input type="hidden" id="idcliente" name="idcliente" value="{IDCLIENTE}" />
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="5" align="left" valign="middle">
+        <div class="top-main" id="top-main-cli"><strong>Dados do Cliente</strong></div>
+        <script type="text/javascript">
+		dados['nome_cliente'] = '{VALOR_NOME}';
+		
+        $('#top-main-cli').click(function() {
+            $('#tbl-itens-cli').slideToggle('fast', function() {});
+        });
+        </script>
+    </td>
+</tr>
+<tr>
+	<td align="center" bgcolor="#F5F5F5" id="tbl-itens-cli">
+      <table width="95%" border="0" align="center" cellpadding="5" cellspacing="0">
+          <tr>
+            <td width="11%" height="20" align="left" bgcolor="#F5F5F5"><label for="select_msg"><strong>Nome:</strong></label></td>
+            <td width="37%" height="20" align="left" bgcolor="#F5F5F5"><input name="cliente_nome" type="text" value="{VALOR_NOME}"  class="inp-form" id="cliente_nome" /></td>
+            <td align="left" bgcolor="#F5F5F5"><strong>Email:</strong></td>
+            <td align="left" bgcolor="#F5F5F5"><input name="cliente_email" type="text" value="{VALOR_EMAIL}"  class="inp-form" id="cliente_email" /></td>
+          </tr>
+		   <tr>
+            <td height="20" align="left" bgcolor="#F5F5F5"><strong>Cidade:</strong></td>
+            <td height="20" align="left" bgcolor="#F5F5F5">
+            	<input name="cliente_cidade" type="text" value="{VALOR_CIDADE}"  class="inp-form" id="cliente_cidade" />
+            </td>
+            <td align="left" bgcolor="#F5F5F5"><strong>Estado:</strong></td>
+            <td align="left" bgcolor="#F5F5F5"><input name="cliente_estado" type="text" value="{VALOR_ESTADO}"  class="inp-form" id="cliente_estado" maxlength="2" /></td>
+          </tr>
+          <tr>
+            <td height="20" align="left" bgcolor="#F5F5F5"><strong>Telefone:</strong></td>
+            <td height="20" align="left" bgcolor="#F5F5F5"><input name="cliente_telefone" type="text" value="{VALOR_TELEFONE}"  class="inp-form" id="cliente_telefone" /></td>
+          </tr>
+        </table>
+	</td>
+</tr>
+</table>

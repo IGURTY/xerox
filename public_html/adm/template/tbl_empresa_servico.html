@@ -1,0 +1,93 @@
+<script type="text/javascript" src="../js/jquery/jquery.bpopup-0.7.0.min.js"></script>
+<script type="text/javascript">
+var id_servico_aberto = 0;
+$(function() {
+	$('input[id^=cb_servico_]').change(function() {
+		id_servico_aberto = $(this).attr('id').replace('cb_servico_','')
+	
+		apprise($('#detalhe_'+id_servico_aberto)[0].outerHTML, '', function(){
+			console.log('id: '+id_servico_aberto);
+			$('#servicos #detalhe_'+id_servico_aberto).html('').remove();
+			$('#detalhe_'+id_servico_aberto).clone().hide().insertAfter("#cb_servico_"+id_servico_aberto);
+			$('.appriseInner #detalhe_'+id_servico_aberto).html('').remove();
+		});
+		$('.appriseInner #detalhe_'+id_servico_aberto).show();
+	});
+});
+</script>
+
+<style>
+div[id^=detalhe_] {
+    display: flex;
+    flex-direction: column;
+}
+.link_prod {
+	width:18px;
+	height:18px;
+	background:#0C3;
+	float:left;
+	margin:0px 0px 0px 4px;
+	background:url(../images/shared/table.gif) no-repeat;
+	cursor:pointer;
+}
+.bClose{
+	border-radius:7px 7px 7px 7px;box-shadow:none;font:bold 131% sans-serif;padding:0 6px 2px;position:absolute;right:-7px;top:-7px;background:#F90; cursor:pointer;
+}
+
+#servicos {
+	display: flex;
+    justify-content: space-around;
+	background-color: #F5F5F5;
+	padding: 15px;
+}
+#servicos .servico_item {
+	display: flex;
+    justify-content: flex-end;
+    padding: 10px 0 5px;
+	cursor: pointer;
+}
+#servicos .servico_item strong {
+    margin-right: 10px;
+}
+</style>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="tbl_empresa_servico">
+	<div id="servicos">
+		<div class="servico_itens">
+			<!-- BEGIN BLOCK_ITEM_SERVICO_MASCULINO -->
+			<div class="servico_item">
+				<strong><label for="cb_servico_{ID_SERVICO}">{NOME_SERVICO}</label></strong>
+				<input type="checkbox" name="cb_servico[]" id="cb_servico_{ID_SERVICO}" value="{ID_SERVICO}" {CHECK_SERVICO} />          
+				<input type="hidden" name="cb_idservico[]" value="{ID_SERVICO}" />
+				<div id="detalhe_{ID_SERVICO}" style="display:none;width:380px;padding:0 10px 0 0;">
+					<label style="clear:both;float:left;" for="detalhe_url_{ID_SERVICO}">Link: </label>
+					<input style="clear:both;float:left;background: #FFF;border: 1px solid #acacac;width: 99%;padding: 7px 5px;height: auto;" name="detalhe_url[]" id="detalhe_url_{ID_SERVICO}" maxlength="100" value="{SERVICO_DETALHE_URL}" type="text" class="inp-form">
+					
+					<label style="clear:both;float:left;" for="detalhe_imagem_{ID_SERVICO}">Imagem: </label>
+					<div class="box_imagem">
+						<input style="clear:both;float:left;" name="detalhe_imagem[]" id="detalhe_imagem_{ID_SERVICO}" type="file" class="file_1">
+					</div>	
+				</div>
+			</div>
+			<!-- END BLOCK_ITEM_SERVICO_MASCULINO -->
+		</div>
+		<div class="servico_itens">
+			<!-- BEGIN BLOCK_ITEM_SERVICO_FEMININO -->
+			<div class="servico_item">
+				<strong><label for="cb_servico_{ID_SERVICO}">{NOME_SERVICO}</label></strong>
+				<input type="checkbox" name="cb_servico[]" id="cb_servico_{ID_SERVICO}" value="{ID_SERVICO}" {CHECK_SERVICO} />          
+				<input type="hidden" name="cb_idservico[]" value="{ID_SERVICO}" />
+				<div id="detalhe_{ID_SERVICO}" style="display:none;width:380px;padding:0 10px 0 0;">
+					<label style="clear:both;float:left;" for="detalhe_url_{ID_SERVICO}">Link: </label>
+					<input style="clear:both;float:left;background: #FFF;border: 1px solid #acacac;width: 99%;padding: 7px 5px;height: auto;" name="detalhe_url[]" id="detalhe_url_{ID_SERVICO}" maxlength="100" value="{SERVICO_DETALHE_URL}" type="text" class="inp-form">
+					
+					<label style="clear:both;float:left;" for="detalhe_imagem_{ID_SERVICO}">Imagem: </label>
+					<div class="box_imagem">
+						<input style="clear:both;float:left;" name="detalhe_imagem[]" id="detalhe_imagem_{ID_SERVICO}" type="file" class="file_1">
+					</div>	
+				</div>
+			</div>
+			<!-- END BLOCK_ITEM_SERVICO_FEMININO -->
+		</div>
+	</div>	
+</table>

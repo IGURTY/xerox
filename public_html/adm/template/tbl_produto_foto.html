@@ -1,0 +1,126 @@
+<script src="../js/jquery/dropzone.js"></script>
+<link rel="stylesheet" href="../css/dropzone.css" type="text/css" />
+
+<!--<div id="dropzone">
+</div>-->
+
+<input name="pre_idproduto" type="hidden" value="{PRE_IDPRODUTO}" />
+
+</form>
+
+<form action="../procedimentos/uploadFotoProduto.php?idproduto={IDPRODUTO}&nome={NOME_FOTO}" class="dropzone" id="fotosproduto">
+  	<div class="fallback">
+    	<input name="file" type="file" accept=".jpg" multiple />
+    </div>
+</form>
+  
+<script type="text/javascript">
+//Dropzone.autoDiscover = false;
+// or disable for specific dropzone:
+// Dropzone.options.myDropzone = false;
+
+$(function() {
+  // Now that the DOM is fully loaded, create the dropzone, and setup the
+  // event listeners
+  Dropzone.options.fotosproduto = {
+    paramName: "file",
+	acceptedFiles: ".jpg",
+	parallelUploads: 1,
+	maxFilesize: 5,
+	accept: function(file, done) {
+		done();
+	}
+  };
+  
+  /*
+  new Dropzone("#dropzone", {
+	  url: "../procedimentos/uploadFotoProduto.php?idproduto={IDPRODUTO}&nome={NOME_FOTO}",
+	  clickable: true,
+	  init: function() {
+		this.on('sending', function(file, xhr, formData) {
+		  var order_id = parseInt($('#dropzone_order_id').val(), 10);
+		  formData.append('order_id', order_id);
+		});
+	  },
+	  accept: function(file, done) {
+		if (parseInt($('#dropzone_order_id').val(), 10)) done();
+		else {
+		  showErrorMessage('Please select an order first');
+		  done('error');
+		}
+	  },
+	  success: function(file, response) {
+		// handle response
+	  }
+	});*/
+})
+</script>
+
+<p><br /></p><p><br /></p>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="3" id="tbl_fotos">
+  <!--  BEGIN BLOCK_CABECALHO_FOTO -->
+  <tr class="bg-titulos">
+    <td height="20" align="left" valign="middle"><strong>Foto</strong></td>
+    <td height="20" align="left" valign="middle"><strong>Tipo</strong></td>
+    <td height="20" align="left" valign="middle">
+    	<strong>Excluir</strong>
+    </td>
+  </tr>
+  <!--  END BLOCK_CABECALHO_FOTO -->
+   
+  <!--  BEGIN BLOCK_LISTA_FOTO -->
+  <input name="produto_foto_id[]" type="hidden" value="{IDREGISTRO_FOTO}" />
+    	
+  <tr id="idlinhafoto{IDREGISTRO_FOTO}">
+    <td height="12" align="left" valign="middle">
+        <!-- BEGIN BLOCK_FOTO -->
+        <img src="../../imagens/produto/{FOTO}" width="180" height="160" ondblclick="javascript:$('#form_upload_foto{IDREGISTRO_FOTO}').show();" />
+        
+        <form id="form_upload_foto{IDREGISTRO_FOTO}" name="form_upload_foto{IDREGISTRO_FOTO}" enctype="multipart/form-data" style="display:none;" action="../procedimentos/uploadFoto.php?tabela=produto" method="post">
+        	<input type="file" name="produto_foto_id[]" id="inputfile_foto_{IDREGISTRO_FOTO}" onchange="javascript:$('#form_upload_foto{IDREGISTRO_FOTO}').submit();" />
+        	<input type="hidden" name="registro_idtipo_foto" value="{IDTIPO_FOTO}" />
+        	<input type="hidden" name="registro_foto_id" value="{IDREGISTRO_FOTO}" />
+        	<input type="hidden" name="nome_foto" value="{NOME_FOTO}" />
+        	<input type="hidden" name="registro_id_produto" value="{ID}" />
+        </form>
+        <!-- END BLOCK_FOTO -->
+    </td>
+    <td align="left" valign="middle">
+      <select name="idtipo_foto[]" id="idtipo_foto{IDREGISTRO_FOTO}" class="styledselect_form_1">
+        <option>SELECIONE</option>
+        <!-- BEGIN BLOCK_LISTA_TIPOFOTO -->
+        <option value="{VALOR_OPCAO_TIPOFOTO}" {SELECTED_TIPOFOTO}>{LABEL_OPCAO_TIPOFOTO}</option>
+        <!-- END BLOCK_LISTA_TIPOFOTO -->
+    </select></td>
+    
+    <td height="12" align="left" valign="middle">
+		<span class="icone-excluir" onclick="javascript: if (window.confirm('Deseja excluir esta imagem?')) { $('#idlinhafoto{IDREGISTRO_FOTO}').fadeOut('slow', function(){
+        	$.get('acao.php?tabela=foto&id={IDREGISTRO_FOTO}&acao=excluir', function(data) {
+            	//apprise('Foto excluida com sucesso!');
+            });
+        }); }" title="Excluir"></span>
+    </td>
+  </tr>
+  <!-- END BLOCK_LISTA_FOTO -->
+</table>
+
+<!--<span class="addfoto">Adicionar Foto</span><script>
+$('.addfoto').click(function() {
+	var trvazia = "<tr>";
+	trvazia += '<td height="12" align="left" valign="middle">';
+    trvazia += '<input type="file" class="file_1" style="display:inline; width:300px; " name="produto_foto_id[]" id="idfoto"/>';
+	trvazia += '</td><td><select name="idtipo_foto[]" class="styledselect_form_1" rel="vazio"><option value="">SELECIONE</option>';-->
+	<!-- BEGIN BLOCK_LISTA_TIPOFOTO_VAZIO -->
+    <!--trvazia += '<option value="{VALOR_OPCAO_TIPOFOTO_VAZIO}">{LABEL_OPCAO_TIPOFOTO_VAZIO}</option>';-->
+    <!-- END BLOCK_LISTA_TIPOFOTO_VAZIO -->
+    <!--trvazia += '</select></td>'
+	trvazia += "</tr>";
+    var campos = jQuery('#tbl_fotos');
+	campos.append(trvazia);
+	
+	initSelects();
+	initClasses();
+    return false;
+});
+</script>-->

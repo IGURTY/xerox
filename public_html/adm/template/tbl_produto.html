@@ -1,0 +1,121 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="3" id="tbl_itens">
+	<tr class="bg-titulos">
+		<!--  BEGIN BLOCK_CAMPO_ITEM -->
+		<td height="20" align="left" valign="middle"><strong>{CAMPO_ITEM}</strong></td>
+		<!-- END BLOCK_CAMPO_ITEM -->
+		<td height="20" align="left" valign="middle"><strong>Excluir</strong></td>
+	</tr>
+
+	<!--  BEGIN BLOCK_LISTA_VALORES_ITEM -->
+	<input name="pacote_item_id[]" type="hidden" value="{IDREGISTRO_ITEM}" />
+
+	<tr id="idreg{IDREGISTRO_ITEM}">
+		<!--  BEGIN BLOCK_VALOR_ITEM -->
+		<td height="12" align="left" valign="middle">
+			<!--  BEGIN BLOCK_VARCHAR_VALOR_ITEM -->
+			<input name="pacote_item_{NOMECAMPO_ITEM}[]" type="number" min="1" onchange="qtdMin(this)" value="{VALOR_ITEM}" class="inp-form-int" />
+			<!-- END BLOCK_VARCHAR_VALOR_ITEM -->
+			<!--  BEGIN BLOCK_SELECTBOX_VALOR_ITEM -->
+			<select name="pacote_item_{NOMECAMPO_ITEM}[]" class="{NOMECAMPO_ITEM} styledselect_form_1" onchange="addItemPreco(this)">
+				<option value="">SELECIONE</option>
+				<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_ITEM -->
+				<option value="{VALOR_ITEM}" {SELECTED} {DISABLED}>{LABEL_ITEM}</option>
+				<!--  END BLOCK_SELECTBOX_LISTA_VALOR_ITEM -->
+			</select>
+			<!-- END BLOCK_SELECTBOX_VALOR_ITEM -->
+			<!-- BEGIN BLOCK_CAMPO_YN_ITEM -->
+			<input name="pacote_item_{NOMECAMPO_ITEM}[]" id="id{NOMECAMPO_ITEM}1" {CHECKEDY_SUB} type="checkbox" value="1"/>
+			<input name="pacote_item_{NOMECAMPO_ITEM}[]" id="id{NOMECAMPO_ITEM}2" {CHECKEDY_SUB} type="checkbox" value="1"/>
+			<!-- END BLOCK_CAMPO_YN_ITEM -->
+		</td>
+		<!-- END BLOCK_VALOR_ITEM -->
+		<td height="12" align="left" valign="middle">
+			<span class="icone-excluir" onclick="removerItemPreco('{IDREGISTRO_ITEM}')" title="Excluir"></span>
+		</td>
+	</tr>
+	<!-- END BLOCK_LISTA_VALORES_ITEM -->
+</table>
+<span class="add_item">Adicionar ITEM</span>
+
+<script type="text/javascript">
+	function qtdMin(x) {
+		if ($(x).val() < 1) {
+			$(x).val("1");
+		}
+	}
+
+	function removerItemPreco(numReg) {
+		apprise('Deseja excluir este registro?', {'verify':true}, function(r) {
+			if (r) {
+				$('#idreg'+numReg).fadeOut('slow', function(){
+					$.get('acao.php?tabela=pacote_item&id='+numReg+'&acao=excluir', function() {});
+				});
+			} else { 
+				return false;
+			}
+		});
+	}
+	function addItemPreco(x){
+		var id = $(x).val();
+		var nome = $(x).find("option[value='"+id+"']").html();
+		var nome_url = $(x).find("option[value='"+id+"']").html();
+
+		if (!$("#tbl-itens_preco table[data-id='"+id+"']").length) {
+			var trpreco = "<table width='100%' data-id='"+id+"' class='table-item_precos'>" +
+						"<tr class='bg-titulos'>" +
+							"<input name='pacote_item_preco_idtipo_item[]' type='hidden' value='"+id+"' />" +
+							"<th colspan='3'>Item: "+nome+"</th></tr>" +	
+						"<tr>" +
+							<!--  BEGIN BLOCK_NOVOCAMPO_ITEM_PRECO -->
+							"<td height='20' align='left' valign='middle'><strong>{NOVOCAMPO_ITEM_PRECO}</strong></td>" +
+							<!-- END BLOCK_NOVOCAMPO_ITEM_PRECO -->
+							"<td height='20' align='left' valign='middle'>" +
+								"<strong>Excluir</strong>" +
+							"</td>" +
+						"</tr>" +
+						"<tr class='button'>" + 
+							"<td onclick='addPreco(this)'>Adicionar PREÇO</td>" +
+						"</tr>" +	
+					  "</table>";
+				  
+			$("#tbl-itens_preco").append(trpreco);
+			$("#tbl-itens_preco table[data-id='"+id+"']").find(".button td").click();	
+		}	
+	}
+
+	$('.add_item').click(function() {
+		var trvazia = "<tr>";
+			<!--  BEGIN BLOCK_VALOR_VAZIO_ITEM -->
+			trvazia += '<td height="12" align="left" valign="middle">';
+				<!--  BEGIN BLOCK_VARCHAR_VALOR_VAZIO_ITEM -->
+				trvazia += '<input name="pacote_item_{NOMECAMPO_VAZIO_ITEM}[]" type="number" min="1" value="1" class="inp-form-int" onchange="qtdMin(this)"/>';
+				<!-- END BLOCK_VARCHAR_VALOR_VAZIO_ITEM -->
+				<!--  BEGIN BLOCK_SELECTBOX_VALOR_VAZIO_ITEM -->
+				trvazia += '<select name="pacote_item_{NOMECAMPO_VAZIO_ITEM}[]" class="{NOMECAMPO_VAZIO_ITEM} styledselect_form_1" rel="vazio" onchange="addItemPreco(this)">';
+					<!-- BEGIN BLOCK_SELECTBOX_VALOR_ITEM_SELECIONE -->
+					trvazia += '<option value="0">SELECIONE</option>';
+					<!-- END BLOCK_SELECTBOX_VALOR_ITEM_SELECIONE -->
+					<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_ITEM -->
+					if (arr_ites_ativos.indexOf('{VALOR_VAZIO_ITEM}') != -1) {
+						trvazia += '<option value="{VALOR_VAZIO_ITEM}">{LABEL_VAZIO_ITEM}</option>';
+					}
+					else {
+						trvazia += '<option value="{VALOR_VAZIO_ITEM}" disabled="disabled">{LABEL_VAZIO_ITEM}</option>';
+					}	
+					<!--  END BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_ITEM -->
+				trvazia += '</select>';
+				<!-- END BLOCK_SELECTBOX_VALOR_VAZIO_ITEM -->
+				<!-- BEGIN BLOCK_CAMPO_YN_VAZIO_ITEM -->
+				trvazia += '<input name="pacote_item_{NOMECAMPO_VAZIO_ITEM}[]" id="id{NOMECAMPO_VAZIO_ITEM}" type="checkbox" value="1" rel="vazio"/>';
+				<!-- END BLOCK_CAMPO_YN_VAZIO_ITEM -->
+			trvazia += '</td>'
+			<!-- END BLOCK_VALOR_VAZIO_ITEM -->
+		trvazia += "</tr>";
+		var campos = jQuery('#tbl_itens');
+		campos.append(trvazia);
+
+		initSelects();
+		initClasses();
+		return false;
+	});
+</script>

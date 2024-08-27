@@ -1,0 +1,53 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="4" id="tbl-endereco">
+	<tr class="bg-titulos">
+		<!--  BEGIN BLOCK_CAMPO_SUB -->
+		<td height="20" align="left" valign="middle"><strong>{CAMPO_SUB}</strong></td>
+		<!-- END BLOCK_CAMPO_SUB -->
+		<td height="20" align="left" valign="middle">
+			<strong>Excluir</strong>
+		</td>
+	</tr>
+
+	<!--  BEGIN BLOCK_LISTA_VALORES_CAMPO -->
+	<input name="empresa_endereco[]" type="hidden" value="{IDREGISTRO_ENDERECO}" />
+
+	<tr id="idreg{IDREGISTRO_ENDERECO}">
+		<!--  BEGIN BLOCK_VALOR_CAMPO -->
+		<td height="12" align="left" valign="middle">
+			<!--  BEGIN BLOCK_VARCHAR_VALOR_CAMPO -->
+			<input name="empresa_endereco_{NOMECAMPO}[]" type="text" value="{VALOR_ITEM}"  class="inp-form" />
+			<!-- END BLOCK_VARCHAR_VALOR_CAMPO -->
+		</td>
+		<!-- END BLOCK_VALOR_CAMPO -->
+
+		<td height="12" align="left" valign="middle">
+			<!--$('#idreg{IDREGISTRO_ITEM}').remove();-->
+			<!--class="icon-2 info-tooltip"-->
+			<span class="icone-excluir" onclick="javascript: if (window.confirm('Deseja excluir este registro?')) { $('#idreg{IDREGISTRO_ENDERECO}').fadeOut('slow', function(){
+$.get('acao.php?tabela=empresa_endereco&id={IDREGISTRO_ENDERECO}&acao=excluir', function() {});
+}); }" title="Excluir"></span>
+		</td>
+	</tr>
+	<!-- END BLOCK_LISTA_VALORES_CAMPO -->
+</table>
+<span id="add_endereco">+ ENDEREÇO</span>
+
+<script type="text/javascript">
+	$('#add_endereco').click(function() {
+		var trvazia = "<tr>";
+			<!--  BEGIN BLOCK_CAMPO_VAZIO -->
+			trvazia += '<td height="12" align="left" valign="middle">';
+				<!--  BEGIN BLOCK_VARCHAR_VALOR_CAMPO_VAZIO -->
+				trvazia += '<input name="empresa_endereco_{NOMECAMPO_VAZIO}[]" type="text" class="inp-form" onkeydown="bloquearLeitor()" />';
+				<!-- END BLOCK_VARCHAR_VALOR_CAMPO_VAZIO -->
+			trvazia += '</td>';
+			<!-- END BLOCK_CAMPO_VAZIO -->
+		trvazia += "</tr>";
+		var campos = jQuery('#tbl-endereco');
+		campos.append(trvazia);
+
+		initSelects();
+		initClasses();
+		return false;
+	});
+</script>

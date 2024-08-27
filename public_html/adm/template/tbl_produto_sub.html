@@ -1,0 +1,69 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="3" id="tbl_subs">
+  <tr class="bg-titulos">
+  	<!--  BEGIN BLOCK_CAMPO_SUB -->
+    <td height="20" align="left" valign="middle"><strong>{CAMPO_SUB}</strong></td>
+    <!-- END BLOCK_CAMPO_SUB -->
+    <td height="20" align="left" valign="middle">
+    	<strong>Excluir</strong>
+    </td>
+  </tr>
+  
+  <!--  BEGIN BLOCK_LISTA_VALORES_SUB -->
+  <input name="produto_sub_id[]" type="hidden" value="{IDREGISTRO_SUB}" />
+    	
+  <tr id="idreg{IDREGISTRO_SUB}">
+  	<!--  BEGIN BLOCK_VALOR_SUB -->
+    <td height="12" align="left" valign="middle">
+    	
+        <!--  BEGIN BLOCK_VARCHAR_VALOR_SUB -->
+        <input name="produto_sub_{NOMECAMPO_SUB}[]" type="text" value="{VALOR_SUB}"  class="inp-form-int" />
+        <!-- END BLOCK_VARCHAR_VALOR_SUB -->
+    	<!--  BEGIN BLOCK_SELECTBOX_VALOR_SUB -->
+        <select name="produto_sub_{NOMECAMPO_SUB}[]" class="styledselect_form_1">
+        	<option value="">SELECIONE</option>
+	        <!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_SUB -->
+        	<option value="{VALOR_SUB}" {SELECTED}>{LABEL_SUB}</option>
+	        <!--  END BLOCK_SELECTBOX_LISTA_VALOR_SUB -->
+        </select>
+        <!-- END BLOCK_SELECTBOX_VALOR_SUB -->
+    </td>
+    <!-- END BLOCK_VALOR_SUB -->
+    
+    <td height="12" align="left" valign="middle">
+    <!--$('#idreg{IDREGISTRO_SUB}').remove();-->
+    <!--class="icon-2 info-tooltip"-->
+		<span class="icone-excluir" onclick="javascript: if (window.confirm('Deseja excluir este registro?')) { $('#idreg{IDREGISTRO_SUB}').fadeOut('slow', function(){
+        	$.get('acao.php?tabela=produto_sub&id={IDREGISTRO_SUB}&acao=excluir', function() {});
+        }); }" title="Excluir"></span>
+    </td>
+  </tr>
+  <!-- END BLOCK_LISTA_VALORES_SUB -->
+</table>
+<span class="addsub">Adicionar SUB</span>
+
+<script type="text/javascript">
+$('.addsub').click(function() {
+	var trvazia = "<tr>";
+	<!--  BEGIN BLOCK_VALOR_VAZIO_SUB -->
+	trvazia += '<td height="12" align="left" valign="middle">';
+		<!--  BEGIN BLOCK_VARCHAR_VALOR_VAZIO_SUB -->
+        trvazia += '<input name="produto_sub_{NOMECAMPO_VAZIO_SUB}[]" type="text" class="inp-form-int" onkeydown="bloquearLeitor()" />';
+        <!-- END BLOCK_VARCHAR_VALOR_VAZIO_SUB -->
+    	<!--  BEGIN BLOCK_SELECTBOX_VALOR_VAZIO_SUB -->
+        trvazia += '<select name="produto_sub_{NOMECAMPO_VAZIO_SUB}[]" class="styledselect_form_1" rel="vazio"><option value="0">SELECIONE</option>';
+	        <!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_SUB -->
+        	trvazia += '<option value="{VALOR_VAZIO_SUB}">{LABEL_VAZIO_SUB}</option>';
+	        <!--  END BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_SUB -->
+        trvazia += '</select>';
+        <!-- END BLOCK_SELECTBOX_VALOR_VAZIO_SUB -->
+	trvazia += '</td>'
+	<!-- END BLOCK_VALOR_VAZIO_SUB -->
+	trvazia += "</tr>";
+    var campos = jQuery('#tbl_subs');
+	campos.append(trvazia);
+	
+	initSelects();
+	initClasses();
+    return false;
+});
+</script>

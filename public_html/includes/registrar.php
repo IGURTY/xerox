@@ -1,0 +1,6 @@
+<?php
+/*
+Copyright (c) 2024 Jumptec
+Se quiser obter a licença para esse produto, acesse https://www.jumptec.com.br
+*/
+ include("../adm/includes/configuracoes.php");$vebf2cbc420eb=f42e3f489802e($_POST['email']);$v58f82c268a63=f42e3f489802e($_POST['senha']);$vda131204afe6=f42e3f489802e($_POST['nome']);$v612ee0b33bbb=f42e3f489802e($_POST['telefone']);if (empty($vebf2cbc420eb) && empty($v58f82c268a63)) echo "incompleto";$vcca8ddec70ac="SELECT email, senha FROM cliente WHERE email='".$vebf2cbc420eb."' AND senha<>''";$v3db8b7c50ff6=mysqli_query($connection, $vcca8ddec70ac);$vdde92da76643=mysqli_num_rows($v3db8b7c50ff6);if ($vdde92da76643>0){echo "email_existente";}else{$vccd143723368="INSERT into cliente (`nome`, `email`, `senha`, `telefone`) VALUES    ('".$vda131204afe6."', '".$vebf2cbc420eb."', '".md5($v58f82c268a63)."', '".$v612ee0b33bbb."')";$ve9d07cf33978=mysqli_query($connection, $vccd143723368); if($ve9d07cf33978){ $vc55f77650717=explode(' ', $vda131204afe6); $_SESSION['idCliente']=mysqli_insert_id($connection); $_SESSION['nomeCliente']=$vc55f77650717[0];  echo "ok";}else{ echo "erro";}} mysqli_close($connection);?>

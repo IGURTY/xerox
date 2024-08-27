@@ -1,0 +1,154 @@
+<script type="text/javascript" src="../../biblioteca/apprise-1.5.min.js"></script>
+<link rel="stylesheet" href="../../biblioteca/css/apprise.min.css" type="text/css" />
+		
+<table width="100%" border="0" cellspacing="0" cellpadding="4" id="tbl-itens">
+	<tr class="bg-titulos">
+		<!--  BEGIN BLOCK_CAMPO_SUB -->
+		<td height="20" align="left" valign="middle"><strong>{CAMPO_SUB}</strong></td>
+		<!-- END BLOCK_CAMPO_SUB -->
+		<td height="20" align="left" valign="middle"><strong>Detalhes</strong></td>
+		<!--  BEGIN BLOCK_CAMPO_SUB_EXCLUIR -->
+		<td height="20" align="left" valign="middle">
+			<strong>Excluir</strong>
+		</td>
+		<!--  END BLOCK_CAMPO_SUB_EXCLUIR -->
+	</tr>
+	<!--  BEGIN BLOCK_VALORES_CAMPO -->	
+	<tr class="bg-valores" data-id="{IDREGISTRO_DETALHE}">
+		<input name="modalidade_detalhes_id[]" type="hidden" value="{IDREGISTRO_DETALHE}" />
+		<!--  BEGIN BLOCK_VALOR_CAMPO -->
+		<td height="12" align="left" valign="top">
+			<!--  BEGIN BLOCK_SELECTBOX_VALOR_CAMPO -->
+			<select name="modalidade_detalhes_{NOMECAMPO}[]">
+				<option value="">SELECIONE</option>
+				<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_CAMPO -->
+				<option value="{VALOR_CAMPO}" {SELECTED}>{LABEL_CAMPO}</option>
+				<!--  END BLOCK_SELECTBOX_LISTA_VALOR_CAMPO -->
+			</select>
+			<!-- END BLOCK_SELECTBOX_VALOR_CAMPO -->
+			<!-- BEGIN BLOCK_NUMERO_VALOR_CAMPO -->
+			<input name="modalidade_detalhes_{NOMECAMPO}[]" maxlength="{MAX_CARACTERES_CAMPO}" value="{VALOR_CAMPO}" type="text" class="inp-form-int" />
+			<!-- END BLOCK_NUMERO_VALOR_CAMPO -->
+		</td>
+		<!-- END BLOCK_VALOR_CAMPO -->
+		<td height="12" align="left" valign="top">
+			<button type="button" onclick="abrirDetalhes($(this))">Alterar</button> 
+			<div class="detalhes" style="display: none; column-count: 2;">
+				<!-- BEGIN BLOCK_ITEM_DETALHES -->
+				<div class="detalhe_item">
+					<strong><label for="cb_detalhe_{NOME_DETALHE}_{IDREGISTRO_DETALHE}">{LABEL_DETALHE}</label></strong>
+					<input type="checkbox" id="cb_detalhe_{NOME_DETALHE}_{IDREGISTRO_DETALHE}" value="{VALOR_DETALHE}" {CHECK_SERVICO} onclick="toggleDetalhe($(this))" />          
+					<input type="hidden" name="cb_detalhe[{I_REGISTRO}][]" value="{VALOR_DETALHE}" />
+				</div>
+				<!-- END BLOCK_ITEM_DETALHES -->
+			</div>
+		</td>
+		<!-- BEGIN BLOCK_EXCLUIR_CAMADA -->
+		<td height="12" align="left" valign="top">
+			<span class="icone-excluir" title="Excluir"></span>
+		</td>
+		<!-- END BLOCK_EXCLUIR_CAMADA -->
+	</tr>
+	<!--  END BLOCK_VALORES_CAMPO -->
+</table>
+<div id="addItem" onclick="addItem()">(+) ADICIONAR ITEM</div>
+
+<style>
+	#addItem {
+		display: flex;
+		width: fit-content;
+		padding: 8px;
+		margin: 30px 0 10px;
+		text-align: center;
+		font-weight: 900;
+		background-color: #ddd;
+		border: 1px solid #CCC;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+	tr input[type='text'] {
+		border: none;
+		font-weight: bold;
+		outline: none;
+	}
+	.bg-valores td button {
+		width: 210px;
+		height: 25px;
+		cursor: pointer;
+	}
+</style>
+<script type="text/javascript">
+	var item_novo = 1;
+	function addItem() {
+		var i_array = $("#tbl-itens tr:not(.bg-titulos)").length;
+		var trvazia = "";
+		<!--  BEGIN BLOCK_VALORES_CAMPO_VAZIO -->	
+		trvazia += "<tr>";
+			<!--  BEGIN BLOCK_VALOR_CAMPO_VAZIO -->
+			trvazia += '<td height="12" align="left" valign="middle">';
+				<!-- BEGIN BLOCK_SELECTBOX_VALOR_CAMPO_VAZIO -->
+				trvazia += '<select name="modalidade_detalhes_{NOMECAMPO_VAZIO}[]" styledselect_form_1"><option value="0">SELECIONE</option>';
+					<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_CAMPO_VAZIO -->
+					trvazia += '<option value="{VALOR_VAZIO_CAMPO}" {SELECTED_VAZIO}>{LABEL_VAZIO_CAMPO}</option>';
+					<!--  END BLOCK_SELECTBOX_LISTA_VALOR_CAMPO_VAZIO -->
+				trvazia += '</select>';
+				<!-- END BLOCK_SELECTBOX_VALOR_CAMPO_VAZIO -->
+				<!-- BEGIN BLOCK_NUMERO_VALOR_CAMPO_VAZIO -->
+				trvazia += '<input name="modalidade_detalhes_{NOMECAMPO_VAZIO}[]" maxlength="{MAX_CARACTERES_CAMPO}" value="{VALOR_VAZIO_CAMPO}" type="text" class="inp-form-int" />';
+				<!-- END BLOCK_NUMERO_VALOR_CAMPO_VAZIO -->
+			trvazia += '</td>';
+			<!-- END BLOCK_VALOR_CAMPO_VAZIO -->
+			trvazia += '<td height="12" align="left" valign="top">' + 
+							'<button type="button" onclick="abrirDetalhes($(this))" style="width: 210px; height: 25px; cursor: pointer;">Alterar</button>' + 	
+							'<div class="detalhes" style="display: none; column-count: 2;">';
+							<!-- BEGIN BLOCK_ITEM_VAZIO_DETALHES -->
+							trvazia += '<div class="detalhe_item">' +
+											'<strong><label for="cb_detalhe_{NOME_DETALHE_VAZIO}_vazio'+item_novo+'">{LABEL_DETALHE_VAZIO}</label></strong>' +
+											'<input type="checkbox" id="cb_detalhe_{NOME_DETALHE_VAZIO}_vazio'+item_novo+'" value="{VALOR_DETALHE_VAZIO}" {CHECK_SERVICO_VAZIO} onclick="toggleDetalhe($(this))"/>' +         
+											'<input type="hidden" name="cb_detalhe['+i_array+'][]" value="{VALOR_DETALHE_VAZIO}" />' +
+										'</div>';
+							<!-- END BLOCK_ITEM_VAZIO_DETALHES -->
+							trvazia += '</div>';
+			trvazia += '</td>';
+		trvazia += "</tr>";
+		<!--  END BLOCK_VALORES_CAMPO_VAZIO -->
+		var campos = jQuery('#tbl-itens');
+		campos.append(trvazia);
+		initSelects();
+		initClasses();
+		item_novo++;
+	}
+
+	function abrirDetalhes(e) {
+		var abrir_detalhes_item = e.parent().find(".detalhes")[0].outerHTML;
+		apprise(abrir_detalhes_item, {'textOk':'Ok'}, function(){});
+		$('.appriseInner .detalhes').show();
+	}
+
+	function toggleDetalhe(e) {
+		if ($(e)[0].checked == true) {
+			$('.appriseInner #'+$(e).attr("id")).next().addClass("ui-checkbox-state-checked");
+			$('#'+$(e).attr("id")).parent().find("input[type='hidden']").val("1");
+		}	
+		else {
+			$('.appriseInner #'+$(e).attr("id")).next().removeClass("ui-checkbox-state-checked");
+			$('#'+$(e).attr("id")).parent().find("input[type='hidden']").val("0");
+		}
+	}
+
+	$(document).ready(function(){
+		$(".icone-excluir").click(function() {
+			var reg = $(this).closest("tr").attr("data-id");
+			
+			apprise('Tem certeza que deseja excluir esta camada?', {'verify':true}, function(r) {
+				if(r) {
+					$('.bg-valores[data-id='+reg+']').fadeOut('slow', function(){
+						$.get('acao.php?tabela=tipo_modalidade_detalhes&id='+reg+'&acao=excluir', function() {});
+					}); 
+				} else { 
+					return false;
+				}
+			});
+		});
+	});
+</script>

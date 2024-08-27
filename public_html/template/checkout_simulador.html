@@ -1,0 +1,1212 @@
+<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/css/checkout_simulador.css">
+<script type="text/javascript">
+	function atualizaValores() {
+		window.location.reload();
+	}
+	
+	function abrePacote(id,rel){
+		$('.pacote[rel='+rel+']').removeAttr('style');
+		$('#label_pacote_'+id).css({'color': '#fff', 'background-color': '#000'});
+			
+		$('.pacotes_conteudo[rel='+rel+'], .box-itens_adicionais[rel=itens-'+rel+']').hide();
+		$('.pacotes_conteudo[id='+id+'], .box-itens_adicionais[id=itens-'+id+']').show();
+		
+		$('.info_pacote_'+rel+' .nome_pacote').html($('#checkout #label_pacote_'+id).html());
+		$('.info_pacote_'+rel+' .detalhes_pacote_email').attr('style',$('#checkout .pacotes_conteudo[id='+id+']').attr('style')+' background-size:cover;');
+		
+		$(".pacotes_conteudo[id="+id+"] .detalhes_pacote ul li").each(function() {
+			$('.info_pacote_'+rel+' .detalhes_pacote_email > tbody:last-child').append('<tr><td style="padding:3px 0 0 20px;">'+$(this).text()+'</td></tr>');
+		});
+		
+		$('.info_pacote_'+rel+' .detalhes_pacote_email > tbody:last-child').append("<tr><td><table width='100%' cellpadding='0' cellspacing='0' class='pacote_precos_email' style='margin: 20px 0 20px 0;'><tr><td></td></tr></table></td></tr>");
+		
+		$('.info_pacote_'+rel+' .pacote_precos_email > tbody:last-child').append('<tr style="display:block;padding: 10px 0 0 20px;"></tr>');
+		$(".pacotes_conteudo[id="+id+"] .preco_item span").each(function() {
+			$('.info_pacote_'+rel+' .pacote_precos_email > tbody tr:last-child').append('<td width="70" height="15" style="text-transform: uppercase;font-weight: bold;">'+$(this).text()+'</td>');
+		});
+		$('.info_pacote_'+rel+' .pacote_precos_email > tbody:last-child').append('<tr style="display:block;padding: 5px 0 0 20px;"></tr>');
+		$(".pacotes_conteudo[id="+id+"] .preco_item b").each(function() {
+			$('.info_pacote_'+rel+' .pacote_precos_email > tbody tr:last-child').append('<td width="70" height="15" style="font-weight: bold;">'+$(this).text()+'</td>');
+		});
+		
+		<!-- BEGIN PRECOS_GOLEIRO_EMAIL -->
+		$('.info_pacote_'+rel+' .pacote_precos_email > tbody td').each(function() {
+			$(this).attr("width","150");
+		});
+		$('.info_pacote_'+rel+' .pacote_precos_email > tbody:last-child').append('<tr style="display:block;padding: 10px 0 0 20px;"></tr>');
+		$(".pacotes_conteudo[id="+id+"] .preco_item_goleiro span").each(function() {
+			$('.info_pacote_'+rel+' .pacote_precos_email > tbody tr:last-child').append('<td width="150"  height="15" style="text-transform: uppercase;font-weight: bold;">'+$(this).text()+'</td>');
+		});
+		$('.info_pacote_'+rel+' .pacote_precos_email > tbody:last-child').append('<tr style="display:block;padding: 5px 0 0 20px;"></tr>');
+		$(".pacotes_conteudo[id="+id+"] .preco_item_goleiro b").each(function() {
+			$('.info_pacote_'+rel+' .pacote_precos_email > tbody tr:last-child').append('<td width="150" height="15" style="font-weight: bold;">'+$(this).text()+'</td>');
+		});
+		<!-- END PRECOS_GOLEIRO_EMAIL -->	
+	}
+	
+	$.fn.toggleText = function(t1, t2){
+		if (this.text() == t1) this.text(t2);
+		else                   this.text(t1);
+		return this;
+	};
+	
+	var campo_modificado = 0;
+	$(document).ready(function(){
+		$('.botaoEnviar').on('click', function(){
+			recaptchaResponse();
+			validaContato();
+		});
+
+		$("#solicitar-atendimento").hide();
+
+		$("#estadoContato").find("option[value=]").prop('selected', true);
+	
+		$("#topo .carrinho").attr("href","{PASTA_RAIZ_SIMULADOR}/checkout");
+		
+		$("#checkout_email #passo_email").remove();
+		
+		$('.titulo_pacote:not(:contains("Futebol"))').each(function(index, element) {
+			var id_pacote = $(this).attr('rel').split('_')[1];
+			
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo").each(function(index, element) {
+				$(this).find(".preco_itens .preco_camisa").eq(1).remove();
+				$(this).find(".preco_itens .preco_calcao").eq(1).remove();
+				$(this).find(".preco_itens .preco_meiao").remove();
+				$(this).find(".preco_itens .preco_conjunto").eq(1).remove();
+				
+				$("#checkout_email .info_pacote_"+id_pacote+" .preco_camisa").eq(1).remove();
+				$("#checkout_email .info_pacote_"+id_pacote+" .preco_calcao").eq(1).remove();
+				$("#checkout_email .info_pacote_"+id_pacote+" .preco_meiao").remove();
+				$("#checkout_email .info_pacote_"+id_pacote+" .preco_conjunto").eq(1).remove();
+			}); 
+		});
+		
+		$('.titulo_pacote:contains("Agasalho")').each(function(index, element) {
+			var id_pacote = $(this).attr('rel').split('_')[1];
+			
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo .preco_itens .preco_camisa span").html('JAQUETA');
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo .preco_itens .preco_calcao span").html('CALÇA');
+			
+			$("#checkout_email .info_pacote_"+id_pacote+" .preco_camisa span").html('JAQUETA');
+			$("#checkout_email .info_pacote_"+id_pacote+" .preco_calcao span").html('CALÇA');
+			
+			$("#"+$(this).attr('rel')+" .itens .camisa .titulo span").html('ITENS DA JAQUETA');
+			$("#"+$(this).attr('rel')+" .itens .calcao .titulo span").html('ITENS DA CALÇA');
+			
+			$("#checkout_email .info_pacote_"+id_pacote+" .itens_camisa span").eq(0).html('ITENS DA JAQUETA');
+			$("#checkout_email .info_pacote_"+id_pacote+" .itens_calcao span").eq(0).html('ITENS DA CALÇA');
+		});
+		
+		$('.titulo_pacote:contains("Passeio")').each(function(index, element) {
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo .itens .calcao").remove();
+			
+			var id_pacote = $(this).attr('rel').split('_')[1];
+			$("#checkout_email .info_pacote_"+id_pacote+" .itens_calcao").remove();
+			$("#checkout_email .info_pacote_"+id_pacote+" .preco_calcao").remove();
+			$("#checkout_email .info_pacote_"+id_pacote+" .preco_meiao").remove();
+			$("#checkout_email .info_pacote_"+id_pacote+" .preco_conjunto").remove();
+			
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo .preco_itens .preco_calcao").remove();
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo .preco_itens .preco_meiao").remove();
+			$("#"+$(this).attr('rel')+" .pacotes_conteudo .preco_itens .preco_conjunto").remove();
+		});
+		
+		if ($('#pacotes').length) {
+			$('#valores .numero_passo').html('3');
+			$('#envio .numero_passo').html('4');
+			$('#passo_email').html('3');
+			$('#passo_email-2').html('4');
+		}
+		
+		if (!$('#valores').length) {
+			if($('#pacotes').length){
+				$('#envio .numero_passo').html('3');
+				$('#passo_email').html('2');
+				$('#passo_email-2').html('3');
+			} else {
+				$('#envio .numero_passo').html('2');
+				$('#passo_email').html('1');
+				$('#passo_email-2').html('2');
+			}	
+		}
+		
+		<!-- BEGIN BLOCK_ESCONDE_TOPO -->
+		$('#topo, .barra_titulo, #newsletter, #rodape, #menu_topo').hide();
+		$('#topo_checkout').show();
+		<!-- END BLOCK_ESCONDE_TOPO -->	
+		
+		$('.item_checkout .nome_item').click(function(){
+			$(this).parent().parent().find('.item_conteudo, .add_goleiro').toggle();
+			$(this).find('span').toggleText(' + ', ' - ');
+		});
+		$('.item_checkout .ico-remover').click(function(){
+			if($(this).attr('rel') == 'jdc'){
+				var idcarrinhoprod = $(this).parent().parent().find('.imagem_item').attr('rel');
+			}
+			else {
+				var idcarrinhoprod = $(this).parent().attr('id');
+			}
+
+			mensagem("Atenção!", "Deseja excluir este produto do orçamento?", "", function(r) {
+				if(r) { 
+					window.location.href= '{PASTA_RAIZ_SIMULADOR}/checkout?remover='+idcarrinhoprod;
+				} else { 
+					return false;
+				}
+			});	
+		});
+
+		$('.ipt-quantidade').on('change', function(){
+			if(parseInt($(this).val()) >= parseInt($(this).attr('rel'))) {
+				$(this).val(Number($(this).val())+1);
+				$(this).prev('.menos').click();
+			}
+			else {
+				mensagem("", "Quantidade mínima foi atingida.", "info");
+				$(this).val(parseInt($(this).attr('rel'))+1);
+				$(this).prev('.menos').click();
+			}
+		});
+		
+		$('.quantidade label').click(function(){
+			var valor = $('#prod_'+$(this).parent().parent().attr('id')+' .preco').html();
+		
+			if ($(this).parent().find('.ipt-checkbox').prop('checked') == false){
+				$(this).parent().parent().addClass('ativo');
+				$('#prod_'+$(this).parent().parent().attr('id')).show();
+				
+				var qtd = Number($(this).parent().parent().find('.ipt-quantidade').attr('qtd'));
+			} else {
+				$(this).parent().parent().removeClass('ativo');
+				$('#prod_'+$(this).parent().parent().attr('id')).hide();
+				
+				var qtd = 0;
+			}
+			$(this).parent().parent().find('.ipt-quantidade').val(qtd);
+			
+			$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?id='+$(this).parent().parent().attr('id')+'&campo=quantidade&valor='+qtd, function(data) {
+				atualizaValores();
+			});
+		});
+		
+		$('.box_2 .mais').click(function(){
+			var id = $(this).attr('id');
+			$(this).parent().find('.ipt-quantidade').focus();
+			
+			var qtd_atual = $(this).parent().find('.ipt-quantidade').val();
+			var qtd_novo = parseInt(qtd_atual) + parseInt(1);
+			$(this).parent().find('.ipt-quantidade').val(qtd_novo);
+			
+			$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?id='+id+'&campo=quantidade&valor='+qtd_novo, function(data) {
+				if(data == 'ok') {
+					atualizaValores();
+				}
+				else {
+					$(this).parent().find('.ipt-quantidade').val(qtd_atual);
+					mensagem("", "Não foi possivel alterar a quantidade deste item.", "warning");
+				}
+			});
+			
+		});
+		$('.box_2 .menos').click(function(){
+			$(this).parent().find('.ipt-quantidade').focus();
+			
+			var id = $(this).attr('id');
+			var qtd_atual = $(this).parent().find('.ipt-quantidade').val();
+			var qtd_novo = parseInt(qtd_atual) - parseInt(1);
+			var qtd_min = $(this).parent().find('.ipt-quantidade').attr('rel');
+
+			
+			if (qtd_novo >= qtd_min) {
+				$(this).parent().find('.ipt-quantidade').val(qtd_novo);
+				$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?id='+id+'&campo=quantidade&valor='+qtd_novo, function(data) {
+					if(data == 'ok') {
+						atualizaValores();
+					}
+					else {
+						$(this).parent().find('.ipt-quantidade').val(qtd_atual);
+						mensagem("", "Não foi possivel alterar a quantidade deste item.", "warning");
+					}
+				});
+			}
+			else {
+				var msg = "";
+				if (qtd_min > 1) 
+					msg += "A quantidade mínima foi atingida.\n";
+				msg +=	"Deseja excluir este produto do orçamento?";
+
+				mensagem("Atenção!", msg, "", function(r) {
+					if(r) { 
+						window.location.href= '{PASTA_RAIZ_SIMULADOR}/checkout?remover='+id;
+					} else { 
+						return false;
+					}
+				});
+			}
+		});
+		
+		$('.add_nome-num').click(function(e){
+			e.stopPropagation();
+			$(this).toggleClass('ativo');
+			$(this).parent().find('.box_nome-num').toggleClass('ativo');
+			$(".add_nome-num").not($(this)).removeClass("ativo");
+			$(".add_nome-num").not($(this)).next().removeClass("ativo");
+		});
+		$('.box_3 .mais').click(function(e){
+			campo_modificado = 1;
+			var qtd_atual = $(this).parent().find('.ipt-quantidade_tam').val();
+			var qtd_novo = parseInt(qtd_atual) + parseInt(1);
+			$(this).parent().find('.ipt-quantidade_tam').val(qtd_novo);
+			e.stopPropagation();
+		});
+		$('.box_3 .menos').click(function(e){
+			campo_modificado = 1;
+			var qtd_atual = $(this).parent().find('.ipt-quantidade_tam').val();
+			if ((parseInt(qtd_atual) - parseInt(1)) >= 0) {
+				var qtd_novo = parseInt(qtd_atual) - parseInt(1);
+				$(this).parent().find('.ipt-quantidade_tam').val(qtd_novo);
+			}	
+			e.stopPropagation();
+		});
+		$('.ipt-quantidade_tam').on('keyup', function(){
+			campo_modificado = 1;
+		});
+		$('.box_nome-num').click(function(e){
+			e.stopPropagation();
+		});
+		$('.ipt_personalizacao').click(function(){
+			if ($(this).find('.checkbox-personalizacao').hasClass('ativo')) {
+				$(this).parent().parent().parent().parent().find('.add_nome-num').removeClass('selecionado');
+				$(this).removeClass('ativo');
+			} else {
+				$(this).parent().parent().parent().parent().find('.add_nome-num').addClass('selecionado');
+				$(this).addClass('ativo');
+			}
+		
+			$(this).find('.checkbox-personalizacao').toggleClass('ativo');
+		});
+		$('.campo_nome-num').keyup(function (){
+			campo_modificado = 1;
+			if ($(this).val().length > 0){
+				$(this).parent().parent().parent().find('.add_nome-num').addClass('selecionado');
+			} else {
+				$(this).parent().parent().parent().find('.add_nome-num').removeClass('selecionado');
+			}	
+		});
+		$(".select_tamanho").change(function (e) {
+			if ( typeof( e.isTrigger ) == 'undefined' )
+				campo_modificado = 1;
+			if($(this).val() == "") $(this).addClass("vazio");
+			else $(this).removeClass("vazio");
+		});
+		$(".vazio").change();
+		$('.bt-concluir').click(function(e){		
+			e.stopPropagation();
+		});
+		
+		$(document).click(function(e){
+			$('.add_nome-num').removeClass('ativo');
+			if (campo_modificado == 1) {
+				$(event.currentTarget).find(".botoes_personalizacao .bt-concluir").click();
+			}
+			$('.box_nome-num').removeClass('ativo');
+		});
+		
+		$('.titulo_pacote').click(function(){
+			$(this).parent().find('#'+$(this).attr('rel')).toggle();
+			$(this).find('span').toggleText(' + ', ' - ');
+		});
+		
+		$('label[class=pacote]').click(function(){
+			var ancora = $(this).attr('rel');
+			var pacote = $(this).attr('for').replace('pacote_','');
+			abrePacote(pacote,ancora);
+		});
+
+		$('.pacotes').change(function(){
+			var modalidade = $(this).find("input[name^='pacote']:checked").attr('name').replace('pacote_','');
+			var pacote = $(this).find("input[name^='pacote']:checked").attr('id').replace('pacote_','');
+			
+			$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?&campo=pacote&valor='+pacote+'&modalidade='+modalidade, function(data) {
+				atualizaValores();
+			});
+		});
+
+		$('.cb-item_adicional').change(function(){
+			var id_item = $(this).val();
+			var idpacote = $(this).parent().parent().parent().attr("id").replace('itens-','');
+			var modalidade = $(this).parent().parent().parent().attr("data-modalidade");
+			
+			if($(this).prop("checked")){
+				$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?&campo=add_item_adicional&valor='+id_item+'&pacote='+idpacote+'&modalidade='+modalidade, function(data) {
+					atualizaValores();
+				});
+			} 
+			else {
+				$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?&campo=remove_item_adicional&valor='+id_item+'&pacote='+idpacote+'&modalidade='+modalidade, function(data) {
+					atualizaValores();
+				});
+			}
+		});
+
+		var total = '{TOTAL}';
+		$('.total .destaque').html(total);
+
+		$("#telefoneContato").inputmask({
+			mask: ["(99) 9999-9999", "(99) 99999-9999"]
+		});
+
+		$("#bt_envio-email").click(function(){
+			$("#solicitar-atendimento").show();
+			$(".bt_envio-whats").css("opacity", 0.5);
+			document.querySelector('#solicitar-atendimento').scrollIntoView({ 
+				behavior: 'smooth' 
+			});
+		});
+	});
+
+	function salvaPersonalizacao(id){
+		$('.add_nome-num').removeClass('ativo');
+		$(this).parent().parent().parent().find('.box_nome-num').removeClass('ativo');
+
+		var tamanhos = [];
+		var nomes = [];
+		var numeros = [];
+
+		$(".box_nome-num[rel="+id+"] .select_tamanho").each(function(){
+			tamanhos.push($(this).val());
+		});
+
+		$(".box_nome-num[rel="+id+"] .campo_nome").each(function(){
+			nomes.push($(this).val());
+		});
+
+		i = 1;
+		$(".box_nome-num[rel="+id+"] .campo_num").each(function(){
+			numeros.push($(this).val());
+		});
+
+		var personalizacoes = new Object();
+		personalizacoes.tam = tamanhos;
+		personalizacoes.nome = nomes;
+		personalizacoes.num = numeros;
+
+		var jsonPersonalizacoes = JSON.stringify(personalizacoes);
+		$.post("{PASTA_RAIZ_SIMULADOR}/includes/salvarPersonalizacao.php", {'id': id, 'personalizacoes': jsonPersonalizacoes}, function(data){
+			atualizaValores();
+		});
+	}
+
+	function salvarTamanhos(element, idProd) {
+		var qtd_total = 0;
+		var id = idProd;
+		var qtd_min = $("#"+idProd+" .box_2 .qtd .ipt-quantidade").attr("rel");
+		var tamanhos = new Object();
+		tamanhos["tam_qtd"] = new Array();
+		$(".box_nome-num[rel='"+idProd+"'] .ipt-quantidade_tam").each(function(){
+			qtd_total += Number($(this).val());
+			tamanhos["tam_qtd"][$(this).attr("tamanho")] = $(this).val();
+		});
+
+		$(element).closest(".box_nome-num").find(".alerta").removeClass("ativo");
+		$('.add_nome-num').removeClass('ativo');
+		$(element).closest(".box_nome-num").removeClass('ativo');
+
+		if (qtd_total < qtd_min)
+			qtd_total = qtd_min;
+
+		$("#"+idProd+" .box_2 .qtd .ipt-quantidade").val(qtd_total);
+		var jsonPersonalizacoes = JSON.stringify(tamanhos);
+		$.get('{PASTA_RAIZ_SIMULADOR}/includes/atualizaCheckout.php?id='+id+'&campo=quantidade&valor='+qtd_total, function(data) {
+			if (data == 'ok') {
+				$.post("{PASTA_RAIZ_SIMULADOR}/includes/salvarPersonalizacao.php", {'id': id, 'personalizacoes': jsonPersonalizacoes}, function(){
+					atualizaValores();
+				});
+			}
+		});
+	}
+	
+	var numWhats = $.trim(celular.replace(".","").replace(/\s/g,"").replace("-",""));
+	function enviarPedidoWhats(num_whats) {
+		var string_msg = encodeURI("{MSG_WHATSAPP}");
+		for (var m=0; m<$(".item_checkout").length; m++) {
+			if ($(".item_checkout").eq(m).attr("rel") == "produto") {
+				// produtos
+				var nome_item = $(".item_checkout").eq(m).find(".nome_item").text().replace(' - ', '');
+				var txt_msg = $.trim(nome_item)+" ("+$(".item_checkout").eq(m).find(".item_conteudo .ipt-quantidade").val()+" und.)";
+				if ($(".valor .nome:contains("+nome_item+")").parent().find(".preco").length > 0 && $(".valor .nome:contains("+nome_item+")").parent().find(".preco").html().indexOf("{CIFRA}") != -1) {
+					var valor = $(".valor .nome:contains("+nome_item+")").parent().find(".preco").html().replace("{CIFRA} ", "").replace(".", "").replace(",", ".");
+					if ($(".item_checkout").eq(m).find(".item_conteudo .ipt-quantidade").val() > 1) {
+						var valor_item = parseFloat(valor) / $(".item_checkout").eq(m).find(".item_conteudo .ipt-quantidade").val();
+						txt_msg += " - {CIFRA} "+valor_item.toFixed(2).toString().replace(".",",");
+						txt_msg += " (cada)";
+					}
+					else 
+						txt_msg += " - {CIFRA} "+valor;	
+				}
+				txt_msg += " / ";
+				string_msg += "%0a"+encodeURI(txt_msg);
+			}
+			else {
+				// jdc
+				for (var i=0; i<$(".item_checkout").eq(m).find(".item_conteudo .quantidade .box_1 label").length; i++) {
+					var nome_item = $(".item_checkout").eq(m).find(".item_conteudo .quantidade .box_1 label").eq(i).text();
+					var txt_msg = $.trim(nome_item)+" ("+$(".item_checkout").eq(m).find(".item_conteudo .ipt-quantidade").eq(i).val()+" und.)";
+					if ($(".valor .nome:contains("+nome_item+")").parent().find(".preco").length > 0 && $(".valor .nome:contains("+nome_item+")").parent().find(".preco").html().indexOf("{CIFRA}") != -1) {
+						var valor = $(".valor .nome:contains("+nome_item+")").parent().find(".preco").html().replace("{CIFRA} ", "").replace(".", "").replace(",", ".");
+						if ($(".item_checkout").eq(m).find(".item_conteudo .ipt-quantidade").eq(i).val() > 1) {
+							var valor_item = parseFloat(valor) / $(".item_checkout").eq(m).find(".item_conteudo .ipt-quantidade").eq(i).val();
+							txt_msg += " - {CIFRA} "+valor_item.toFixed(2).toString().replace(".",",");
+							txt_msg += " (cada)";
+						}
+						else 
+							txt_msg += " - {CIFRA} "+valor;	
+					}
+					txt_msg += " / ";
+					string_msg += "%0a"+encodeURI(txt_msg);
+				} 
+
+				string_msg += "%0a"+$(".item_checkout").eq(m).find(".imagem_item img").attr("src");
+			}
+		}
+
+		if ($(".info_uniforme").parent().find("table thead:contains('Personalização ')").length > 0) {
+			$.post("{PASTA_RAIZ_SIMULADOR}/includes/salvaDetalhes.php", {'conteudo' : $(".info_uniforme").hide().parent()[0].outerHTML }, function (data) {
+				if (data != null && data.length == 36) {
+					string_msg += '%0aDetalhes: '+window.location.href.replace('/checkout','').replace('?teste','')+'/modelo/pdf/'+data;
+					window.location.href = "https://api.whatsapp.com/send/?phone="+num_whats+"&text="+string_msg;
+				}
+			});
+		}
+		else {
+			window.location.href = "https://api.whatsapp.com/send/?phone="+num_whats+"&text="+string_msg;
+		}
+	}
+
+	function gravarPedidoWhats(num) {
+		$(".bt_envio-whats").removeAttr("onclick");
+		var num_whats = (num === undefined) ? '{COD_DDI}'+numWhats : num;
+
+		$.post("{PASTA_RAIZ_SIMULADOR}/includes/gravarOrcamento.php", {'valor_total': '{TOTAL_FLOAT}', 'orcamento_whats': 1}, function(retorno) {
+			if (retorno != 'erro') {
+				enviarPedidoWhats(num_whats);
+			}
+			else {
+				console.log('Erro: '+retorno);
+			}
+		});
+	}
+	
+	function validaContato() {
+		var recaptcha_cod = grecaptcha.getResponse();
+		if (grecaptcha.getResponse() == "") {
+			$(".g-recaptcha div:first").css("border", "2px solid red");
+			return false;
+		}
+
+		if ($('#nomeContato').val() == '' || $('#emailContato').val() == '' || $('#telefoneContato').val() == '' || 
+		$('#cidadeContato').val() == '' || $('#estadoContato').val() == '') {
+			mensagem("", "Preencha todos os campos do formulário.", "info");
+			return false;
+		}
+		else {
+			$("#formOrcamento .botaoEnviar").html("CARREGANDO...");
+			$('#email-nome_cliente').html($('#nomeContato').val());
+			$('#email-email_cliente').html($('#emailContato').val());
+			$('#email-telefone_cliente').html($('#telefoneContato').val());
+			$('#email-mensagem_cliente').html($('#msgContato').val().replace(/\n/g, '<br/>'));
+			$('#email-cidade_cliente').html($('#cidadeContato').val());
+			$('#email-estado_cliente').html($('#estadoContato').val());
+		
+			$.post("{PASTA_RAIZ_SIMULADOR}/includes/gravarOrcamento.php", {'nome_cliente': $('#nomeContato').val(), 'email_cliente': $('#emailContato').val(), 'telefone_cliente': $('#telefoneContato').val(), 
+			'cidade_cliente': $('#cidadeContato').val(), 'estado_cliente': $('#estadoContato').val(), 'valor_total': '{TOTAL_FLOAT}', 'comentario': $('#msgContato').val(),
+			'upload': $('#upl_escudo').val(), 'recaptcha': recaptcha_cod}, function(retorno) {
+				if (retorno != 'erro') {
+					var idorcamento = retorno;
+					$('#formOrcamento').hide();
+					$('#box_envio, #solicitar-atendimento .titulo_passo').hide();
+					$('#aguarde').show();
+
+					var form_data = new FormData();
+					var num_anexo = 1;
+					for (var i=0; i < $("input[type=file]").length; i++) {
+						if ($("input[type=file]")[i].files[0] != undefined) {
+							form_data.append('anexo_'+num_anexo, $("input[type=file]")[i].files[0]);
+							num_anexo++;
+						}
+					}
+					form_data.append('conteudo', $('#checkout_email').html());
+					form_data.append('email_cliente', $('#emailContato').val());
+					form_data.append('lojista', 1);
+					form_data.append('idorcamento', idorcamento);
+					
+					$.ajax({
+						type: 'POST',
+						url: "{PASTA_RAIZ_SIMULADOR}/includes/enviaOrcamento.php",
+						enctype: 'multipart/form-data',
+						data: form_data,
+						processData: false,
+						contentType: false,
+						success: function (data) {
+							if (data == 'ok') {
+								$('#checkout_email #nome_cliente').html('Prezado(a) Sr(a).');
+								$('#checkout_email .info_uniforme').remove();
+								$('#checkout_email .link_svg').remove();
+								$.post("{PASTA_RAIZ_SIMULADOR}/includes/enviaOrcamento.php", {conteudo: $('#checkout_email').html(), email_cliente: $('#emailContato').val(), nome_cliente: $('#nomeContato').val(), lojista: 0, idorcamento: idorcamento}, function(data) {
+									if(data == 'ok') {
+										$('#aguarde').hide();
+										$('#mensagem_enviada').show();
+									}	
+									else {
+										$('#aguarde').hide();
+										$('#mensagem_erro').show();
+									}
+								});
+							}
+							else {
+								$('#aguarde').hide();
+								$('#formOrcamento').hide();
+								$('#mensagem_erro').show();
+							}
+						},
+						error: function (xhr, desc, err) {
+							$('#aguarde').hide();
+							$('#formOrcamento').hide();
+							$('#mensagem_erro').show();
+						}
+					});
+				}
+				else {
+					$('#formOrcamento').hide();
+					$('#box_envio, #solicitar-atendimento .titulo_passo').hide();
+					$('#mensagem_erro').show();
+				}
+			});
+		}
+	}
+</script>
+
+<div id="topo_checkout">
+	<div class="conteudo">
+		<a class="logo" alt="{NOME_SITE}">
+			<img src="{PASTA_RAIZ_SIMULADOR}/img/logo.webp" title="{NOME_SITE}" alt="{NOME_SITE}"/>
+		</a>
+		<a href="{PASTA_RAIZ_SIMULADOR}/" class="botoes_voltar">
+			<div class="icone_checkout" id="ico_simulacao-1"></div>
+			<div class="icone_checkout" id="ico_simulacao-2"></div>
+			<span class="texto">VOLTAR A SIMULAÇÃO</span>
+		</a>
+	</div>
+</div>		
+<div class="conteudo" id="checkout">
+	<!-- BEGIN BLOCK_CARRINHO_VAZIO -->
+	<div id="carrinho_vazio">
+		<div id="mensagem">
+			<figure class="icone" id="ico-carr_vazio"></figure>
+			<span>Ops, não há nenhum item para orçamento.</span>
+		</div>
+		<a href="{PASTA_RAIZ_SIMULADOR}/" id="bt_voltar">VOLTAR AO SIMULADOR</a>
+		<div class="passo_checkout">
+			<div class="cabecalho">
+				<div class="numero_passo">?</div>
+				<div class="titulo_passo">PRECISA DE AJUDA?</div>
+			</div>
+			<form id="formAjuda" method="post" action="{PASTA_RAIZ_SIMULADOR}/includes/enviaContato.php" onsubmit="return recaptchaResponse();">
+				<input type="hidden" name="chave" value="{CHAVE_FORM}"/>
+				<input type="text" name="nome" class="nomeContato"  placeholder="Nome *" autocomplete="off" required/>
+				<input type="email" name="email" class="emailContato" placeholder="E-mail *" autocomplete="off" required/>
+				<input type="text" name="assunto" class="assuntoContato" placeholder="Assunto" autocomplete="off"/>
+				<textarea name="msg" rows="5" placeholder="Digite sua mensagem *" class="msgContato" required></textarea>
+				<div class="g-recaptcha" data-callback="recaptchaCallback" data-sitekey="6LcT3PApAAAAANQc_DA7pktX7abhKRWY1SacWUgC"></div>
+				<input type="submit" value="" id="enviar-contato"/>
+				<label class="botaoEnviar" for="enviar-contato">ENVIAR</label>
+			</form>
+		</div>	
+	</div>
+	<!-- END BLOCK_CARRINHO_VAZIO -->
+	<!-- BEGIN BLOCK_CARRINHO -->
+	<div class="passo_checkout" id="itens">
+		<div class="cabecalho">
+			<div class="numero_passo">1</div>
+			<div class="titulo_passo">ITENS ADICIONADOS AO SEU ORÇAMENTO</div>
+		</div>
+		<!-- BEGIN BLOCK_ITEM_PRODUTO -->
+		<div class="item_checkout" rel="produto">
+			<div class="item" id="{IDCARRINHOPROD}">
+				<div class="nome_item"><span> - </span>{NOME_ITEM}</div>
+				<div class="icone_checkout ico-remover"></div>
+			</div>
+			<div class="item_conteudo ativo">
+				<div class="imagem_item">
+					<a href="{LINK_ITEM}">
+						<img src="{FOTO_ITEM}" width="160px"/>
+					</a>
+				</div>	
+				<div class="quantidade">
+					<div class="titulos">
+						<div class="box_1">
+							<div class="titulo">Tamanho</div>
+						</div>
+						<div class="box_2">
+							<div class="titulo">Quantidade</div>
+						</div>
+					</div>
+					<div class="flex ativo">
+						<div class="box_1">
+							<span>{TAM}</span>
+						</div>	
+						<div class="box_2">			
+							<div class="qtd">
+								<span class="menos" id="{IDCARRINHOPROD}">-</span>
+								<input type="text" class="ipt-quantidade" value="{Q}" qtd="{Q_ANT}" rel="{MINPROD}" id="qtd_item{IDCARRINHOPROD}"  size="3" maxlength="3"/>
+								<span class="mais" id="{IDCARRINHOPROD}">+</span>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END BLOCK_ITEM_PRODUTO -->
+		<!-- BEGIN BLOCK_ITEM_JDC -->
+		<div class="item_checkout" rel="{I_ITEM_JDC}">
+			<div class="item">
+				<div class="nome_item"><span> - </span>{MODALIDADE_ITEM}</div>
+				<div class="icone_checkout ico-remover" rel="jdc"></div>
+			</div>
+			<div class="item_conteudo ativo">
+				<div class="imagem_item" rel="{ID_IMAGEM}">
+					<a href="{FOTO_JOGO}" target="_blank"><img src="{FOTO_JOGO}" width="160px"/></a>
+				</div>	
+				<div class="quantidade">
+					<div class="titulos">
+						<div class="box_1">
+							<div class="titulo">Produto (desmarque para remover ou marque para adicionar)</div>
+						</div>
+						<div class="box_2">
+							<div class="titulo">Quantidade</div>
+						</div>
+						<div class="box_3">
+							<div class="titulo">Adicione</div>
+						</div>
+					</div>
+					<!-- BEGIN ITEM_JDC -->
+					<script type="text/javascript">
+						$(document).ready(function (){
+							if ($('#qtd_item{IDCARRINHOPROD}').val() == '0') {
+								$('#{IDCARRINHOPROD}').find('.ipt-checkbox').prop('checked',false);
+								$('#{IDCARRINHOPROD}').removeClass('ativo');
+								$('#prod_{IDCARRINHOPROD}').hide();
+							}
+						});	
+					</script>
+					<div class="flex ativo"  rel="jdc" id="{IDCARRINHOPROD}">
+						<div class="box_1">
+							<input type="checkbox" value="0" class="ipt-checkbox" id="ipt-{IDCARRINHOPROD}" checked>
+							<label id="label-{IDCARRINHOPROD}" for="ipt-{IDCARRINHOPROD}">{NOME_ITEM}</label>
+						</div>	
+						<div class="box_2">			
+							<div class="qtd">
+								<span class="menos" id="{IDCARRINHOPROD}">-</span>
+								<input type="text" class="ipt-quantidade" value="{Q}" qtd="{Q_ANT}" rel="{MINPROD}" id="qtd_item{IDCARRINHOPROD}"  size="3" maxlength="3"/>
+								<span class="mais" id="{IDCARRINHOPROD}">+</span>
+							</div>
+						</div>	
+						<!-- BEGIN BLOCK_PERSONALIZACAO -->
+						<div class="box_3" rel="personalizacao">
+							<ul class="add_nome-num">{OPCOES_PERSONALIZACAO}</ul>
+							<div class="box_nome-num" rel="{IDCARRINHOPROD}">
+								<!-- BEGIN LINHA_PERSONALIZACAO -->
+								<div class="linha_nome-num">
+									<span>{C_LINHA}</span>
+									<!-- BEGIN PERSONALIZACAO_TAMANHO -->
+									<select class="select_tamanho vazio">
+										<option class="campo_nome-num" value="" default selected>TAM.</option>
+										<!-- BEGIN OPCOES_TAMANHO -->
+										<option class="campo_nome-num" value="{ID_TAMANHO}" {SELECTED}>{TAMANHO}</option>
+										<!-- END OPCOES_TAMANHO -->
+									</select>
+									<!-- END PERSONALIZACAO_TAMANHO -->
+									<!-- BEGIN PERSNALIZACAO_NOME -->
+									<input type="text" placeholder="Nome" rel="campoNome{C_LINHA}" maxlength="12" class="campo_nome-num campo_nome" value="{VALOR_NOME}"/>
+									<!-- END PERSNALIZACAO_NOME -->
+									<!-- BEGIN PERSNALIZACAO_NUM -->
+									<input type="text" pattern="[0-9]" rel="campoNum{C_LINHA}" maxlength="2" placeholder="nº" class="campo_nome-num campo_num" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="{VALOR_NUM}"/>
+									<!-- END PERSNALIZACAO_NUM -->
+								</div>
+								<!-- END LINHA_PERSONALIZACAO -->
+								
+								<!-- BEGIN BLOCK_OPCOES_TAMANHO -->
+								<script type="text/javascript">
+									$(document).ready(function(){
+										$("#{IDCARRINHOPROD} .box_3[rel='personalizacao'] .add_nome-num").css("width", "75%");	
+										$("#{IDCARRINHOPROD} .box_3[rel='personalizacao'] .box_nome-num").css("width", "75%");	
+										$("#{IDCARRINHOPROD} .box_3[rel='personalizacao'] .bt-concluir").attr("onClick", "salvarTamanhos(this, {IDCARRINHOPROD});");	
+										
+										$("#{IDCARRINHOPROD}").closest(".item_checkout").find(".box_2 .qtd span").remove();
+										$("#{IDCARRINHOPROD}").closest(".item_checkout").find(".box_2 .qtd .ipt-quantidade").css("margin-left", "20px").prop('readonly', true);
+									});
+								</script>
+								<!-- BEGIN TAMANHO_QTD -->
+								<div class="linha_tamanho">
+									<label>{TAMANHO}</label>
+									<div class="qtd">
+										<span class="menos" id="{IDCARRINHOPROD}">-</span>
+										<input type="text" class="ipt-quantidade_tam" value="{Q_TAM}" tamanho="{ID_TAMANHO}" rel="{MINPROD}" size="3" maxlength="3"/>
+										<span class="mais" id="{IDCARRINHOPROD}">+</span>
+									</div>
+								</div>
+								<!-- END TAMANHO_QTD -->
+								<!-- END BLOCK_OPCOES_TAMANHO -->
+								<div class="botoes_personalizacao">
+									<div class="bt-concluir" onClick="salvaPersonalizacao({IDCARRINHOPROD});">SALVAR</div>
+								</div>
+							</div>
+						</div>
+						<!-- END BLOCK_PERSONALIZACAO -->
+					</div>
+					<!-- END ITEM_JDC -->
+				</div>
+			</div>
+			<!-- BEGIN BLOCK_ADD_GOLEIRO -->
+			<a href="{LINK_SIMULADOR}" class="add_goleiro"><img src="{PASTA_RAIZ_SIMULADOR}/img/checkout/add_goleiro.webp"/></a>
+			<!-- END BLOCK_ADD_GOLEIRO -->
+			<!-- BEGIN BLOCK_ADD_COMISSAO -->
+			<a href="{LINK_SIMULADOR}" class="add_comissao"><img src="{PASTA_RAIZ_SIMULADOR}/img/checkout/add_comissao.webp"/></a>
+			<!-- END BLOCK_ADD_COMISSAO -->
+		</div>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				if (!$(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao']").length)
+					$(".item_checkout[rel='{I_ITEM_JDC}']").find(".box_3").remove();
+				else if ($(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao'] .add_nome-num").eq(0).find("li").length > 1) {
+					$(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao'] .add_nome-num").css("width", "auto");
+					$(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao'] .box_nome-num").css("right", "15px");
+
+					if ($(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao'] .box_nome-num").width() > $(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao']").width())
+						$(".item_checkout[rel='{I_ITEM_JDC}'] .box_3[rel='personalizacao'] .box_nome-num").css("left", "unset");
+				}
+			});
+		</script>
+		<!-- END BLOCK_ITEM_JDC -->
+	</div>
+	<!-- BEGIN MOSTRAR_PACOTES -->
+	<div class="passo_checkout" id="pacotes">
+		<div class="cabecalho">
+			<div class="numero_passo">2</div>
+			<div class="titulo_passo">SELECIONE SEU PACOTE</div>
+		</div>
+		<!-- BEGIN BLOCK_PACOTES -->
+		<div class="titulo_pacote" rel="form_{ANCORA_PACOTE}"><span> - </span>Pacote {NOME_MODALIDADE}</div>
+		<div id="form_{ANCORA_PACOTE}">
+			<form class="pacotes">
+				<script type="text/javascript">
+					$(document).ready(function (){
+						var qtd_pacotes = $('.pacotes_conteudo').length;
+						if (qtd_pacotes >= 6)
+							$('.pacotes').css('flex-wrap','wrap');
+					});
+				</script>
+				<!-- BEGIN LISTA_PACOTE -->
+				<script type="text/javascript">
+					$(document).ready(function (){
+						$('.pacotes_conteudo[id={ID_PACOTE}]').css('background-image','url({PASTA_RAIZ_SIMULADOR}/{IMG_PACOTE}');
+					});	
+				</script>
+				
+				<!-- BEGIN PACOTE_ATIVO -->
+				<script type="text/javascript">
+					$(document).ready(function (){
+						abrePacote('{ID_PACOTE}', '{ANCORA_PACOTE}');
+					});	
+				</script>
+				<!-- END PACOTE_ATIVO -->
+				
+				<input type="radio" name="pacote_{ANCORA_PACOTE}" id="pacote_{ID_PACOTE}" {PACOTE_ATIVO_CB} autocomplete="off"/>
+				<label class="pacote" id="label_pacote_{ID_PACOTE}" for="pacote_{ID_PACOTE}" rel="{ANCORA_PACOTE}">
+					{PACOTE}
+					<span></span>
+				</label>
+				<!-- END LISTA_PACOTE -->
+			</form>
+			<!-- BEGIN BLOCK_PACOTE -->
+			<div class="pacotes_conteudo" id="{ID_PACOTE}" rel="{ANCORA_PACOTE}">
+				<div class="itens">	
+					<!-- BEGIN BLOCK_DETALHES -->
+					<div class="detalhes_pacote">
+						<div class="titulo">Detalhes:</div>
+						<div class="texto">{DETALHES_PACOTE}</div>
+					</div>
+					<!-- END BLOCK_DETALHES -->
+					<!-- BEGIN MOSTRAR_PRECOS -->
+					<div class="preco_itens">
+						<div class="flex">
+							<!-- BEGIN INFO_ITEM -->
+							<div class="preco_item">
+								<span>{NOME_ITEM}</span>
+								<b>{PRECO_ITEM}</b>
+							</div>
+							<!-- END INFO_ITEM -->
+							<!-- BEGIN PRECO_CONJUNTO -->
+							<div class="preco_conjunto">
+								<span>CONJUNTO COMPLETO</span>
+								<b>{TOTAL_CONJUNTO}</b>
+							</div>	
+							<!-- END PRECO_CONJUNTO -->
+						</div>	
+						<!-- BEGIN PRECOS_GOLEIRO -->
+						<div class="flex precos_goleiro">
+							<!-- BEGIN INFO_ITEM_GOLEIRO -->
+							<div class="preco_item_goleiro">
+								<span>{NOME_ITEM}</span>
+								<b>{PRECO_ITEM}</b>
+							</div>						
+							<!-- END INFO_ITEM_GOLEIRO -->
+							<div class="preco_conjunto">
+								<span>CONJUNTO GOLEIRO COMPLETO</span>
+								<b>{TOTAL_CONJUNTO_GOLEIRO}</b>
+							</div>
+						</div>	
+						<!-- END PRECOS_GOLEIRO -->
+						<!-- BEGIN PRECOS_COMISSAO -->
+						<div class="flex precos_comissao">
+							<!-- BEGIN INFO_ITEM_COMISSAO -->
+							<div class="preco_item_comissao">
+								<span>{NOME_ITEM}</span>
+								<b>{PRECO_ITEM}</b>
+							</div>
+							<!-- END INFO_ITEM_COMISSAO -->
+							<div class="preco_conjunto">
+								<span>CONJUNTO COMISSAO COMPLETO</span>
+								<b>{TOTAL_CONJUNTO_COMISSAO}</b>
+							</div>
+						</div>	
+						<!-- END PRECOS_COMISSAO -->
+					</div>
+					
+					<!-- END MOSTRAR_PRECOS -->
+				</div>
+			</div>
+			
+			<!-- BEGIN MOSTRAR_ITENS_ADICIONAIS -->
+			<div class="box-itens_adicionais"  id="itens-{ID_PACOTE}" data-modalidade="{ID_MODALIDADE}" rel="itens-{ANCORA_PACOTE}">
+				<div class="titulo">ITENS ADICIONAIS</div>	
+				<ul class="lista-itens_adicionais">
+					<!-- BEGIN BLOCK_ITEM_ADICIONAL -->
+					<li class="item_adicional">
+						<input name="cb-item_adicional" {ITEM_ATIVO_CB} type="checkbox" class="cb-item_adicional" id="cb-{ID_ITEM_ADICIONAL}" value="{ID_ITEM_ADICIONAL}">
+						<label for="cb-{ID_ITEM_ADICIONAL}" class="info">
+							<span class="nome">{ITEM_ADICIONAL}</span>
+							<!-- BEGIN MOSTRAR_PRECOS_ADICIONAIS -->
+							<span class="preco">+ {PRECO_ITEM_ADICIONAL} <span class="menor">(und)</span></span>
+							<!-- END MOSTRAR_PRECOS_ADICIONAIS -->
+						</label>	
+					</li>
+					<!-- END BLOCK_ITEM_ADICIONAL -->
+				</ul>	
+			</div>
+			<!-- END MOSTRAR_ITENS_ADICIONAIS -->
+			
+			<!-- END BLOCK_PACOTE -->
+		</div>
+		<!-- END BLOCK_PACOTES -->
+	</div>
+	<!-- END MOSTRAR_PACOTES -->	
+	<!-- BEGIN MOSTRAR_VALORES -->
+	<div class="passo_checkout" id="valores">
+		<div class="cabecalho">
+			<div class="numero_passo">2</div>
+			<div class="titulo_passo">VALORES DA PROPOSTA</div>
+		</div>
+		<div class="valores">
+			<div class="valor">
+				<!-- BEGIN VALOR_PRODUTO -->
+				<script type="text/javascript">
+					$(document).ready(function (){
+						if($('#qtd_prod_{IDCARRINHOPROD}').val() == '0'){
+							$('#qtd_prod_{IDCARRINHOPROD}').parent().hide();
+						}
+					});	
+				</script>
+				<div class="valor-linha" id="prod_{IDCARRINHOPROD}">
+					<span class="nome">{NOME_ITEM}</span>
+					<!-- BEGIN QUANTIDADE_PRODUTO -->
+					<span class="quantidade">Qtd: <b>{Q}</b></span>
+					<input type="hidden" value="{Q}" id="qtd_prod_{IDCARRINHOPROD}">
+					<!-- END QUANTIDADE_PRODUTO -->
+					<span class="preco">{TOTAL_ITEM}</span>
+				</div>
+				<!-- END VALOR_PRODUTO -->
+			</div>	
+			<div class="total">
+				<span>Total</span>
+				<span class="destaque"></span>
+				<!--<span class="parcelas">Em até {NUMPARCELA}x de {VALORPARCELA} no cartão</span>-->
+			</div>
+		</div>
+		<a href="{PASTA_RAIZ_SIMULADOR}/" id="bt_voltar">ADICIONAR MAIS ITENS</a>
+	</div>	
+	<!-- END MOSTRAR_VALORES -->
+	<div class="passo_checkout" id="envio">
+		<div class="cabecalho">
+			<div class="numero_passo">3</div>
+			<!-- BEGIN MOSTRAR_FORMAS_ENVIO -->
+			<div class="titulo_passo">ESCOLHA A FORMA DE ENVIO DO ORÇAMENTO</div>
+		</div>
+		<div id="atencao">
+			<div class="titulo">
+				<div id="ico-atencao"><span>X</span></div>
+				<span>ERRO</span>
+			</div>	
+			<p class="texto">Seu orçamento <span>não pode ser enviado.</span><br/>
+			Esta página está destinada apenas para apresentação <br/>
+			de funcionalidades dos Simuladores <a href="https://www.jumptec.com.br">Jumptec.</a>
+			</p>
+		</div>
+		<div id="box_envio">
+			<div id="bt_envio-email">VIA E-MAIL</div>
+			<!-- BEGIN OPCAO_WHATSAPP_ORCAMENTO -->
+			<div class="bt_envio-whats" onclick="gravarPedidoWhats('{CONTATO_WHATSAPP}')" style="flex-direction:column;">VIA WHATSAPP<span style="font-size:14px;">{CONTATO_NOME}</span></div>
+			<!-- END OPCAO_WHATSAPP_ORCAMENTO -->
+			<div class="bt_envio-whats" onclick="gravarPedidoWhats()">VIA WHATSAPP</div>
+			<!-- FINALLY OPCAO_WHATSAPP_ORCAMENTO -->
+		</div>
+	</div>
+	<div class="passo_checkout" id="solicitar-atendimento">
+		<div class="titulo_passo">PREENCHA COM SUAS INFORMAÇÕES</div>
+		<!-- END MOSTRAR_FORMAS_ENVIO -->
+		<div class="titulo_passo">PREENCHA COM SUAS INFORMAÇÕES</div>
+	</div>
+		<!-- FINALLY MOSTRAR_FORMAS_ENVIO -->
+		<div id="mensagem_enviada">
+			<div class="destaque">
+				<div class="icone_checkout" id="ico-ok"></div>
+				<span>Pronto!</span>
+			</div>
+			<p class="texto">Seu orçamento foi enviado para nossa equipe.<br/>Aguarde nosso contato.</p>
+		</div>
+		<div id="mensagem_erro">
+			<div class="destaque">
+				<div class="icone_checkout" id="ico-erro"></div>
+				<span>Erro!</span>
+			</div>
+			<p class="texto">Infelizmente houve um erro no envio do orçamento.<br/>Tente mais tarde.</p>
+		</div>
+		<div id="aguarde">
+			<center>
+				<p><br></p>
+				<h2>AGUARDE...</h2>
+				<img src="{PASTA_RAIZ_SIMULADOR}/img/icones/carregando.gif">
+			</center>
+		</div>
+		<form id="formOrcamento" action="" onsubmit="return validaContato();" method="post">
+			<input type="text" name="nome" id="nomeContato"  placeholder="Nome *" autocomplete="off" value="{NOME_CLIENTE}" required/>
+			<input type="email" name="email" id="emailContato" placeholder="E-mail *" autocomplete="off" value="{EMAIL_CLIENTE}" required/>
+			<input type="text" name="telefone" id="telefoneContato" placeholder="Telefone *" autocomplete="off" value="{TELEFONE_CLIENTE}" required/>
+			<input type="text" name="cidade" id="cidadeContato" placeholder="Cidade *" autocomplete="off" value="{CIDADE_CLIENTE}" required/>
+			<!-- ESTADO_CLIENTE -->
+			<script type="text/javascript">
+				$(document).ready(function (){
+					$("#estadoContato option[value='{ESTADO_CLIENTE}']").attr("selected",true);
+				});	
+			</script>
+			<select name="estado" id="estadoContato" required>
+				<option value="" style="display: none;">Estado *</option>
+				<option value="AC">Acre</option>
+			    <option value="AL">Alagoas</option>
+			    <option value="AP">Amapá</option>
+			    <option value="AM">Amazonas</option>
+			    <option value="BA">Bahia</option>
+			    <option value="CE">Ceará</option>
+			    <option value="DF">Distrito Federal</option>
+			    <option value="ES">Espírito Santo</option>
+			    <option value="GO">Goiás</option>
+			    <option value="MA">Maranhão</option>
+			    <option value="MT">Mato Grosso</option>
+			    <option value="MS">Mato Grosso do Sul</option>
+			    <option value="MG">Minas Gerais</option>
+			    <option value="PA">Pará</option>
+			    <option value="PB">Paraíba</option>
+			    <option value="PR">Paraná</option>
+			    <option value="PE">Pernambuco</option>
+			    <option value="PI">Piauí</option>
+			    <option value="RJ">Rio de Janeiro</option>
+			    <option value="RN">Rio Grande do Norte</option>
+			    <option value="RS">Rio Grande do Sul</option>
+			    <option value="RO">Rondônia</option>
+			    <option value="RR">Roraima</option>
+			    <option value="SC">Santa Catarina</option>
+			    <option value="SP">São Paulo</option>
+			    <option value="SE">Sergipe</option>
+			    <option value="TO">Tocantins</option>
+			</select>
+			<textarea name="msg" rows="5" placeholder="Digite sua mensagem" id="msgContato"></textarea>
+			<script type="text/javascript">
+				function addArquivoUpld() {
+					var i_anexos = $("input[type=file]").length;
+
+					if (i_anexos < 5) {
+						i_anexos++;
+						var html = 	'<div class="linha-upload">' +
+										'<label for="upl_escudo_'+i_anexos+'">Arquivo '+i_anexos+':</label>' +
+										'<input type="file" class="file_upl" id="upl_escudo_'+i_anexos+'" name="anexos[]" accept=".cdr,.png,.pdf">' +
+									'</div>';
+						$(html).insertBefore("#bt_addUpd");	
+						if (i_anexos == 5) $("#bt_addUpd").hide();
+					}
+				}
+			</script>
+			<div id="alerta_upload">
+				<p id="fraseUpld">Para agilizar seu orçamento, faça o upload do arquivo da logomarca para ser estampado no uniforme (Arquivos permitidos: CDR, PNG ou PDF)</p>
+				<div class="linha-upload">
+					<label for="upl_escudo">Arquivo:</label>
+					<input type="file" class="file_upl" id="upl_escudo" name="anexos[]" accept=".cdr,.png,.pdf">
+				</div>
+				<div id="bt_addUpd" onclick="addArquivoUpld()">(+) Adicionar mais arquivos</div>
+			</div>
+			<div class="g-recaptcha" data-callback="recaptchaCallback" data-sitekey="6LcT3PApAAAAANQc_DA7pktX7abhKRWY1SacWUgC"></div>
+			<input type="submit" value="ENVIAR ORÇAMENTO" id="enviar"/>
+			<div class="teste_enviar" id="enviar-2"></div>
+			<label class="botaoEnviar" for="enviar-2">ENVIAR ORÇAMENTO</label>
+		</form>
+	</div>	
+	<!-- END BLOCK_CARRINHO -->
+</div>	
+<div style="display:none;">
+	<table width="100%" cellpadding="0" cellspacing="0"  border="0" id="checkout_email">
+		<tr><td>
+			<table width="700" align="center" cellpadding="0"  border="0" cellspacing="0" style="font-family:Arial,sans-serif;font-size:13px;">
+				<tr><td colspan="2">
+					<table width="700" align="center" cellpadding="0" cellspacing="0">
+						<tr>
+							<td id="nome_cliente" style="padding:5px 10px 5px 0;">Nome:</td>
+							<td id="email-nome_cliente" style="padding:5px 0 5px 0;font-weight:bold;"></td>
+							<td style="padding:5px 5px 5px 20px;">E-mail:</td>
+							<td id="email-email_cliente" style="padding:5px 0 5px 0;font-weight:bold;"></td>
+							<td style="padding:5px 5px 5px 20px;">Telefone:</td>
+							<td id="email-telefone_cliente" style="padding:5px 0 5px 0;font-weight:bold;"></td>	
+						</tr>
+						<tr>
+							<td style="padding:5px 5px 5px 0;">Cidade:</td>
+							<td id="email-cidade_cliente" style="padding:5px 0 5px 0;font-weight:bold;"></td>
+							<td style="padding:5px 5px 5px 20px;">Estado:</td>
+							<td id="email-estado_cliente" style="padding:5px 0 5px 0;font-weight:bold;"></td>	
+						</tr>
+					</table>			
+				</td></tr>
+				<tr><td colspan="2" style="padding:5px 0 5px 0;">Comentários:</td></tr>
+				<tr><td colspan="2" id="email-mensagem_cliente" style="padding:5px 0 5px 0;font-weight:bold;"></td></tr>
+				<tr><td colspan="2" bgcolor="#fff8e7" style="padding:30px 35px 30px 35px;">
+					<!-- BEGIN BLOCK_ITEM_EMAIL -->
+					<table width="700" cellpadding="0" cellspacing="0" style="margin:5px 0 10px 0;">
+						<tr>
+							<td width="170">
+								<img src="{FOTO_ITEM}" alt="{NOME_ITEM}" width="150" style="display: block;" />
+							</td>
+							<td width="270" valign="top">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr><td style="padding:8px 0 8px 5px;color:#7c7c7c;font-size:13px;">Tamanho</td></tr>
+									<tr><td bgcolor="#ffffff" style="padding:8px 0 8px 5px;text-transform:uppercase;font-size:12px;">{TAM}</td></tr>
+								</table>
+							</td>
+							<td width="260" valign="top">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr><td style="padding:8px 0 8px 5px;color:#7c7c7c;font-size:13px;">Quantidade</td></tr>
+									<tr><td bgcolor="#ffffff" style="padding:8px 0 8px 5px;text-transform:uppercase;font-size:12px;">{Q}</td></tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+					<!-- END BLOCK_ITEM_EMAIL -->
+					<!-- BEGIN BLOCK_ITEM_JDC_EMAIL -->
+					<table width="700" cellpadding="0" cellspacing="0" style="margin:5px 0 10px 0;">
+						<tr>
+							<td width="170">
+								<a href="{FOTO_JOGO}" target="_blank" style="display: block; width: 150px;">
+									<img src="{FOTO_JOGO}" alt="Uniforme" width="150" style="display: block;" />
+								</a>
+								{SVG_JOGO}
+							</td>
+							<td width="270" valign="top">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr><td style="padding:8px 0 8px 5px;color:#7c7c7c;font-size:13px;">Produto</td></tr>
+									<!-- BEGIN ITEM_JDC_EMAIL_NOME -->
+									<tr><td bgcolor="#ffffff" style="padding:8px 0 8px 5px;text-transform:uppercase;font-size:12px;">{NOME_ITEM}</td></tr>
+									<!-- END ITEM_JDC_EMAIL_NOME -->
+								</table>
+							</td>
+							<td width="260" valign="top">
+								<table width="100%" cellpadding="0" cellspacing="0">
+									<tr><td style="padding:8px 0 8px 5px;color:#7c7c7c;font-size:13px;">Quantidade</td></tr>
+									<!-- BEGIN ITEM_JDC_EMAIL_QTD -->
+									<tr><td bgcolor="#ffffff" style="padding:8px 0 8px 5px;text-transform:uppercase;font-size:12px;">{Q}</td></tr>
+									<!-- END ITEM_JDC_EMAIL_QTD -->
+								</table>
+							</td>
+						</tr>
+					</table>
+					<!-- BEGIN BLOCK_INFO_UNIFORMES_EMAIL -->
+					<table class="info_uniforme" width="280" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="padding:0;margin:0 10px 10px 0;width:280px;float:left;border: 1px solid #000;">
+						<tr><td style="padding:5px 10px 5px;margin:0px;font-size:12px;line-height:15px;text-transform:uppercase;border-bottom:1px solid #000;" height="15">{PARTE_UNIFORME}</td></tr>
+						{INFO_UNIFORMES_EMAIL}
+					</table>
+					<!-- END BLOCK_INFO_UNIFORMES_EMAIL -->	
+					<!-- BEGIN BLOCK_PERSONALIZACAO_EMAIL -->
+					<table width="280" cellpadding="0" cellspacing="0" style="margin: 0 0 10px 0;border: 1px solid #000;clear:both;">
+						<thead>
+							<th style="padding:8px 0 8px 0;color:#7c7c7c;border-bottom: 1px solid #000;font-size:13px;" colspan="{N_PERSONALIZACOES}">Personalização  {PARTE_PERSONALIZACAO}</th>
+						</thead>
+						<tr>{OPCOES_PERSONALIZACAO_EMAIL}</tr>
+						<!-- BEGIN LINHA_PERSONALIZACAO_EMAIL -->
+						<tr>
+							<td style="font-size:12px;padding: 5px 0 5px 5px;">{C_LINHA}</td>
+							<td style="text-transform:uppercase;font-size:12px;padding: 5px 0;">{TAMANHO_EMAIL}</td>
+							<td {CAMPO_INVISIVEL} style="text-transform:uppercase;font-size:12px;padding: 5px 0;">{VALOR_NOME_EMAIL}</td>
+							<td {CAMPO_INVISIVEL_2} style="font-size:12px;padding: 5px 0;">{VALOR_NUM_EMAIL}</td>
+						</tr>	
+						<!-- END LINHA_PERSONALIZACAO_EMAIL -->
+					</table>
+					<!-- END BLOCK_PERSONALIZACAO_EMAIL -->
+					<!-- END BLOCK_ITEM_JDC_EMAIL -->
+				</td></tr>	
+				<!-- BEGIN PACOTE_EMAIL -->
+				<tr class="info_pacote_{ANCORA_PACOTE}"><td colspan="2">
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr><td class="nome_pacote" bgcolor="#000000" style="color:#ffffff;text-transform:uppercase;font-size: 20px;text-align: center;" height="50"></td></tr>
+						<tr><td>
+							<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#dbdee0" class="detalhes_pacote_email">
+								<tr style="display:block;padding:10px 0 10px 20px;">
+									<td style="font-size:15px;font-weight:bold;padding:5px 15px 5px 5px;border-bottom:1px solid #000;">DETALHES:</td>
+								</tr>
+							</table>
+						</td></tr>
+					</table>
+				</td></tr>	
+				<!-- END PACOTE_EMAIL -->
+				<!-- BEGIN MOSTRAR_VALORES_EMAIL -->
+				<tr><td colspan="2" style="border-bottom:1px solid #dbdbdb;padding:25px 0 8px 15px;font-weight:bold;">VALORES DA PROPOSTA</td></tr>	
+				<tr style="padding:10px 0px 20px 0px;margin:0px;">
+					<td width="500" style="padding: 10px 0px;margin:0px;">
+						<table width="500" cellpadding="0" cellspacing="0">
+							<!-- BEGIN VALOR_PRODUTO_EMAIL -->
+							<tr style="border-bottom:1px solid #dbdbdb;padding:10px 0px 10px 0px;margin:0px;display:block;">	
+								<td width="200" style="color:#7c7c7c;padding:0px;margin:0px;">{NOME_ITEM}</td>
+								<!-- BEGIN QUANTIDADE_PRODUTO_EMAIL -->
+								<td width="90" align="center" style="color:#7c7c7c;padding:0px;margin:0px;">Qtd. {Q}</td>
+								<!-- END QUANTIDADE_PRODUTO_EMAIL -->
+								<td width="130" align="center" style="font-weight:bold;color:#F5B53D;padding:0px;margin:0px;">{TOTAL_ITEM}</td>
+							</tr>
+							<!-- END VALOR_PRODUTO_EMAIL -->
+						</table>
+					</td>
+					<td width="200" valign="top" style="padding:10px 0px 0px 20px;margin:0px;">
+						<table width="200" cellpadding="0" cellspacing="0" style="width:200px;border-left:5px solid #F5B53D;padding:0 0 15px 10px;margin:0px;">
+							<tr><td style="color:#7c7c7c;padding:0px 0px 10px 0px;margin:0px;">Total</td></tr>
+							<tr><td style="font-size:21px;color:#F5B53D;padding:0px;margin:0px;">{TOTAL}</td></tr>
+						</table>
+					</td>
+				</tr>
+				<!-- END MOSTRAR_VALORES_EMAIL -->	
+			</table>
+		</td></tr>
+	</table>
+</div>

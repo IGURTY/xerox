@@ -1,0 +1,45 @@
+Options All -Indexes
+
+DirectoryIndex index.php
+
+ServerSignature Off
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+RewriteRule ^futebol_masculino_2 index.php?esporte=futebol_masculino_2 [QSA]
+
+RewriteRule ^miniatura miniatura.php [QSA]
+RewriteRule ^recuperarSenha pagina.php?pagina=cadastro [QSA]
+RewriteRule ^checkout checkout.php [QSA]
+RewriteRule ^js/script_2d.js includes/2d/simulador.php [QSA]
+
+<IfModule mod_headers.c>
+	Header set X-XSS-Protection "1; mode=block"
+	Header set X-Content-Type-Options nosniff
+	#Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+	Header set X-Frame-Options "SAMEORIGIN"
+	Header set Referrer-Policy "same-origin"
+	Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite=strict
+</IfModule>
+
+<IfModule mod_expires.c>
+  	ExpiresActive On
+  	ExpiresByType image/jpeg "access plus 1 year"
+  	ExpiresByType image/gif "access plus 1 year"
+ 	ExpiresByType image/png "access plus 1 year"
+  	ExpiresByType image/webp "access plus 1 year"
+  	ExpiresByType image/svg+xml "access plus 1 year"
+  	ExpiresByType image/x-icon "access plus 1 year"
+  	ExpiresByType video/mp4 "access plus 1 year"
+  	ExpiresByType video/mpeg "access plus 1 year"
+  	ExpiresByType text/css "access plus 6 month"
+  	ExpiresByType text/javascript "access plus 6 month"
+  	ExpiresByType application/javascript "access plus 6 month"
+  	ExpiresByType application/pdf "access plus 6 month"
+</IfModule>

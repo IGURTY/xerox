@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>ORÇAMENTO {NUMEROORCAMENTO}</title>
+<link href="../css/imprime_pedido.css" rel="stylesheet" type="text/css">
+<script src="../js/jquery/jquery-1.4.1.min.js" type="text/javascript"></script>
+<script>
+function salvaData(pedido, valor){
+	
+	var data_split = valor.split('/');
+	
+	var valor = data_split[2]+'-'+data_split[1]+'-'+data_split[0];
+	
+	$.get("../procedimentos/atualizaRegistro.php?tabela=pedido_pagamento&campo=data_recebimento&valor="+valor+"&pedido="+pedido, function(data){
+		if(data) {
+			apprise("Erro: "+data);
+		}
+		else {
+			
+		}
+	});
+}
+</script>
+</head>
+<body style="margin:0;">
+<!-- BEGIN BLOCK_ORCAMENTO -->
+    <table width="700" border="0" cellspacing="0" cellpadding="0" class="tabela">
+      <tr>
+        <td align="left">
+        
+        <table width="700" border="0" cellspacing="2" cellpadding="3">
+          <tr class="linha_logo">
+            <td width="682" align="center" class="titulo"><img src="../images/shared/logo.png" width="156" height="75" /></td>
+          </tr>
+          <tr>
+            <td><table width="100%" border="0" cellspacing="0" cellpadding="5">
+              <tr >
+                <td width="52%" height="38" align="left" class="linha_carrinho"><strong>Nome: </strong>{NOMECLIENTE}</td>
+                <td width="48%" colspan="3" rowspan="4" valign="top" class="linha_carrinho"><table class="box_pagamento" width="100%" border="0" align="center" cellpadding="4" cellspacing="0">
+                  <tr>
+                    <td width="51%">Nº do 
+                      orçamento:</td>
+                    <td width="49%" align="right">
+                      <B>{NUMEROORCAMENTO}</B>
+                      </td>
+                  </tr>
+                  <tr>
+                    <td height="1" colspan="2" bgcolor="#999999"></td>
+                  </tr>
+                  <tr>
+                    <td height="50" colspan="2">Data do Orçamento: {DATAORCAMENTO}</td>
+                  </tr>
+                </table></td>
+                </tr>
+              <tr >
+                <td align="left" class="linha_carrinho"><strong>Email:</strong> {EMAILCLIENTE}</td>
+              </tr>
+              <!-- BEGIN BLOCK_DESTINATARIO -->
+              <!-- END BLOCK_DESTINATARIO -->
+              <tr >
+                <td align="left" class="linha_carrinho"><strong>Tel.:</strong> {TELCLIENTE}</td>
+              </tr>
+              <tr >
+                <td align="left" valign="top" class="linha_carrinho"><strong>Cidade: </strong>{CIDADECLIENTE} /  {ESTADOCLIENTE}</td>
+              </tr>
+              <tr >
+                <td colspan="5">                {OBSORCAMENTO}              </tr>
+            </table></td>
+          </tr>
+          <tr>
+            <td class="titulo_carrinho">
+                <table width="100%" border="0" cellspacing="0" cellpadding="5">
+                  <tr>
+                    <td width="304"><strong>Item</strong></td>
+                    <td width="50" align="center"><strong>Qtd.</strong></td>
+                    <td width="100"><strong>Und.</strong></td>
+                    <td width="100"><strong>Total</strong></td>
+                  </tr>
+                </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            
+            <table width="100%" border="0" cellspacing="0" cellpadding="5">
+            
+              <!-- BEGIN BLOCK_CARRINHO_PRODUTO -->	
+              <tr >
+                <td width="305" class="linha_carrinho">{NOMEPROD} {OBSPROD} {MODELOPROD}</td>
+                <td width="50" align="center" class="linha_carrinho">{QTDPROD}</td>
+                <td width="100" class="linha_carrinho"><span class="carrinho_valor_unit">{VALORUNT}</span></td>
+                <td width="100" class="linha_carrinho"><span class="carrinho_valor_linha">{VALOR}</span></td>
+              </tr>
+              <!-- END BLOCK_CARRINHO_PRODUTO -->
+            
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="4">
+            
+              <tr class="subtotal">
+                <td align="right">Valor dos produtos:</td>
+                <td align="left">{VALORPRODUTOS}</td>
+              </tr>
+            <!-- BEGIN BLOCK_CARRINHO_DESCONTO -->
+              <tr class="subtotal">
+                <td width="77%" align="right">Desconto:</td>
+                <td width="23%" align="left">- {DESCONTO}</td>
+              </tr>
+            <!-- END BLOCK_CARRINHO_DESCONTO -->
+            <!-- BEGIN BLOCK_VALOR_PRESENTE -->              <!-- END BLOCK_VALOR_PRESENTE -->
+            <!-- BEGIN BLOCK_OBS_ENTREGA -->  
+              <!-- END BLOCK_OBS_ENTREGA -->
+              <tr class="total">
+                <td width="77%" align="right">Total:</td>
+                <td align="left"><span class="carrinho_estrutura_linha_valortotal2">{VALORTOTAL}</span></td>
+              </tr>
+            </table>
+            </td>
+          </tr>
+          <!-- BEGIN BLOCK_ORCAMENTO_DESCONTO -->
+          <!-- END BLOCK_ORCAMENTO_DESCONTO -->
+        </table>
+        
+        <!-- BEGIN BLOCK_QUEBRA_PAGINA -->
+        <div style="page-break-after: always;"></div>
+        <!-- END BLOCK_QUEBRA_PAGINA -->
+
+        <style rel="stylesheet" type="text/css" media="print">
+           #botao{display:none}
+           .link { text-decoration:none; color:#000; }
+		   .linha_logo{display:none}
+        </style>
+        <div id="botao">
+            <a href="#" onClick="window.print();" class="link"><img src="../images/shared/imprimir.jpg" border="0" /></a>
+          
+        </div>
+        
+        </td>
+      </tr>
+    </table>
+<!-- END BLOCK_ORCAMENTO -->
+</body>
+</html>

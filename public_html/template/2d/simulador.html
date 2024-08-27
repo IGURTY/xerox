@@ -1,0 +1,3420 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="{DESCRICAO_SITE}">
+		<link rel="shortcut icon" href="{PASTA_RAIZ_SIMULADOR}/img/logo_icone.png" type="image/x-icon" />
+		<title>Simulador - {NOME_SITE}</title>
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/css/jquery.reject.css" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/css/jquery-ui-v1.11.2.css" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/css/apprise.min.css" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/css/ns-default.css" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/css/ns-style-attached.css" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/css/jquery.ui.rotatable.css" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/css/2d/configuracoes.css?v={VERSAO}" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/css/2d/simulador.css?v={VERSAO}" />
+		<link rel="stylesheet" type="text/css" href="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/css/jquery-ui.css" />
+
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/jquery-3.6.0.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/jquery.reject.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/jquery-ui-v1.11.2.js" ></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/jsapi.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/rgbcolor.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/StackBlur.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/canvg.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/html-to-image.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/html2canvas.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/modernizr.custom.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/apprise-1.5.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/jquery.ui.rotatable.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/jquery.mask.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/jquery.transform2d.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/2d/jquery.ui.touch-punch.min.js"></script>
+		<script type="text/javascript" src="{PASTA_RAIZ_SIMULADOR}/biblioteca/sweetalert.min.js"></script>
+		<script src="{PASTA_RAIZ_SIMULADOR}/js/script_2d.js?{INFO_SIMU}"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#meio').css('background-image', 'url("{PASTA_RAIZ_SIMULADOR}/{FUNDO}?v={VERSAO}")');
+				if (document.body.clientHeight < $(document).height() && $(document).width() > 1024) {
+					var h_alvo = Number($(document).height());
+					var h_topo = Number($('#topo').height());
+					var h_meio_novo = h_alvo - h_topo;
+
+					$('#meio').css('height', h_meio_novo+'px');
+				}
+
+				<!-- BEGIN REMOVER_SETAS_FONTES -->
+				$('.fontes .seta_anterior, .fontes .seta_proximo').remove();
+				$('.edicao_texto .lista-fontes .fontes').css('justify-content', 'center');
+				<!-- END REMOVER_SETAS_FONTES -->
+
+				if ($('.nav-telefones').length < 2)
+					$('.nav-telefones').remove();
+			});
+		</script>
+		<!-- BEGIN BLOCK_TAGS_HEAD -->
+		{TAGS_HEAD}
+		<!-- END BLOCK_TAGS_HEAD -->
+		<!-- BEGIN POPUP_COLECOES -->
+		<script type="text/javascript">
+			function popupColecoes(){
+				//global swal;
+				var div_colecoes = '<ul>';
+				var linkAtual = window.location.href.replace(window.location.search, '');
+				var linkColecao = '';
+
+				<!-- BEGIN EXIBIR_COLECAO -->
+				if ('{GOLEIRO}' == 0) linkColecao = linkAtual + '?colecao={ID_COLECAO}';
+				else linkColecao = linkAtual + '&colecao={ID_COLECAO}';
+
+				div_colecoes += '<li style="display:table; padding:8px 4px; float:left;">' +
+									'<a href="'+linkColecao+'" title="{NOME_COLECAO}"><img src="{PASTA_RAIZ_SIMULADOR}/imagens/colecao/{IMAGEM_COLECAO}" width="245" height="245" border="0" /></a>' +
+								'</li>';
+				<!-- END EXIBIR_COLECAO -->
+
+				div_colecoes += '</ul>';
+
+				<!-- BEGIN POPUP_COLECOES_INICIALMENTE -->
+				swal({
+					title: 'Escolha uma opção para iniciar a simulação',
+					text: ' ',
+					button: '',
+					//timer: 3000,
+					className: 'swal-modal-width',
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+
+				setTimeout(function(){
+					$('.swal-modal').css('width', '70%');
+					$('.swal-text').html(div_colecoes);
+					$('.swal-button').hide();
+				}, 250);
+				<!-- END POPUP_COLECOES_INICIALMENTE -->
+				swal({
+					title: 'Escolha uma opção',
+					text: ' ',
+					button: '',
+					className: 'swal-modal-width'
+				});
+
+				$('.swal-modal').css('width', '70%');
+				$('.swal-text').html(div_colecoes);
+				$('.swal-button').hide();
+				<!-- FINALLY POPUP_COLECOES_INICIALMENTE -->
+			}
+		</script>
+		<!-- END POPUP_COLECOES -->
+		<!-- BEGIN BLOCK_MSG_INVALIDO -->
+		<script type="text/javascript">
+			$(document).ready(function(){
+				mensagem('Atenção!', 'Link já acessado. Solicite outro, por favor.', 'warning');
+			});
+		</script>
+		<!-- END BLOCK_MSG_INVALIDO -->
+	</head>
+	<body>
+		<!-- BEGIN BLOCK_TAGS_BODY -->
+		{TAGS_BODY}
+		<!-- END BLOCK_TAGS_BODY -->
+		<div id="site">
+			<div id="topo">
+				<div class="flex" id="cabecalho">
+					<nav id="nav-cabecalho">
+						<nav class="nav-site">
+							<a href="https://criaconfeccoes.com/" id="bt_site">Site</a>
+						</nav>
+						<nav class="nav-redes_sociais">
+							<!-- BEGIN BLOCK_FACEBOOK -->
+							<a href="{URL_FACEBOOK}" target="_blank">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 31.7 32" enable-background="new 0 0 31.7 32" xml:space="preserve" height="32px">
+									<g>
+										<path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M24.5,0H7.2C3.2,0,0,3.2,0,7.2v17.7c0,4,3.2,7.2,7.2,7.2h17.4
+										c3.9,0,7.2-3.2,7.2-7.2V7.2C31.7,3.2,28.5,0,24.5,0 M29.9,24.8c0,3-2.4,5.5-5.4,5.5H7.2c-3,0-5.4-2.4-5.4-5.5V7.2
+										c0-3,2.4-5.4,5.4-5.4h17.4c3,0,5.4,2.4,5.4,5.4V24.8z"/>
+										<path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M13.9,11.3v2.1h-1.6V16h1.6v7.7H17v-7.7h2.2l0.2-2.6H17v-1.5
+										c0-0.6,0.1-0.9,0.7-0.9h1.7V8.3h-2.1C14.9,8.3,13.9,9.3,13.9,11.3"/>
+									</g>
+								</svg>
+							</a>
+							<!-- END BLOCK_FACEBOOK -->
+							<!-- BEGIN BLOCK_INSTAGRAM -->
+							<a href="{URL_INSTAGRAM}" target="_blank">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 31.7 32" enable-background="new 0 0 31.7 32" xml:space="preserve" height="32px">
+									<g>
+										<path fill="#FFFFFF" d="M24.5,0H7.2C3.2,0,0,3.2,0,7.2v17.7c0,4,3.2,7.2,7.2,7.2h17.4c3.9,0,7.2-3.2,7.2-7.2V7.2
+										C31.7,3.2,28.5,0,24.5,0 M30,24.8c0,3-2.4,5.5-5.4,5.5H7.2c-3,0-5.4-2.4-5.4-5.5V7.2c0-3,2.4-5.4,5.4-5.4h17.4c3,0,5.4,2.4,5.4,5.4
+										V24.8z"/>
+										<path fill="#FFFFFF" d="M15.9,12.5c-2,0-3.6,1.6-3.6,3.6c0,2,1.6,3.6,3.6,3.6c2,0,3.6-1.6,3.6-3.6C19.5,14.1,17.9,12.5,15.9,12.5
+										M15.9,18.4c-1.3,0-2.3-1-2.3-2.3c0-1.3,1-2.3,2.3-2.3c1.3,0,2.3,1,2.3,2.3C18.2,17.4,17.1,18.4,15.9,18.4"/>
+										<path fill="#FFFFFF" d="M19.7,11.4c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9c0.5,0,0.9-0.4,0.9-0.9S20.1,11.4,19.7,11.4"/>
+										<path fill="#FFFFFF" d="M18.7,8.7H13c-2.4,0-4.4,2-4.4,4.4v5.8c0,2.4,1.9,4.4,4.4,4.4h5.8c2.4,0,4.4-2,4.4-4.4v-5.8
+										C23.1,10.7,21.2,8.7,18.7,8.7 M21.7,18.9c0,1.7-1.3,3-3,3H13c-1.7,0-3-1.3-3-3v-5.8c0-1.7,1.4-3,3-3h5.8c1.7,0,3,1.3,3,3V18.9z"/>
+									</g>
+								</svg>
+							</a>
+							<!-- END BLOCK_INSTAGRAM -->
+						</nav>
+					</nav>
+					<!-- BEGIN MOSTRAR_TELEFONES -->
+					<nav class="nav-telefones">
+						<!-- BEGIN MOSTRAR_TELEFONE_2 -->
+						<a href="https://api.whatsapp.com/send?phone={NUM_WHATSAPP}">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve" height="16px">
+								<g>
+									<path fill="#34B44A" d="M13.6,2.3C12.1,0.8,10.1,0,8,0C3.6,0,0.1,3.6,0.1,7.9c0,1.4,0.4,2.8,1.1,4L0,16l4.2-1.1
+									c1.2,0.6,2.5,1,3.8,1h0c4.4,0,8-3.6,8-7.9C16,5.8,15.1,3.8,13.6,2.3"/>
+									<path fill="#FFFFFF" d="M8,14.5c-1.2,0-2.3-0.3-3.4-0.9l-0.2-0.1l-2.5,0.7l0.7-2.4l-0.2-0.3c-0.7-1-1-2.3-1-3.5
+									c0-3.6,3-6.6,6.6-6.6c1.8,0,3.4,0.7,4.7,1.9c1.2,1.2,2,2.9,2,4.7C14.7,11.6,11.6,14.5,8,14.5"/>
+									<path fill="#34B44A" d="M11.6,9.6c-0.2-0.1-1.2-0.6-1.4-0.6C10.1,8.9,9.9,8.8,9.8,9C9.7,9.2,9.3,9.7,9.2,9.8C9.1,10,8.9,10,8.8,9.9
+									c-1.2-0.6-1.9-1-2.7-2.4C5.9,7.2,6.3,7.2,6.6,6.4c0.1-0.1,0-0.2,0-0.3C6.6,6,6.2,5,6,4.6C5.9,4.2,5.7,4.3,5.6,4.3
+									c-0.1,0-0.2,0-0.4,0c-0.1,0-0.3,0.1-0.5,0.2C4.5,4.7,4,5.2,4,6.2s0.7,1.9,0.8,2.1c0.1,0.1,1.4,2.1,3.4,3c1.3,0.5,1.8,0.6,2.4,0.5
+									c0.4-0.1,1.2-0.5,1.3-0.9C12,10.3,12,9.9,12,9.8C11.9,9.7,11.8,9.7,11.6,9.6"/>
+								</g>
+							</svg>
+							<span>{TELEFONE_2}</span>
+						</a>
+						<!-- END MOSTRAR_TELEFONE_2 -->
+						<!-- BEGIN MOSTRAR_TELEFONE -->
+						<a href="tel:{NUM_TELEFONE}">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							viewBox="0 0 16 17.3" enable-background="new 0 0 16 17.3" xml:space="preserve" height="17.3px">
+								<g>
+									<path fill="#FFFFFF" d="M12.1,13.8c-0.3-0.2-1.9-0.9-2.1-1c-0.3-0.1-0.5-0.2-0.7,0.2c-0.2,0.3-0.8,1-1,1.2
+									c-0.2,0.2-0.4,0.2-0.7,0.1c-1.8-0.9-3-1.6-4.3-3.7C3,10,3.6,10,4.2,8.9c0.1-0.2,0.1-0.4,0-0.5C4.1,8.1,3.5,6.6,3.2,6
+									C3,5.4,2.7,5.5,2.5,5.4c-0.2,0-0.4,0-0.6,0c-0.2,0-0.5,0.1-0.8,0.4C0.8,6.1,0,6.9,0,8.4c0,1.5,1.1,3,1.3,3.2
+									c0.2,0.2,2.2,3.4,5.4,4.7c2,0.9,2.8,0.9,3.8,0.8c0.6-0.1,1.9-0.8,2.1-1.5c0.3-0.7,0.3-1.4,0.2-1.5C12.6,14.1,12.4,14,12.1,13.8"/>
+									<path fill="#FFFFFF" d="M7.3,5c0.2,0,1.5-0.3,2.5,0.6c0.9,0.7,1.3,1.8,1.1,2.9c-0.1,0.4,0.2,0.8,0.7,0.9c0,0,0.1,0,0.1,0
+									c0.4,0,0.7-0.3,0.8-0.7c0.2-1.7-0.4-3.4-1.7-4.4C9.3,3.1,7.5,3.3,7,3.4C6.6,3.5,6.3,3.9,6.4,4.4C6.5,4.8,6.9,5.1,7.3,5"/>
+									<path fill="#FFFFFF" d="M13.3,1.5C10.9-0.4,8.2,0,7.4,0.1C7,0.2,6.7,0.7,6.8,1.1c0.1,0.4,0.5,0.7,0.9,0.6c0.4-0.1,2.7-0.5,4.6,1
+									c1.6,1.2,2.3,3.2,2,5.3c-0.1,0.4,0.2,0.8,0.7,0.9c0,0,0.1,0,0.1,0c0.4,0,0.7-0.3,0.8-0.7C16.3,5.6,15.3,3,13.3,1.5"/>
+								</g>
+							</svg>
+							<span>{TELEFONE}</span>
+						</a>
+						<!-- END MOSTRAR_TELEFONE -->
+					</nav>
+					<!-- END MOSTRAR_TELEFONES -->
+					<!-- BEGIN MOSTRAR_LOGIN -->
+					<nav id="nav-login">
+						<div id="box-login">
+							<!-- BEGIN BLOCK_SAUDACAO -->
+							<div id="nome_membro" class="flex">
+								<span class="cor_principal">Olá, {NOME_CLIENTE}</span>
+							</div>
+							<!-- END BLOCK_SAUDACAO -->
+							<div id="bt_login" class="flex">
+								<span class="cor_principal">Fazer Login</span>
+							</div>
+							<!-- FINALLY BLOCK_SAUDACAO -->
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							viewBox="0 0 14.7 16" enable-background="new 0 0 14.7 16" xml:space="preserve" height="16px">
+								<path fill="#224252" d="M14.7,12.9c-0.2-2.7-2.5-4.5-5.6-5c1.4-0.7,2.4-2.1,2.4-3.7C11.5,1.8,9.6,0,7.3,0C5.1,0,3.2,1.8,3.2,4.1
+								c0,1.6,1,3.1,2.4,3.7c-3.1,0.5-5.4,2.3-5.6,5c0,0.1,0,0.1,0,0.2v1.5C0,15.4,0.6,16,1.4,16h11.9c0.8,0,1.4-0.6,1.4-1.4v-1.5
+								C14.7,13,14.7,12.9,14.7,12.9"/>
+							</svg>
+						</div>	
+					</nav>
+					<!-- END MOSTRAR_LOGIN -->
+					<style>
+						#topo #cabecalho {
+							padding-right: 20px;
+						}
+						#nav-cabecalho {
+							flex: 1.1;
+						}
+						.nav-telefones {
+							justify-content: end;
+						}
+					</style>
+					<!-- FINALLY MOSTRAR_LOGIN -->
+				</div>
+				<div class="flex" id="menu">
+					<div class="logo">
+						<img src="{PASTA_RAIZ_SIMULADOR}/img/logo.webp" alt="{NOME_SITE}" title="{NOME_SITE}" />
+					</div>
+					<nav class="nav-redes_sociais mobile">
+						<!-- BEGIN BLOCK_FACEBOOK_RODAPE -->
+						<a href="{URL_FACEBOOK}" target="_blank">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							viewBox="0 0 31.7 32" enable-background="new 0 0 31.7 32" xml:space="preserve" height="32px">
+								<g>
+									<path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M24.5,0H7.2C3.2,0,0,3.2,0,7.2v17.7c0,4,3.2,7.2,7.2,7.2h17.4
+									c3.9,0,7.2-3.2,7.2-7.2V7.2C31.7,3.2,28.5,0,24.5,0 M29.9,24.8c0,3-2.4,5.5-5.4,5.5H7.2c-3,0-5.4-2.4-5.4-5.5V7.2
+									c0-3,2.4-5.4,5.4-5.4h17.4c3,0,5.4,2.4,5.4,5.4V24.8z"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M13.9,11.3v2.1h-1.6V16h1.6v7.7H17v-7.7h2.2l0.2-2.6H17v-1.5
+									c0-0.6,0.1-0.9,0.7-0.9h1.7V8.3h-2.1C14.9,8.3,13.9,9.3,13.9,11.3"/>
+								</g>
+							</svg>
+						</a>
+						<!-- END BLOCK_FACEBOOK_RODAPE -->
+						<!-- BEGIN BLOCK_INSTAGRAM_RODAPE -->
+						<a href="{URL_INSTAGRAM}" target="_blank">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							viewBox="0 0 31.7 32" enable-background="new 0 0 31.7 32" xml:space="preserve" height="32px">
+								<g>
+									<path fill="#FFFFFF" d="M24.5,0H7.2C3.2,0,0,3.2,0,7.2v17.7c0,4,3.2,7.2,7.2,7.2h17.4c3.9,0,7.2-3.2,7.2-7.2V7.2
+									C31.7,3.2,28.5,0,24.5,0 M30,24.8c0,3-2.4,5.5-5.4,5.5H7.2c-3,0-5.4-2.4-5.4-5.5V7.2c0-3,2.4-5.4,5.4-5.4h17.4c3,0,5.4,2.4,5.4,5.4
+									V24.8z"/>
+									<path fill="#FFFFFF" d="M15.9,12.5c-2,0-3.6,1.6-3.6,3.6c0,2,1.6,3.6,3.6,3.6c2,0,3.6-1.6,3.6-3.6C19.5,14.1,17.9,12.5,15.9,12.5
+									M15.9,18.4c-1.3,0-2.3-1-2.3-2.3c0-1.3,1-2.3,2.3-2.3c1.3,0,2.3,1,2.3,2.3C18.2,17.4,17.1,18.4,15.9,18.4"/>
+									<path fill="#FFFFFF" d="M19.7,11.4c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9c0.5,0,0.9-0.4,0.9-0.9S20.1,11.4,19.7,11.4"/>
+									<path fill="#FFFFFF" d="M18.7,8.7H13c-2.4,0-4.4,2-4.4,4.4v5.8c0,2.4,1.9,4.4,4.4,4.4h5.8c2.4,0,4.4-2,4.4-4.4v-5.8
+									C23.1,10.7,21.2,8.7,18.7,8.7 M21.7,18.9c0,1.7-1.3,3-3,3H13c-1.7,0-3-1.3-3-3v-5.8c0-1.7,1.4-3,3-3h5.8c1.7,0,3,1.3,3,3V18.9z"/>
+								</g>
+							</svg>
+						</a>
+						<!-- END BLOCK_INSTAGRAM_RODAPE -->
+					</nav>
+					<nav id="nav-modalidades">
+						<span class="titulo">Outros Simuladores</span>
+						<nav class="modalidades">
+							<div class="seta_esquerda inativo"></div>
+							<ul class="lista_modalidades"></ul>
+							<div class="seta_direita inativo"></div>
+							<span class="outros_simulador">Ver todos</span>
+						</nav>
+					</nav>
+					<nav id="nav-menu">
+						<div id="menu_mobile">
+						<div class="menu_oculto" id="menu_topo">
+							<div class="opcao bt_ajuda">Ajuda</div>
+							<!-- BEGIN BLOCK_SIMULACOES_SALVAS -->
+							<div class="opcao bt_armario">Simulações Salvas</div>
+							<!-- END BLOCK_SIMULACOES_SALVAS -->
+							<!-- BEGIN MOSTRAR_SIMULACOES_MOBILE -->
+							<div class="opcao salvar-armario">Salvar Simulação</div>
+							<div class="opcao bt_nova-simulacao">Nova Simulação</div>
+							<!-- END MOSTRAR_SIMULACOES_MOBILE -->
+							<div class="opcao salvar-computador">Salvar no&nbsp;<span class="nome_dispositivo">Computador</span></div>
+							<!-- BEGIN MOSTRAR_TELEFONE_MOBILE -->
+							<a class="opcao telefones_mobile" href="tel:{NUM_TELEFONE}">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 481.168 481.168" style="enable-background:new 0 0 481.168 481.168;" xml:space="preserve" width="20px" height="20px">
+									<path d="M410.639,70.5c-94-94-246.3-94-340.2,0c-90.4,90.4-93.8,235-10.1,329.5l2.5,2c-9.1,19.6-24.7,43.8-49.5,56 c-8.2,4-6.3,16.2,2.7,17.6c27.1,4.2,66-0.5,102.3-27.9l0.5,0.4c92.2,54.2,212.8,41.8,292-37.4 C504.639,316.8,504.639,164.4,410.639,70.5z M319.839,343.5c-5.3,5.4-10.9,10.4-15.9,16c-7.3,8.2-16.5,10.8-26.9,10.2 c-15.2-0.8-29.3-5.9-42.8-12.5c-30.1-14.6-55.8-34.9-77.3-60.5c-15.9-18.9-29-39.5-37.7-62.8c-4.2-11.3-7.2-22.8-6.3-35 c0.6-7.5,3.4-13.9,8.9-19.2c6-5.7,11.6-11.6,17.5-17.4c7.7-7.6,17.3-7.5,25,0c4.8,4.7,9.4,9.4,14.1,14.1c4.6,4.6,9.2,9.1,13.7,13.7 c8,8.1,8,17.5,0,25.6c-5.7,5.8-11.4,11.6-17.3,17.2c-1.5,1.5-1.7,2.7-0.9,4.6c3.8,9.2,9.4,17.4,15.6,25 c12.5,15.4,26.7,29.1,43.7,39.7c3.6,2.3,7.6,3.9,11.4,6c1.9,1.1,3.3,0.7,4.8-0.9c5.7-5.9,11.6-11.7,17.4-17.5 c7.7-7.6,17.3-7.6,24.9,0c9.4,9.3,18.7,18.6,28,28C327.739,326,327.739,335.6,319.839,343.5z M231.139,188.1l3-21.4 c20.7,2.9,39.5,12.3,54.3,27.1c14.1,14.1,23.3,31.8,26.6,51.3l-21.3,3.7c-2.6-15.1-9.7-28.8-20.6-39.7 C261.639,197.6,247.139,190.3,231.139,188.1z M349.839,245.1c-4.8-28-18-53.4-38.1-73.6c-21.2-21.2-48.1-34.6-77.8-38.8l3-21.4 c34.3,4.8,65.5,20.3,90,44.9c23.3,23.3,38.6,52.8,44.2,85.2L349.839,245.1z"/>
+								</svg>
+								{TELEFONE}
+							</a>
+							<!-- END MOSTRAR_TELEFONE_MOBILE -->
+							<!-- BEGIN MOSTRAR_TELEFONE_2_MOBILE -->
+							<a class="opcao telefones_mobile" href="https://api.whatsapp.com/send?phone={NUM_WHATSAPP}">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 418.135 418.135" style="enable-background:new 0 0 418.135 418.135;" xml:space="preserve" width="20px" height="20px">
+									<path style="fill:#7AD06D;" d="M198.929,0.242C88.5,5.5,1.356,97.466,1.691,208.02c0.102,33.672,8.231,65.454,22.571,93.536
+									L2.245,408.429c-1.191,5.781,4.023,10.843,9.766,9.483l104.723-24.811c26.905,13.402,57.125,21.143,89.108,21.631
+									c112.869,1.724,206.982-87.897,210.5-200.724C420.113,93.065,320.295-5.538,198.929,0.242z M323.886,322.197
+									c-30.669,30.669-71.446,47.559-114.818,47.559c-25.396,0-49.71-5.698-72.269-16.935l-14.584-7.265l-64.206,15.212l13.515-65.607
+									l-7.185-14.07c-11.711-22.935-17.649-47.736-17.649-73.713c0-43.373,16.89-84.149,47.559-114.819
+									c30.395-30.395,71.837-47.56,114.822-47.56C252.443,45,293.218,61.89,323.887,92.558c30.669,30.669,47.559,71.445,47.56,114.817
+									C371.446,250.361,354.281,291.803,323.886,322.197z"/>
+									<path style="fill:#7AD06D;" d="M309.712,252.351l-40.169-11.534c-5.281-1.516-10.968-0.018-14.816,3.903l-9.823,10.008
+									c-4.142,4.22-10.427,5.576-15.909,3.358c-19.002-7.69-58.974-43.23-69.182-61.007c-2.945-5.128-2.458-11.539,1.158-16.218
+									l8.576-11.095c3.36-4.347,4.069-10.185,1.847-15.21l-16.9-38.223c-4.048-9.155-15.747-11.82-23.39-5.356
+									c-11.211,9.482-24.513,23.891-26.13,39.854c-2.851,28.144,9.219,63.622,54.862,106.222c52.73,49.215,94.956,55.717,122.449,49.057
+									c15.594-3.777,28.056-18.919,35.921-31.317C323.568,266.34,319.334,255.114,309.712,252.351z"/>
+								</svg>
+								{TELEFONE_2}
+							</a>
+							<!-- END MOSTRAR_TELEFONE_2_MOBILE -->
+							<!-- BEGIN BLOCK_LOGOUT -->
+							<div class="opcao" id="conta_mobile">
+								<svg class="cor_principal" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="12px" viewBox="177.504 235.828 256.992 320.225" enable-background="new 177.504 235.828 256.992 320.225" xml:space="preserve">
+									<g>
+										<path d="M306,235.828c43.868,0,79.488,35.62,79.488,79.488s-35.62,79.488-79.488,79.488
+										s-79.488-35.62-79.488-79.488S262.132,235.828,306,235.828z"/>
+										<path d="M434.496,509.794c0,25.46-20.799,46.259-46.259,46.259H223.763c-25.46,0-46.259-20.799-46.259-46.259
+										v-98.016c0-25.46,20.798-46.259,46.259-46.259h3.825c16.137,26.297,45.183,43.868,78.293,43.868
+										c33.109,0,62.156-17.571,78.293-43.868h3.824c25.461,0,46.259,20.798,46.259,46.259v98.016H434.496z"/>
+									</g>
+								</svg>
+								Minha Conta
+							</div>
+							<a id="logout">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="12px" height="16px" viewBox="0 0 612 792" enable-background="new 0 0 612 792" xml:space="preserve" class="cor_principal">
+									<path d="M476.967,461.782c-11.201,11.203-11.201,29.366,0.002,40.569c5.6,5.6,12.943,8.399,20.283,8.401
+									c7.343,0,14.683-2.802,20.286-8.403l86.063-86.064c0.03-0.03,0.055-0.064,0.086-0.096c0.633-0.641,1.239-1.308,1.811-2.004
+									c0.277-0.336,0.519-0.693,0.778-1.04c0.301-0.403,0.612-0.796,0.892-1.214c0.275-0.412,0.515-0.838,0.765-1.261
+									c0.228-0.381,0.467-0.754,0.678-1.146c0.229-0.431,0.424-0.873,0.631-1.311c0.195-0.411,0.399-0.814,0.573-1.235
+									c0.177-0.425,0.317-0.858,0.473-1.291c0.161-0.451,0.335-0.897,0.475-1.358c0.13-0.43,0.226-0.867,0.334-1.302
+									c0.121-0.472,0.253-0.938,0.349-1.421c0.1-0.501,0.158-1.006,0.231-1.511c0.06-0.423,0.14-0.838,0.182-1.265
+									c0.092-0.928,0.14-1.856,0.142-2.788c0-0.013,0.002-0.029,0.002-0.042c0-0.014-0.002-0.029-0.002-0.042
+									c-0.002-0.93-0.05-1.861-0.142-2.787c-0.042-0.432-0.124-0.853-0.186-1.279c-0.071-0.5-0.13-1-0.228-1.496
+									c-0.096-0.486-0.229-0.96-0.35-1.437c-0.107-0.43-0.201-0.86-0.329-1.285c-0.142-0.468-0.317-0.922-0.484-1.381
+									c-0.151-0.424-0.292-0.851-0.465-1.27c-0.178-0.429-0.386-0.842-0.585-1.261c-0.203-0.428-0.392-0.86-0.618-1.281
+									c-0.216-0.405-0.462-0.79-0.697-1.184c-0.245-0.41-0.477-0.824-0.744-1.224c-0.293-0.438-0.618-0.849-0.934-1.27
+									c-0.246-0.327-0.475-0.666-0.736-0.985c-0.601-0.734-1.235-1.438-1.906-2.109l-86.059-86.06c-11.203-11.204-29.368-11.204-40.569,0
+									c-11.203,11.203-11.203,29.366,0,40.569l37.091,37.091H181.696c-15.844,0-28.688,12.844-28.688,28.688
+									c0,15.844,12.844,28.688,28.688,28.688h332.361L476.967,461.782z"/>
+									<path d="M0.002,166.5v459c0,15.843,12.845,28.687,28.688,28.687h363.372c15.844,0,28.688-12.844,28.688-28.687
+									V510.747c0-15.843-12.844-28.688-28.688-28.688c-15.843,0-28.688,12.845-28.688,28.688v86.064H57.377V195.187h305.997v86.062
+									c0,15.843,12.845,28.687,28.688,28.687c15.844,0,28.688-12.844,28.688-28.687V166.5c0-15.843-12.844-28.688-28.688-28.688H28.689
+									C12.847,137.812,0.002,150.656,0.002,166.5z"/>
+								</svg>
+								<span class="cor_principal">Sair</span>
+							</a>
+							<!-- END BLOCK_LOGOUT -->
+							<div class="opcao" id="login_mobile">Fazer Login</div>
+							<!-- FINALLY BLOCK_LOGOUT -->
+						</div>
+						</div>
+						<div class="flex" id="menu-superior">
+							<a href="https://www.youtube.com/watch?v=ouiDyIcwFm4" target="_blank" id="bt-ajuda">
+								<span>Ajuda / Tutorial</span>
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 42.6 42.6" enable-background="new 0 0 42.6 42.6" xml:space="preserve" height="42.6px">
+									<g>
+										<path fill="var(--cor-destaque)" d="M21.3,0C9.6,0,0,9.6,0,21.3s9.6,21.3,21.3,21.3s21.3-9.6,21.3-21.3S33.1,0,21.3,0 M2,21.3
+										C2,10.7,10.7,2,21.3,2C32,2,40.6,10.7,40.6,21.3c0,10.6-8.7,19.3-19.3,19.3C10.7,40.6,2,32,2,21.3"/>
+										<path fill="var(--cor-destaque)" d="M21.1,26.9c-0.8,0-1.4-0.3-1.4-0.7V26c0-1.1,0.2-2.1,0.5-3c0.2-0.6,0.6-1.3,1.1-1.9c0.4-0.5,1.1-1.1,2.1-2
+										c1-0.9,1.7-1.6,2-2.1c0.3-0.5,0.5-1.1,0.5-1.7c0-1.1-0.4-2.1-1.3-3c-0.9-0.9-2-1.3-3.3-1.3c-1.2,0-2.3,0.4-3.1,1.2
+										c-0.8,0.8-1.1,1.7-1.1,1.7c-0.3,1.1-1.2,1.8-2,1.7s-1.3-1-1-2.1c0,0,0.5-2,1.9-3.1c1.3-1.2,3.1-1.8,5.3-1.8c2.3,0,4.2,0.6,5.5,1.9
+										c1.4,1.3,2.1,2.8,2.1,4.6c0,1-0.2,2-0.7,2.9c-0.5,0.9-1.4,1.8-1.4,1.8c-0.8,0.8-2.1,2-2.9,2.8c0,0-0.1,0.1-0.4,0.5
+										c-0.3,0.4-0.5,0.9-0.6,1.4c-0.1,0.5-0.1,0.5-0.1,0.5C22.6,26,21.9,26.9,21.1,26.9 M21.2,32.8c-0.9,0-1.7-0.7-1.7-1.7
+										s0.7-1.7,1.7-1.7c0.9,0,1.7,0.7,1.7,1.7S22.1,32.8,21.2,32.8"/>
+									</g>
+								</svg>
+							</a>
+							<!-- BEGIN MOSTRAR_SIMULACOES -->
+							<div id="bt_simulacoes">
+								<!-- BEGIN BLOCK_SIMULACOES -->
+								<span data-qnt="{NUM_SIMULACOES}">Suas<br/>Simulações ({NUM_SIMULACOES})</span>
+								<!-- END BLOCK_SIMULACOES -->
+								<span>Nova<br/>Simulação</span>
+								<!-- FINALLY BLOCK_SIMULACOES -->
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 38.1 38.1" enable-background="new 0 0 38.1 38.1" xml:space="preserve" height="38.1px">
+									<circle fill="#44AC48" cx="19" cy="19" r="19"/>
+									<polygon fill="#FFFFFF" points="17.6,27.2 17.6,20.4 10.9,20.4 10.9,17.6 17.6,17.6 17.6,10.9 20.5,10.9 20.5,17.6 27.1,17.6 
+									27.1,20.4 20.5,20.4 20.5,27.2 "/>
+								</svg>
+							</div>
+							<div class="menu_oculto simulacoes">
+								<!-- BEGIN BLOCK_ARMARIO -->
+								<div class="armario">
+									<!-- BEGIN BLOCK_SIMULACAO -->
+									<div class="opcao" rel="{ID_SIMULACAO}">
+										<div class="bg_opcao"></div>
+										<div class="box_imagem">
+											<div class="img_simulacao" style="background-image: url({PASTA_RAIZ_SIMULADOR}/geradas/partes/{IMG_SIMULACAO}_1.png);"></div>
+										</div>
+										<span class="nome_simulacao">{NOME_SIMULACAO}</span>
+										<div class="excluir_simulacao">X</div>
+									</div>
+									<!-- END BLOCK_SIMULACAO -->
+								</div>
+								<!-- onclick="novaSimulacao()" -->
+								<div class="opcao">
+									<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 52 52" xml:space="preserve" height="13px" style="enable-background:new 0 0 52 52; margin-right: 5px;">
+										<path d="M26,0C11.664,0,0,11.663,0,26s11.664,26,26,26s26-11.663,26-26S40.336,0,26,0z M38.5,28H28v11c0,1.104-0.896,2-2,2
+										s-2-0.896-2-2V28H13.5c-1.104,0-2-0.896-2-2s0.896-2,2-2H24V14c0-1.104,0.896-2,2-2s2,0.896,2,2v10h10.5c1.104,0,2,0.896,2,2
+											S39.604,28,38.5,28z"/>
+									</svg>
+									Nova Simulação
+								</div>
+								<!-- END BLOCK_ARMARIO -->
+							</div>
+							<!-- END MOSTRAR_SIMULACOES -->
+						</div>
+						<ul class="flex" id="menu-inferior">
+							<li><div class="bt_zoom" id="menos">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 17.7 18.4" enable-background="new 0 0 17.7 18.4" xml:space="preserve" height="18.4px">
+									<g>
+										<path fill="#224252" d="M17.7,17.7l-4.9-5c1.3-1.4,2.2-3.2,2.2-5.3c0-4.1-3.4-7.5-7.5-7.5S0,3.4,0,7.5c0,4.1,3.4,7.5,7.5,7.5
+										c1.7,0,3.3-0.6,4.6-1.6l4.9,5L17.7,17.7z M1,7.5C1,3.9,3.9,1,7.5,1c3.6,0,6.5,2.9,6.5,6.5c0,3.6-2.9,6.5-6.5,6.5
+										C3.9,13.9,1,11,1,7.5"/>
+										<rect x="4.6" y="6.8" fill="#224252" width="5.1" height="1"/>
+									</g>
+								</svg>
+							</div></li>
+							<li><div class="bt_zoom" id="mais">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 17.7 18.4" enable-background="new 0 0 17.7 18.4" xml:space="preserve" height="18.4px">
+									<g>
+										<path fill="#224252" d="M17.7,17.7l-4.9-5c1.3-1.4,2.2-3.2,2.2-5.3c0-4.1-3.4-7.5-7.5-7.5S0,3.4,0,7.5c0,4.1,3.4,7.5,7.5,7.5
+										c1.7,0,3.3-0.6,4.6-1.6l4.9,5L17.7,17.7z M1,7.5C1,3.9,3.9,1,7.5,1c3.6,0,6.5,2.9,6.5,6.5c0,3.6-2.9,6.5-6.5,6.5
+										C3.9,13.9,1,11,1,7.5"/>
+										<polygon fill="#224252" points="7.7,4.7 6.7,4.7 6.7,6.8 4.6,6.8 4.6,7.8 6.7,7.8 6.7,9.8 7.7,9.8 7.7,7.8 9.7,7.8 9.7,6.8 
+										7.7,6.8"/>
+									</g>
+								</svg>
+							</div></li>
+							<li><div id="voltar" class="desativado" title="Desfazer">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 26.8 26.8" enable-background="new 0 0 26.8 26.8" xml:space="preserve" height="26.8px">
+									<g>
+										<path fill="#224252" d="M14.3,9.9H8.6l1.6-1.6c0.4-0.4,0.4-1,0-1.3c-0.4-0.4-1-0.4-1.3,0l-3.2,3.2c-0.1,0.1-0.1,0.1-0.2,0.2
+										c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0
+										c0,0,0,0.1,0,0.1c0,0,0,0.1,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0
+										c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0.1,0.1,0.1,0.2,0.2l3.2,3.2c0.4,0.4,1,0.4,1.3,0c0.4-0.4,0.4-1,0-1.3l-1.6-1.6h3.9v0h1.9
+										c2.9,0,5.2,2.3,5.2,5.2v2.3c0,0.5,0.4,0.9,0.9,0.9s0.9-0.4,0.9-0.9v-2.3C21.4,13,18.2,9.9,14.3,9.9"/>
+										<path fill="#224252" d="M13.4,0C6,0,0,6,0,13.4c0,7.4,6,13.4,13.4,13.4c7.4,0,13.4-6,13.4-13.4C26.8,6,20.8,0,13.4,0 M13.4,25.6
+										c-6.7,0-12.2-5.5-12.2-12.2c0-6.7,5.5-12.2,12.2-12.2c6.7,0,12.2,5.5,12.2,12.2C25.6,20.1,20.1,25.6,13.4,25.6"/>
+									</g>
+								</svg>
+							</div></li>
+							<li><div id="avancar" class="desativado" title="Refazer">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 26.8 26.8" enable-background="new 0 0 26.8 26.8" xml:space="preserve" height="26.8px">
+									<g>
+										<path fill="#224252" d="M21.4,10.7C21.4,10.6,21.4,10.6,21.4,10.7C21.4,10.6,21.4,10.6,21.4,10.7c0-0.1,0-0.1,0-0.2l0,0
+										c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0-0.1-0.1-0.1-0.2-0.2L18,6.9c-0.4-0.4-1-0.4-1.3,0c-0.4,0.4-0.4,1,0,1.3
+										l1.6,1.6h-5.8c-3.9,0-7.1,3.2-7.1,7.1v2.3c0,0.5,0.4,0.9,0.9,0.9s0.9-0.4,0.9-0.9v-2.3c0-2.9,2.3-5.2,5.2-5.2h1.9v0h3.9l-1.6,1.6
+										c-0.4,0.4-0.4,1,0,1.3c0.4,0.4,1,0.4,1.3,0l3.2-3.2c0.1-0.1,0.1-0.1,0.2-0.2c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1
+										l0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0-0.1,0-0.1C21.4,10.8,21.4,10.7,21.4,10.7
+										C21.4,10.7,21.4,10.7,21.4,10.7"/>
+										<path fill="#224252" d="M13.4,0C6,0,0,6,0,13.4c0,7.4,6,13.4,13.4,13.4c7.4,0,13.4-6,13.4-13.4C26.8,6,20.8,0,13.4,0 M13.4,25.6
+										c-6.7,0-12.2-5.5-12.2-12.2c0-6.7,5.5-12.2,12.2-12.2c6.7,0,12.2,5.5,12.2,12.2C25.6,20.1,20.1,25.6,13.4,25.6"/>
+									</g>
+								</svg>
+							</div></li>
+							<li><div id="bt_salvar">
+								<span class="bt_titulo">Salvar</span>
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 11.2 16" enable-background="new 0 0 11.2 16" xml:space="preserve" height="16px">
+									<g>
+										<path fill="#224252" d="M10.3,14.2H0.9c-0.5,0-0.9,0.4-0.9,0.9S0.4,16,0.9,16h9.4c0.5,0,0.9-0.4,0.9-0.9S10.8,14.2,10.3,14.2"/>
+										<path fill="#224252" d="M5,13C5,13,5,13,5,13C5,13,5.1,13,5.1,13.1c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0
+										c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0h0c0,0,0.1,0,0.1,0c0,0,0.1,0,0.1,0h0c0,0,0,0,0,0
+										c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0,0
+										c0,0,0,0,0,0c0,0,0,0,0,0c0,0,0,0,0.1-0.1l4.1-4.1c0.4-0.4,0.4-0.9,0-1.3c-0.4-0.4-0.9-0.4-1.3,0l-2.6,2.6V0.9C6.5,0.4,6.1,0,5.6,0
+										C5.1,0,4.7,0.4,4.7,0.9v9.2L2.1,7.5c-0.4-0.4-0.9-0.4-1.3,0c-0.4,0.4-0.4,0.9,0,1.3L5,13z"/>
+									</g>
+								</svg>
+								<span class="menu_detalhe"></span>
+								<div class="menu_oculto" id="salvar-opcoes">
+									<!-- BEGIN SALVAR_FUNDO -->
+									<div class="opcao salvar-fundo">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 480 480" style="enable-background:new 0 0 480 480;" xml:space="preserve" width="15px" height="15px">
+											<g>
+												<path d="M378.528,214.688l-21.088-24c-5.824-6.624-15.904-7.264-22.56-1.472L272,244.32V16c0-8.832-7.168-16-16-16h-32
+													c-8.832,0-16,7.168-16,16v228.32l-62.88-55.104c-6.624-5.792-16.704-5.152-22.56,1.472l-21.088,23.968
+													c-5.856,6.656-5.184,16.8,1.472,22.624l126.528,110.752c6.048,5.28,15.04,5.28,21.088,0L377.056,237.28
+													C383.712,231.456,384.384,221.312,378.528,214.688z"/>
+											</g>
+											<g>
+												<path d="M416,416H64c-8.832,0-16,7.168-16,16v32c0,8.832,7.168,16,16,16h352c8.832,0,16-7.168,16-16v-32
+													C432,423.168,424.832,416,416,416z"/>
+											</g>
+										</svg>
+										<span>Salvar Fundo</span>
+									</div>
+									<!-- END SALVAR_FUNDO -->
+									<div class="opcao salvar-computador">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 480 480" style="enable-background:new 0 0 480 480;" xml:space="preserve" width="15px" height="15px">
+											<g>
+												<path d="M378.528,214.688l-21.088-24c-5.824-6.624-15.904-7.264-22.56-1.472L272,244.32V16c0-8.832-7.168-16-16-16h-32
+													c-8.832,0-16,7.168-16,16v228.32l-62.88-55.104c-6.624-5.792-16.704-5.152-22.56,1.472l-21.088,23.968
+													c-5.856,6.656-5.184,16.8,1.472,22.624l126.528,110.752c6.048,5.28,15.04,5.28,21.088,0L377.056,237.28
+													C383.712,231.456,384.384,221.312,378.528,214.688z"/>
+											</g>
+											<g>
+												<path d="M416,416H64c-8.832,0-16,7.168-16,16v32c0,8.832,7.168,16,16,16h352c8.832,0,16-7.168,16-16v-32
+													C432,423.168,424.832,416,416,416z"/>
+											</g>
+										</svg>
+										<p>Salvar no <span class="nome_dispositivo">Computador</span></p>
+									</div>
+									<!-- BEGIN SALVAR_ARMARIO -->
+									<div class="opcao salvar-armario">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 49 49" style="enable-background:new 0 0 49 49;" xml:space="preserve" width="15px" height="15px">
+											<g>
+												<path d="M39.914,0H37.5h-28h-9v49h7h33h8V8.586L39.914,0z M35.5,2v14h-24V2H35.5z M9.5,47V28h29v19H9.5z M46.5,47h-6V26h-33v21h-5
+													V2h7v16h28V2h1.586L46.5,9.414V47z"/>
+												<path d="M13.5,33h7c0.553,0,1-0.447,1-1s-0.447-1-1-1h-7c-0.553,0-1,0.447-1,1S12.947,33,13.5,33z"/>
+												<path d="M23.5,35h-10c-0.553,0-1,0.447-1,1s0.447,1,1,1h10c0.553,0,1-0.447,1-1S24.053,35,23.5,35z"/>
+												<path d="M25.79,35.29c-0.181,0.189-0.29,0.45-0.29,0.71s0.109,0.52,0.29,0.71C25.979,36.89,26.229,37,26.5,37
+													c0.26,0,0.52-0.11,0.71-0.29c0.18-0.19,0.29-0.45,0.29-0.71s-0.11-0.521-0.29-0.71C26.84,34.92,26.16,34.92,25.79,35.29z"/>
+												<path d="M33.5,4h-6v10h6V4z M31.5,12h-2V6h2V12z"/>
+											</g>
+										</svg>
+										<span>Salvar no Armário</span>
+									</div>
+									<!-- END SALVAR_ARMARIO -->
+								</div>
+							</div></li>
+							<li><div id="bt_visualizar">
+								<span>Visualizar</span>
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 16 14.4" enable-background="new 0 0 16 14.4" xml:space="preserve" height="14.4px">
+									<g>
+										<path fill="#224252" d="M8,5.4C6.6,5.4,5.4,6.6,5.4,8c0,1.4,1.1,2.6,2.6,2.6c1.4,0,2.6-1.1,2.6-2.6C10.6,6.6,9.4,5.4,8,5.4"/>
+										<path fill="#224252" d="M14.4,1.6h-2.5L10.4,0H5.6L4.1,1.6H1.6C0.7,1.6,0,2.3,0,3.2v9.6c0,0.9,0.7,1.6,1.6,1.6h12.8
+										c0.9,0,1.6-0.7,1.6-1.6V3.2C16,2.3,15.3,1.6,14.4,1.6 M8,12c-2.2,0-4-1.8-4-4c0-2.2,1.8-4,4-4c2.2,0,4,1.8,4,4
+										C12,10.2,10.2,12,8,12"/>
+									</g>
+								</svg>
+							</div></li>
+							<li id="bt_orcamento_2" class="mobile"><div><span class="texto">Orçamento</span><span class="seta"></span></div></li>
+							<input class="btzoom" type="range" name="points" min="0" value="1" max="3" step="1">
+						</ul>
+					</nav>
+				</div>
+			</div>
+
+			<div id="meio">
+				<div id="aguarde">
+					<center>
+						<p><br></p>
+						<h2>Carregando</h2>
+						<img src="{PASTA_RAIZ_SIMULADOR}/img/2d/loading.svg">
+					</center>
+				</div>
+				
+				<nav id="menu-central">
+					<ul id="lista_edicao">
+						<li class="opcao" rel="edicao_pecas" alt="Peças" title="Peças">
+							<div class="ico-lista_edicao">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 99.6 106.4" enable-background="new 0 0 99.6 106.4" xml:space="preserve" height="95px">
+									<path fill="var(--cor-destaque)" d="M69.6,73.8H20.4V30l-8.9,5L0,16.7L18.7,3.8L35.4,0l0.4,0.5c2.1,3.2,5.6,5,9.3,5h0
+									c3.6,0,7.1-1.9,9.2-5L54.6,0l16.7,3.8L90,16.7L78.6,35l-8.9-5V73.8z M22.2,72h45.6V26.8l10.1,5.7l9.6-15.4l-17-11.6L55.4,2.1
+									C52.9,5.4,49.1,7.4,45,7.4H45c-4,0-7.9-2-10.4-5.3L19.5,5.6l-17,11.6l9.6,15.4l10.1-5.7V72z"/>
+									<path fill="#fff" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" d="M94.1,74.6c-1.5-7-3.2-13.5-5-19.5
+									v-5.7H41.6v5.7c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0
+									c1.2-6.2,2.5-12.4,3.7-18.5c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0c6.1-0.5,11.4-1.5,15.7-2.7
+									C97.7,93.9,96.3,84.6,94.1,74.6z"/>
+								</svg>
+							</div>
+							<span>Modelos / Peças</span>
+						</li>
+						<li class="opcao" rel="edicao_modelos" alt="Modelos" title="Modelos">
+							<div class="ico-lista_edicao">
+								<img src="" />
+							</div>
+							<span>Modelos / Estampas</span>
+						</li>
+						<li class="opcao" rel="edicao_acabamentos" alt="Acabamentos" title="Acabamentos">
+							<div class="ico-lista_edicao">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 100 82" enable-background="new 0 0 100 82" xml:space="preserve" height="82px">
+									<g>
+										<path fill="var(--cor-destaque)" d="M77.4,82H22.6V33.3l-9.9,5.6L0,18.5L20.8,4.3L39.3,0l0.4,0.6C42.1,4.1,46,6.2,50,6.2h0
+										c4.1,0,7.9-2.1,10.3-5.6L60.7,0l18.5,4.3L100,18.5L87.3,38.9l-9.9-5.6V82z M24.7,80h50.6V29.8l11.3,6.4l10.6-17.1L78.4,6.2
+										L61.6,2.3C58.8,6,54.5,8.2,50,8.2H50c-4.5,0-8.8-2.2-11.5-5.9L21.6,6.2L2.8,19.1l10.6,17.1l11.3-6.4V80z"/>
+										<path fill="var(--cor-destaque)" d="M65.3,2.1C64.9,7.8,58,12.4,49.5,12.4c-8.4,0-15.3-4.4-15.8-10c1.7-0.4,3.5-0.8,5.2-1.2
+										c2.6,3.8,6.8,6.1,11.1,6c4.4,0,8.6-2.3,11.1-6C62.5,1.5,63.9,1.8,65.3,2.1"/>
+										<path fill="var(--cor-destaque)" d="M21.3,6.2c1.4,1.6,3,4,4.1,7.2c2.8,8.1-0.1,15.3-1,17.4c-2.4,1.4-4.8,2.7-7.2,4.1L5,16.4
+										C10.4,13,15.9,9.6,21.3,6.2"/>
+										<path fill="var(--cor-destaque)" d="M78.8,6.2c-1.4,1.6-3,4-4.1,7.2c-2.8,8.1,0.1,15.3,1,17.4c2.4,1.4,4.8,2.7,7.2,4.1l12.3-18.4
+										C89.7,13,84.3,9.6,78.8,6.2"/>
+									</g>
+								</svg>
+							</div>
+							<span>Acabamentos</span>
+						</li>
+						<li class="opcao" rel="edicao_texto" alt="Nome e Número" title="Nome e Número">
+							<div class="ico-lista_edicao">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 99.9 81.9" enable-background="new 0 0 99.9 81.9" xml:space="preserve" height="81.9px">
+									<g>
+										<path fill="none" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" d="M78.8,5.1C72.9,3.7,67,2.4,61.1,1
+										c-2.8,0.7-6.5,1.4-11,1.4c-4.6,0-8.4-0.7-11.3-1.4L21.2,5.1C14.6,9.6,8,14.2,1.4,18.7C5.2,24.9,9.1,31.2,13,37.4
+										c3.5-2,7.1-4,10.6-6v49.4H50h26.3V31.4c3.5,2,7.1,4,10.6,6c3.9-6.2,7.8-12.5,11.7-18.7C92,14.2,85.4,9.6,78.8,5.1z"/>
+										<polygon fill="var(--cor-destaque)" points="42.7,27 42.7,62.6 36,62.6 36,30.8 33.8,30.8 33.8,27 	"/>
+										<path fill="var(--cor-destaque)" d="M47.4,53.9V36.5c0-6.7,3.4-10,10.3-10c6.9,0,10.3,3.1,10.3,9.2v17.4c0,6.7-3.4,10-10.3,10
+										C50.8,63.1,47.4,60,47.4,53.9 M54.8,31.3c-0.5,0.7-0.8,1.8-0.8,3.4v20.1c0,1.6,0.3,2.8,0.9,3.6c0.6,0.7,1.5,1.1,2.8,1.1
+										s2.1-0.4,2.7-1.1c0.6-0.7,0.8-2,0.8-3.7v-20c0-1.6-0.3-2.8-0.8-3.4c-0.6-0.7-1.5-1-2.8-1S55.4,30.6,54.8,31.3"/>
+										<polygon fill="var(--cor-destaque)" points="29.4,20.9 27.3,20.9 27.3,8.9 29.4,8.9 35.6,16 35.6,8.9 37.6,8.9 37.6,20.9 35.9,20.9 29.4,14"/>
+										<path fill="var(--cor-destaque)" d="M50.3,11.9v6c0,1.1-0.4,1.9-1.3,2.4c-0.9,0.5-2.1,0.8-3.9,0.8c-3.5,0-5.2-1-5.2-3.1v-6
+										c0-1.1,0.4-1.9,1.3-2.4c0.9-0.5,2.2-0.8,3.9-0.8C48.6,8.8,50.3,9.8,50.3,11.9 M46.3,19.6c0.2-0.2,0.3-0.5,0.3-1.1v-7.1
+										c0-0.3,0-0.5-0.1-0.7c-0.1-0.2-0.2-0.3-0.3-0.4c-0.1-0.1-0.3-0.2-0.5-0.2c-0.2,0-0.4-0.1-0.7-0.1s-0.5,0-0.7,0.1
+										c-0.2,0-0.3,0.1-0.4,0.2c-0.1,0.1-0.2,0.2-0.3,0.4c-0.1,0.2-0.1,0.4-0.1,0.7v7.1c0,0.5,0.1,0.9,0.3,1.1c0.2,0.2,0.6,0.3,1.2,0.3
+										C45.7,19.8,46.1,19.7,46.3,19.6"/>
+										<polygon fill="var(--cor-destaque)" points="55.3,8.9 58.9,16.3 62.3,8.9 65.2,8.9 65.2,20.9 61.8,20.9 61.8,14.4 59.3,20.9 57.2,20.9 
+										54.6,15.1 54.6,20.9 52.7,20.9 52.7,8.9 	"/>
+										<polygon fill="var(--cor-destaque)" points="67.9,8.9 76,8.9 76,10.2 71.6,10.2 71.6,14.1 74.6,14.1 74.6,15.4 71.6,15.4 71.6,19.7 76,19.7 
+										76,20.9 67.9,20.9 	"/>
+									</g>
+								</svg>
+							</div>
+							<span>Nome e Número</span>
+						</li>
+						<li class="opcao" rel="edicao_patrocinios" alt="Escudo e Patrocínio" title="Escudo e Patrocínio">
+							<div class="ico-lista_edicao">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 100.4 82.6" enable-background="new 0 0 100.4 82.6" xml:space="preserve" height="82.6px">
+									<g>
+										<path fill="var(--cor-destaque)" d="M24.8,80.6h50.8V30l11.3,6.4l10.7-17.2l-18.9-13L61.8,2.3c-2.8,3.8-7.1,6-11.6,6c0,0-0.1,0-0.1,0
+										c-4.5,0-8.8-2.2-11.6-6L21.7,6.2l-18.9,13l10.7,17.2L24.8,30V80.6z M77.7,82.6H22.7V33.6l-10,5.6L0,18.7L20.9,4.3L39.5,0l0.4,0.6
+										c2.4,3.5,6.2,5.6,10.3,5.6c0,0,0.1,0,0.1,0c4.1,0,7.9-2.1,10.3-5.6L60.9,0l18.6,4.3l20.9,14.3L87.6,39.2l-10-5.6V82.6z"/>
+										<path fill="var(--cor-destaque)" class="icone-escudo" d="M66.8,17.6c-1.8-0.5-3.5-1-5.3-1.5c-1.8,0.5-3.5,1-5.3,1.5c-0.3,1-0.9,3.4,0,6.3c1.3,4,4.6,5.9,5.3,6.3
+										c0.7-0.4,4-2.2,5.3-6.3C67.7,21,67.1,18.5,66.8,17.6"/>
+										<path fill="var(--cor-destaque)" d="M65.2,52.5H35.2c-2.8,0-5.1-2.3-5.1-5.1v0c0-2.8,2.3-5.1,5.1-5.1h29.9c2.8,0,5.1,2.3,5.1,5.1v0
+										C70.3,50.2,68,52.5,65.2,52.5"/>
+										<path fill="var(--cor-destaque)" d="M68.2,78h-9.5c-1.2,0-2.1-0.9-2.1-2.1V75c0-1.2,0.9-2.1,2.1-2.1h9.5c1.2,0,2.1,0.9,2.1,2.1v0.9
+										C70.3,77.1,69.3,78,68.2,78"/>
+									</g>
+								</svg>
+							</div>
+							<span>Escudo e Patrocínio</span>
+						</li>
+						<li class="opcao" rel="edicao_upload" alt="Upload de Imagem" title="Upload de Imagem">
+							<div class="ico-lista_edicao">
+								<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 53.6 55.7" enable-background="new 0 0 53.6 55.7" xml:space="preserve" height="55.7px">
+									<g>
+										<path fill="#224252" d="M41.4,0c-6.7,0-12.2,5.5-12.2,12.2s5.5,12.2,12.2,12.2c6.7,0,12.2-5.5,12.2-12.2S48.1,0,41.4,0"/>
+										<path fill="var(--cor-destaque)" d="M1.3,34.9c0.6,0,1-0.4,1-1V7.6H26c0.6,0,1-0.5,1-1c0-0.6-0.4-1-1-1H1.3c-0.6,0-1,0.5-1,1v27.4
+										C0.3,34.5,0.7,34.9,1.3,34.9"/>
+										<path fill="var(--cor-destaque)" d="M46.8,34.9c0.6,0,1.1-0.5,1.1-1.1v-7.1c0-0.6-0.5-1.1-1.1-1.1c-0.6,0-1.1,0.5-1.1,1.1v7.1
+										C45.8,34.5,46.3,34.9,46.8,34.9"/>
+										<path fill="var(--cor-destaque)" d="M48.2,41.8c-0.4-1.2-0.9-1.9-1.3-2.4c-3.5-3.5-7-6.9-10.4-10.4c-0.2-0.2-1.3-1.4-3.2-1.5
+										c-2.1-0.1-3.4,1.3-3.6,1.5L17.2,41.6c-0.3,0.5-0.7,0.8-0.9,0.9c-0.2,0.2-0.5,0.3-0.8,0.4c-0.3,0.1-0.6,0-0.8,0
+										c-0.3-0.3-0.8-0.7-1.3-1.3c-1.5-1.6-2.1-2.1-3.2-3.3c-0.2-0.3-0.9-1-2.1-1.3c-1.3-0.3-2.3,0.1-2.6,0.3c-0.5,0.2-0.8,0.5-1.7,1.3
+										c-0.6,0.6-1.4,1.3-2.4,2.2c-0.2,0.2-0.4,0.4-0.7,0.7C0.2,42.1,0,42.8,0,43.2v7c0.1,1,0.4,1.7,0.7,2.2c1.9,3.3,6.7,3.3,7,3.3h5.7h17
+										h11.9c0.7-0.1,2.3-0.4,3.8-1.7c1.7-1.5,2.2-3.3,2.4-4v-5.5C48.5,43.9,48.5,43,48.2,41.8"/>
+										<path fill="var(--cor-destaque)" d="M9.2,27.1c0,2.4,1.9,4.4,4.4,4.4c2.4,0,4.4-2,4.4-4.4c0-2.4-2-4.4-4.4-4.4C11.2,22.7,9.2,24.6,9.2,27.1"/>
+										<path fill="#FFFFFF" d="M47.7,10.7h-4.8V5.9c0-0.8-0.7-1.5-1.5-1.5c-0.8,0-1.5,0.7-1.5,1.5v4.8H35c-0.8,0-1.5,0.7-1.5,1.5
+										c0,0.8,0.7,1.5,1.5,1.5h4.8v4.8c0,0.8,0.7,1.5,1.5,1.5c0.8,0,1.5-0.7,1.5-1.5v-4.8h4.8c0.8,0,1.5-0.7,1.5-1.5
+										C49.2,11.4,48.6,10.7,47.7,10.7"/>
+									</g>
+								</svg>
+							</div>
+							<span>Upload de Imagem</span>
+						</li>
+					</ul>
+				</nav>
+				<div id="meio_conteudo">
+					<div id="menu_edicao">
+						<!-- BEGIN MOSTRAR_ATENDIMENTO_WHATSAPP -->
+						<a href="https://api.whatsapp.com/send?phone={NUM_WHATSAPP}" target="_blank" rel="noopener noreferrer" class="atendimento">
+							<div class="bt_whatsApp">
+								<span class="texto_atendimento">Atendimento online</span>
+								<span>WhatsApp</span>
+							</div>
+							<figure class="bt_detalhe">
+								<img src="{PASTA_RAIZ_SIMULADOR}/img/icones/layout_1/detalhe-whatsapp.webp" height="65px" />
+							</figure>
+						</a>
+						<!-- BEGIN MOSTRAR_CONTATOS_WHATSAPP -->
+						<div class="box_contatos_whatsapp" style="display: none;">
+							<!-- BEGIN BLOCK_CONTATO_WHATSAPP -->
+							<a href="https://api.whatsapp.com/send?phone={CONTATO_WHATSAPP}" target="_blank" rel="noopener noreferrer" class="bt_atendimento">
+								<div class="bt_whatsApp">
+									<span class="texto_atendimento">{CONTATO_NOME}</span>
+								</div>
+								<figure class="bt_detalhe">
+									<img src="{PASTA_IMAGENS}/img/icones/detalhe-whatsapp.webp" height="65px" />
+								</figure>
+							</a>
+							<!-- END BLOCK_CONTATO_WHATSAPP -->
+						</div>
+						<!-- END MOSTRAR_CONTATOS_WHATSAPP -->
+						<!-- END MOSTRAR_ATENDIMENTO_WHATSAPP -->
+						<nav id="box_edicao">
+							<div id="conteudo_edicao">
+								<div class="edicao_pecas">
+									<div class="cabecalho">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 51.4 51.4" enable-background="new 0 0 51.4 51.4" xml:space="preserve" height="51.4px">
+											<g>
+												<circle fill="none" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" cx="25.7" cy="25.7" r="24.7"/>
+												<path transform="scale(0.75) translate(2, 0)" fill="#fff" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" d="M36.4,12.5c-2.2-0.5-4.4-1-6.5-1.5
+												c-1,1.4-2.5,2.2-4.1,2.2c-1.6,0-3.2-0.8-4.1-2.2c-2.2,0.5-4.4,1-6.5,1.5c-2.4,1.7-4.9,3.4-7.3,5c1.4,2.3,2.9,4.6,4.3,6.9
+												c1.3-0.7,2.6-1.5,3.9-2.2v18.3h9.8h9.8V22.2c1.3,0.7,2.6,1.5,3.9,2.2c1.4-2.3,2.9-4.6,4.3-6.9C41.3,15.8,38.8,14.1,36.4,12.5z"/>
+												<path transform="scale(0.65) translate(27, 34)" fill="#fff" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" d="M34.3,14.5c-0.8-3.7-1.7-7.2-2.7-10.5
+												V1H6.1v3c-1,3.2-1.9,6.7-2.7,10.5c-1.2,5.3-1.9,10.3-2.4,14.9c2.3,0.6,5.2,1.2,8.4,1.5c2.8,0.2,5.2,0.2,7.4,0c0.7-3.3,1.3-6.6,2-9.9
+												c0.7,3.3,1.4,6.6,2.2,10c2.1,0.2,4.5,0.2,7.2,0c3.3-0.3,6.1-0.8,8.4-1.5C36.2,24.8,35.5,19.8,34.3,14.5z"/>
+											</g>
+										</svg>
+										<figure class="detalhe-menu_edicao"></figure>
+										<span class="titulo">Peças</span>
+
+										<div class="mobile bt_fechar">
+											<span>Fechar</span>
+											<span class="detalhe"></span>
+										</div>
+									</div>
+									<div class="nome_peca">Peças Superior</div>
+									<ul class="conteudo_edicao pecas_superior ativo">
+										<!-- BEGIN BLOCK_PECA_SUPERIOR -->
+										<li onclick="trocaPeca('{PECA}', 'superior', '{NOME_PECA}')" rel="{PECA}">
+											<img src="{PASTA_RAIZ_SIMULADOR}/img/manequim/{ESPORTE_PATH}_{PECA}.webp" alt="{NOME_PECA}" title="{NOME_PECA}"/>
+											<span>{NOME_PECA}</span>
+										</li>
+										<!-- END BLOCK_PECA_SUPERIOR -->
+									</ul>
+									<div class="nome_peca">Peças Inferior</div>
+									<ul class="conteudo_edicao pecas_inferior ativo">
+										<!-- BEGIN BLOCK_PECA_INFERIOR --> 
+										<li onclick="trocaPeca('{PECA}', 'inferior', '{NOME_PECA}')" rel="{PECA}">
+											<img src="{PASTA_RAIZ_SIMULADOR}/img/manequim/{ESPORTE_PATH}_{PECA}.webp" alt="{NOME_PECA}" title="{NOME_PECA}"/>
+											<span>{NOME_PECA}</span>
+										</li>
+										<!-- END BLOCK_PECA_INFERIOR --> 
+									</ul>
+								</div>
+								<div class="edicao_modelos">
+									<div class="cabecalho">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 51.4 51.4" enable-background="new 0 0 51.4 51.4" xml:space="preserve" height="51.4px">
+											<g>
+												<circle fill="none" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" cx="25.7" cy="25.7" r="24.7"/>
+												<path fill="none" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" d="M36.4,12.5c-2.2-0.5-4.4-1-6.5-1.5
+												c-1,1.4-2.5,2.2-4.1,2.2c-1.6,0-3.2-0.8-4.1-2.2c-2.2,0.5-4.4,1-6.5,1.5c-2.4,1.7-4.9,3.4-7.3,5c1.4,2.3,2.9,4.6,4.3,6.9
+												c1.3-0.7,2.6-1.5,3.9-2.2v18.3h9.8h9.8V22.2c1.3,0.7,2.6,1.5,3.9,2.2c1.4-2.3,2.9-4.6,4.3-6.9C41.3,15.8,38.8,14.1,36.4,12.5z"/>
+											</g>
+										</svg>
+										<figure class="detalhe-menu_edicao"></figure>
+										<span class="titulo">Modelos / Estampas</span>
+
+										<div class="mobile bt_fechar">
+											<span>Fechar</span>
+											<span class="detalhe"></span>
+										</div>
+									</div>
+									<div class="box-checkbox">
+										<input type="checkbox" name="sincronizar" value="" id="ipt-sincronizar"/>
+										<label class="ipt-checkbox" for="ipt-sincronizar">
+											<span><b>Sincronizar {NOME_SUPERIOR} e {NOME_INFERIOR}</b></span>
+										</label>
+									</div>
+									<div id="opcoes-modelo_conjunto">
+										<br/>
+										<div class="box-checkbox">
+											<input type="checkbox" name="mostrar_peca" value="" id="ipt-peca-conjunto"/>
+											<label class="ipt-checkbox" for="ipt-peca-conjunto">
+												<span><b>Somente {NOME_SUPERIOR} e {NOME_INFERIOR}</b></span>
+											</label>
+										</div>
+										<div class="box-checkbox">
+											<input type="checkbox" name="mostrar_peca" value="" id="ipt-peca-superior"/>
+											<label class="ipt-checkbox" for="ipt-peca-superior">
+												<span><b>Somente {NOME_SUPERIOR}</b></span>
+											</label>
+										</div>
+										<div class="box-checkbox">
+											<input type="checkbox" name="mostrar_peca" value="" id="ipt-peca-inferior"/>
+											<label class="ipt-checkbox" for="ipt-peca-inferior">
+												<span><b>Somente {NOME_INFERIOR}</b></span>
+											</label>
+										</div>
+									</div>
+									<div class="sub-menu_edicao">
+										<div class="opcao_edicao" rel="superior"><span>{NOME_SUPERIOR}</span></div>
+										<div class="opcao_edicao" rel="inferior"><span>{NOME_INFERIOR}</span></div>
+										<div class="opcao_edicao" rel="acessorio"><span>{NOME_ACESSORIO}</span></div>
+									</div>
+									<div class="conteudo_edicao" rel="superior">
+										<ul class="lista_modelos" rel="modelos_superior"></ul>
+									</div>
+									<div class="conteudo_edicao" rel="inferior">
+										<ul class="lista_modelos" rel="modelos_inferior"></ul>
+									</div>
+									<div class="conteudo_edicao" rel="acessorio">
+										<ul class="lista_modelos" rel="modelos_acessorio"></ul>
+									</div>
+								</div>
+								<div class="edicao_acabamentos">
+									<div class="cabecalho">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 51.4 51.4" enable-background="new 0 0 51.4 51.4" xml:space="preserve" height="51.4px">
+											<g>
+												<path fill="var(--cor-destaque)" d="M25.7,51.4C11.5,51.4,0,39.9,0,25.7C0,11.5,11.5,0,25.7,0c14.2,0,25.7,11.5,25.7,25.7
+												C51.4,39.9,39.9,51.4,25.7,51.4 M25.7,2C12.6,2,2,12.6,2,25.7c0,13.1,10.6,23.7,23.7,23.7c13.1,0,23.7-10.6,23.7-23.7
+												C49.4,12.6,38.8,2,25.7,2"/>
+												<path fill="none" stroke="var(--cor-destaque)" stroke-width="2" stroke-miterlimit="10" d="M36.4,12.5c-2.2-0.5-4.4-1-6.5-1.5
+												c-1,1.4-2.5,2.2-4.1,2.2c-1.6,0-3.2-0.8-4.1-2.2c-2.2,0.5-4.4,1-6.5,1.5c-2.4,1.7-4.9,3.4-7.3,5c1.4,2.3,2.9,4.6,4.3,6.9
+												c1.3-0.7,2.6-1.5,3.9-2.2v18.3h9.8h9.8V22.2c1.3,0.7,2.6,1.5,3.9,2.2c1.4-2.3,2.9-4.6,4.3-6.9C41.3,15.8,38.8,14.1,36.4,12.5z"/>
+												<path fill="var(--cor-destaque)" d="M36.4,12.2l-6.8-1.6l-0.1,0.2c-0.9,1.3-2.3,2-3.7,2h0c-1.5,0-2.9-0.8-3.8-2l-0.1-0.2L15,12.2l-7.6,5.2
+												l4.6,7.5l3.6-2v17.8h20V22.9l3.6,2l4.7-7.5L36.4,12.2z M8.4,17.7l1-0.7c1.4,2.1,2.8,4.1,4.1,6.2l-1.3,0.7L8.4,17.7z M35,39.9H16.4
+												V21.7c0.4-1,1.2-3.4,0.3-6.1c-0.4-1.1-1-2-1.5-2.6l0.1-0.1l4.5-1c0.5,1.9,2.8,3.3,5.7,3.3c2.9,0,5.3-1.5,5.7-3.4l4.8,1.1l0.1,0.1
+												c-0.5,0.6-1.1,1.4-1.4,2.6c-0.9,2.6-0.2,5,0.2,6l0,0V39.9z M39.1,23.9l-1.2-0.7L42,17l1,0.7L39.1,23.9z"/>
+											</g>
+										</svg>
+										<figure class="detalhe-menu_edicao"></figure>
+										<span class="titulo">Acabamentos</span>
+
+										<div class="mobile bt_fechar">
+											<span>Fechar</span>
+											<span class="detalhe"></span>
+										</div>
+									</div>
+									<div class="sub-menu_edicao">
+										<div class="opcao_edicao" rel="gola"><span>Gola</span></div>
+										<div class="opcao_edicao" rel="manga_punho"><span>Punho</span></div>
+									</div>
+									<div class="conteudo_edicao" rel="gola">
+										<nav class="container" rel="gola">
+											<ul class="lista_opcoes" rel="gola"></ul>
+										</nav>
+										<div class="box_cores">
+											<div class="titulo">Cores da Gola</div>
+											<div class="lista_camadas" rel="cor_gola" data-peca="{PECA_SUPERIOR}">
+												<div class="cor_camada" rel="gola">
+													<div class="cor_atual"></div>
+													<span class="numero_camada">Cor 1</span>
+												</div>
+												<div class="cor_camada" rel="gola_2">
+													<div class="cor_atual"></div>
+													<span class="numero_camada">Cor 2</span>
+												</div>
+												<div class="cor_camada" rel="gola_3">
+													<div class="cor_atual"></div>
+													<span class="numero_camada">Cor 3</span>
+												</div>
+												<div class="cor_camada" rel="gola_4">
+													<div class="cor_atual"></div>
+													<span class="numero_camada">Cor 4</span>
+												</div>
+												<ul class="paleta_cores" rel="">
+													<div class="camada" rel=""></div>
+													<!-- BEGIN CAIXA_COR_GOLA -->
+													<li class="cor" style="background-color:{COD_COR};" data-i="{I}" id-cor="{ID_COR}" rel="superior"  alt="{ALT_COR}" title="{NOME_COR}"></li>
+													<!-- END CAIXA_COR_GOLA -->
+												</ul>
+											</div>
+										</div>
+										<div class="conteudo_bolso">
+											<ul class="box_selecao" rel="bolso" data-ancora="bolso">
+												<li class="selecao opcao_pers" rel="superior-bolso-sem"></li>
+												<li class="selecao opcao_pers" rel="superior-bolso-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 82" 
+													enable-background="new 0 0 100 82" xml:space="preserve" height="82px">
+														<path fill="#FFFFFF" d="M78.8,5.2L61.1,1.1C58.6,4.9,54.4,7.2,50,7.1c-4.4,0-8.6-2.2-11.1-6.1L21.2,5.2L1.4,18.7
+														C5.3,25,9.2,31.2,13.1,37.5c3.5-2,7.1-4,10.6-6v49.4H50h26.3V31.5c3.5,2,7.1,4,10.6,6c3.9-6.2,7.8-12.5,11.7-18.7L78.8,5.2z"/>
+														<path fill="var(--cor-destaque)" d="M77.4,82H22.6V33.3l-9.9,5.6L0,18.5L20.8,4.3L39.3,0l0.4,0.6C42.1,4.1,46,6.2,50,6.2h0
+														c4.1,0,7.9-2.1,10.3-5.6L60.7,0l18.5,4.3L100,18.5L87.3,38.9l-9.9-5.6V82z M24.7,80h50.6V29.8l11.3,6.4l10.6-17.1L78.4,6.2
+														L61.6,2.3C58.8,6,54.5,8.2,50,8.2H50c-4.5,0-8.8-2.2-11.5-5.9L21.6,6.2L2.8,19.1l10.6,17.1l11.3-6.4V80z"/>
+														<path fill="var(--cor-destaque)" d="M54,25v8c0,1.3,2.1,2.8,7,3.9c4.9-1.1,7-2.6,7-3.9c0-0.2,0-0.7,0-1.4c0-1,0-1.8,0-2.3
+														c0-0.8,0-1.5,0-2.2c0-0.7,0-1.4,0-2.1H54z"/>
+														<path fill="var(--cor-destaque)" d="M68,21.2l0-0.2H54v2h14C68,21.9,68,21.2,68,21.2z"/>
+													</svg>
+													<span>Bolso</br>Tradicional</span>
+												</li>
+											</ul>
+											<div class="box_cores" rel="bolso" data-ancora="bolso"></div>
+										</div>
+									</div>
+									<div class="conteudo_edicao" rel="manga_punho">
+										<div class="conteudo_manga">
+											<ul class="box_selecao" rel="manga" data-ancora="manga">
+												<li class="selecao opcao_pers" rel="superior-manga-sem"></li>
+												<li class="selecao opcao_pers" rel="superior-manga-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 100 82" enable-background="new 0 0 100 82" xml:space="preserve" height="82px">
+														<g>
+															<path fill="#FFFFFF" d="M78.8,5.2L61.1,1.1C58.6,4.9,54.4,7.2,50,7.1c-4.4,0-8.6-2.2-11.1-6.1L21.2,5.2L1.4,18.7
+															C5.3,25,9.2,31.2,13.1,37.5c3.5-2,7.1-4,10.6-6v49.4H50h26.3V31.5c3.5,2,7.1,4,10.6,6c3.9-6.2,7.8-12.5,11.7-18.7L78.8,5.2z"/>
+															<path fill="var(--cor-destaque)" d="M77.4,82H22.6V33.3l-9.9,5.6L0,18.5L20.8,4.3L39.3,0l0.4,0.6C42.1,4.1,46,6.2,50,6.2h0
+															c4.1,0,7.9-2.1,10.3-5.6L60.7,0l18.5,4.3L100,18.5L87.3,38.9l-9.9-5.6V82z M24.7,80h50.6V29.8l11.3,6.4l10.6-17.1L78.4,6.2
+															L61.6,2.3C58.8,6,54.5,8.2,50,8.2H50c-4.5,0-8.8-2.2-11.5-5.9L21.6,6.2L2.8,19.1l10.6,17.1l11.3-6.4V80z"/>
+															<path fill="var(--cor-destaque)" d="M21.3,6.2c1.4,1.6,3,4,4.1,7.2c2.8,8.1-0.1,15.3-1,17.4c-3.8,2.2-7.6,4.5-11.3,6.7c-3.7-6-7.3-12.1-11-18.1
+															C8.5,15,14.9,10.6,21.3,6.2"/>
+															<path fill="var(--cor-destaque)" d="M78.8,6.2c-1.4,1.6-3,4-4.1,7.2c-2.8,8.1,0.1,15.3,1,17.4c3.7,2.2,7.5,4.5,11.2,6.7
+															c3.9-6.2,7.8-12.5,11.7-18.7C92,14.6,85.4,10.4,78.8,6.2"/>
+														</g>
+													</svg>
+													<span>Manga</br>Tradicional</span>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-raglan-sem"></li>
+												<li class="selecao opcao_pers" rel="superior-raglan-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 100 82" enable-background="new 0 0 100 82" xml:space="preserve" height="82px">
+														<g>
+															<path fill="#FFFFFF" d="M78.8,5.2L61.1,1.1C58.6,4.9,54.4,7.2,50,7.1c-4.4,0-8.6-2.2-11.1-6.1L21.2,5.2L1.4,18.7
+															C5.3,25,9.2,31.2,13.1,37.5c3.5-2,7.1-4,10.6-6v49.4H50h26.3V31.5c3.5,2,7.1,4,10.6,6c3.9-6.2,7.8-12.5,11.7-18.7
+															C92,14.2,85.4,9.7,78.8,5.2"/>
+															<path fill="var(--cor-destaque)" d="M77.4,82H22.6V33.3l-9.9,5.6L0,18.5L20.8,4.3L39.3,0l0.4,0.6C42.1,4.1,46,6.2,50,6.2h0
+															c4.1,0,7.9-2.1,10.3-5.6L60.7,0l18.5,4.3L100,18.5L87.3,38.9l-9.9-5.6V82z M24.7,80h50.6V29.8l11.3,6.4l10.6-17.1L78.4,6.2
+															L61.6,2.3C58.8,6,54.5,8.2,50,8.2H50c-4.5,0-8.8-2.2-11.5-5.9L21.6,6.2L2.8,19.1l10.6,17.1l11.3-6.4V80z"/>
+															<path fill="var(--cor-destaque)" d="M78.8,6.2C72.9,4.8,66.9,3.3,61,1.8c2,0.9,7.7,3.6,11.5,10.1c4.7,8,3.2,16,2.8,17.9
+															c3.9,2.6,7.7,5.1,11.6,7.7c3.9-6.2,7.8-12.5,11.7-18.7C92,14.6,85.4,10.4,78.8,6.2"/>
+															<path fill="var(--cor-destaque)" d="M21.2,6.2C27.1,4.8,33.1,3.3,39,1.8c-2,0.9-7.7,3.6-11.5,10.1c-4.7,8-3.2,16-2.8,17.9
+															c-3.9,2.6-7.7,5.1-11.6,7.7C9.2,31.2,5.3,25,1.4,18.7C8,14.6,14.6,10.4,21.2,6.2"/>
+														</g>
+													</svg>
+													<span>Manga</br>Raglan</span>
+												</li>
+											</ul>
+											<div class="box_cores" rel="manga" data-ancora="manga"></div>
+										</div>
+										<div class="conteudo_punho">
+											<ul class="lista_opcoes" rel="punho" data-ancora="punho">
+												<li class="opcao opcao_pers" rel="superior-punho-sem">
+													<figure>
+														<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+														viewBox="0 0 92.2 85.6" enable-background="new 0 0 92.2 85.6" xml:space="preserve" height="85.6px">
+															<g>
+																<path fill="#FFFFFF" d="M47.5,54c-2.1-5.2-5.6-16.9-1.1-29.8c1.9-5.6,4.7-9.8,7.2-12.7L53,11.2l-30.4-7c-5,6.7-12.7,10.7-20.9,10.7
+																H1.6c-0.5,0-1-0.1-1.6-0.1v49.1c0,11.9,9.8,21.7,21.7,21.7h25.8L47.5,54L47.5,54z"/>
+																<path fill="var(--cor-destaque)" d="M69.1,70.5l23-36.9L54.5,7.7L21,0l-0.7,1.1C16,7.4,9,11.2,1.7,11.2H1.6c-0.5,0-1.1-0.1-1.6-0.1v3.7
+																c0.5,0,1,0.1,1.6,0.1h0.2c8.1,0,15.9-4,20.9-10.7l30.4,7l0.5,0.4c0.1-0.1,0.2-0.2,0.3-0.3c12,7.6,23.9,15.1,35.9,22.7L68.5,67.9
+																c-6.8-4-13.5-8.1-20.3-12.1c-0.2-0.4-0.4-1-0.7-1.7l-0.1,0v31.6h3.7V60.3L69.1,70.5z"/>
+																<path fill="var(--cor-destaque)" d="M47.5,54c0.3,0.7,0.5,1.3,0.7,1.7c6.8,4,13.5,8.1,20.3,12.1l21.1-33.9c-12-7.6-23.9-15.1-35.9-22.7
+																c-0.1,0.1-0.2,0.2-0.3,0.3c-2.4,2.9-5.2,7.1-7.2,12.7C42,37.1,45.5,48.8,47.5,54"/>
+																<line fill="none" stroke="#FFFFFF" stroke-miterlimit="12" x1="88.5" y1="32.6" x2="87.1" y2="34.7"/>
+
+																<line fill="none" stroke="#FFFFFF" stroke-miterlimit="12" stroke-dasharray="5.077,5.077" x1="84.4" y1="39" x2="69.6" y2="62.7"/>
+																<line fill="none" stroke="#FFFFFF" stroke-miterlimit="12" x1="68.3" y1="64.8" x2="67" y2="66.9"/>
+															</g>
+														</svg>
+													</figure>
+													<span>Sem Punho</span>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-punho-com">
+													<figure>
+														<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+														viewBox="0 0 92.2 85.6" enable-background="new 0 0 92.2 85.6" xml:space="preserve" height="85.6px">
+															<g>
+																<path fill="#FFFFFF" d="M47.5,54c-2.1-5.2-5.6-16.9-1.1-29.8c1.9-5.6,4.7-9.8,7.2-12.7L53,11.2l-30.4-7c-5,6.7-12.7,10.7-20.9,10.7
+																H1.6c-0.5,0-1-0.1-1.6-0.1v49.1c0,11.9,9.8,21.7,21.7,21.7h25.8L47.5,54L47.5,54z"/>
+																<path fill="var(--cor-destaque)" d="M69.1,70.5l23-36.9L54.5,7.7L21,0l-0.7,1.1C16,7.4,9,11.2,1.7,11.2H1.6c-0.5,0-1.1-0.1-1.6-0.1v3.7
+																c0.5,0,1,0.1,1.6,0.1h0.2c8.1,0,15.9-4,20.9-10.7l30.4,7l0.5,0.4c0.1-0.1,0.2-0.2,0.3-0.3c12,7.6,23.9,15.1,35.9,22.7
+																c-7,11.3-14.1,22.6-21.1,33.9c-6.8-4-13.5-8.1-20.3-12.1c-0.2-0.4-0.4-1-0.7-1.7l-0.1,0v31.6h3.7V60.3L69.1,70.5z"/>
+																<path fill="var(--cor-destaque)" d="M47.5,54c0.3,0.7,0.5,1.3,0.7,1.7c6.8,4,13.5,8.1,20.3,12.1c7-11.3,14.1-22.6,21.1-33.9
+																c-12-7.6-23.9-15.1-35.9-22.7c-0.1,0.1-0.2,0.2-0.3,0.3c-2.4,2.9-5.2,7.1-7.2,12.7C42,37.1,45.5,48.8,47.5,54"/>
+																<rect x="74" y="29" transform="matrix(-0.8486 -0.529 0.529 -0.8486 116.0341 132.5054)" fill="#FFFFFF" width="6" height="41.3"/>
+															</g>
+														</svg>
+													</figure>
+													<span>Punho Simples</span>
+												</li>
+												<input type="hidden" id="punho" value=""/>
+											</ul>
+											<div class="box_cores" rel="punho" data-ancora="punho"></div>
+										</div>
+									</div>
+									<div class="conteudo_edicao" rel="bolso">
+										<div class="conteudo_bolso">
+											<ul class="lista_opcoes" rel="bolso" data-ancora="bolso">
+												<li class="opcao opcao_pers" rel="superior-bolso-com"><figure class="icone" id="com-bolso"></figure></li>
+												<li class="opcao opcao_pers" rel="superior-bolso-sem"><figure class="icone" id="sem-bolso"></figure></li>
+											</ul>
+											<div class="box_cores" rel="bolso" data-ancora="bolso"></div>
+										</div>
+										<div class="conteudo_faixa">
+											<ul class="box_selecao" rel="faixa" data-ancora="faixa">
+												<li class="selecao opcao_pers" rel="superior-faixa-sem" style="display: none;"></li>
+												<li class="selecao opcao_pers" rel="superior-faixa-com"><figure class="icone" id="com-faixa"></figure></li>
+											</ul>
+											<div class="box_cores" rel="faixa" data-ancora="faixa"></div>
+										</div>
+										<div class="conteudo_edicao" rel="fecho">
+											<div class="conteudo_fecho">
+												<ul class="lista_opcoes" rel="fecho" data-ancora="fecho">
+													<li class="opcao opcao_pers" rel="superior-fecho-plastico" alt="Plástico" title="Plástico"><figure class="icone" id="fecho-plastico"></figure></li>
+													<li class="opcao opcao_pers" rel="superior-fecho-velcro" alt="Velcro" title="Velcro"><figure class="icone" id="fecho-velcro"></figure></li>
+													<li class="opcao opcao_pers" rel="superior-fecho-fivela" alt="Fivela" title="Fivela"><figure class="icone" id="fecho-fivela"></figure></li>
+												</ul>
+												<div class="box_cores" rel="fecho" data-ancora="fecho"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="edicao_texto">
+									<div class="cabecalho">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 51.4 51.4" enable-background="new 0 0 51.4 51.4" xml:space="preserve" height="51.4px">
+											<g>
+												<path fill="var(--cor-destaque)" d="M25.7,51.4C11.5,51.4,0,39.9,0,25.7C0,11.5,11.5,0,25.7,0c14.2,0,25.7,11.5,25.7,25.7
+												C51.4,39.9,39.9,51.4,25.7,51.4 M25.7,2C12.6,2,2,12.6,2,25.7c0,13.1,10.6,23.7,23.7,23.7c13.1,0,23.7-10.6,23.7-23.7
+												C49.4,12.6,38.8,2,25.7,2"/>
+												<path fill="none" stroke="var(--cor-destaque)" stroke-miterlimit="10" d="M36.2,13.3c-2.1-0.5-4.3-0.9-6.4-1.4c-1,0.2-2.4,0.5-4,0.5
+												c-1.7,0-3.1-0.2-4.1-0.5c-2.1,0.5-4.3,0.9-6.4,1.4c-2.4,1.6-4.8,3.1-7.2,4.7c1.4,2.2,2.8,4.3,4.2,6.5c1.3-0.7,2.6-1.4,3.8-2.1v17.1
+												h9.6h9.6V22.4c1.3,0.7,2.6,1.4,3.8,2.1c1.4-2.2,2.8-4.3,4.2-6.5C41,16.4,38.6,14.9,36.2,13.3z"/>
+												<polygon fill="var(--cor-destaque)" points="23.1,20.9 23.1,33.2 20.6,33.2 20.6,22.2 19.8,22.2 19.8,20.9 	"/>
+												<path fill="var(--cor-destaque)" d="M24.8,30.2v-6c0-2.3,1.2-3.5,3.7-3.5c2.5,0,3.7,1.1,3.7,3.2v6c0,2.3-1.2,3.5-3.7,3.5
+												C26,33.4,24.8,32.3,24.8,30.2 M27.5,22.4c-0.2,0.2-0.3,0.6-0.3,1.2v7c0,0.6,0.1,1,0.3,1.2c0.2,0.3,0.5,0.4,1,0.4
+												c0.5,0,0.8-0.1,1-0.4c0.2-0.3,0.3-0.7,0.3-1.3v-6.9c0-0.6-0.1-1-0.3-1.2c-0.2-0.2-0.5-0.3-1-0.3C28,22,27.7,22.1,27.5,22.4"/>
+											</g>
+										</svg>
+										<figure class="detalhe-menu_edicao"></figure>
+										<span class="titulo">Nome e Número</span>
+
+										<div class="mobile bt_fechar">
+											<span>Fechar</span>
+											<span class="detalhe"></span>
+										</div>
+									</div>
+									<div class="sub-menu_edicao">
+										<div class="opcao_edicao" rel="superior"><span>{NOME_SUPERIOR}</span></div>
+										<div class="opcao_edicao" rel="inferior"><span>{NOME_INFERIOR}</span></div>
+									</div>
+									<script>
+										var fontes = new Array();
+										var style_fontes = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+											style_fontes.type = 'text/css';
+											style_fontes.innerHTML = '';
+									</script>
+									<!-- BEGIN FONTES_CADASTRADAS -->
+									<script>
+										fontes.push( new Array('{NOME_FONTE}', '{DATA_FONTE}') );
+										style_fontes.innerHTML += '@font-face { font-family: "{NOME_FONTE}"; src: url("{DATA_FONTE}") format("woff"); }';
+									</script>
+									<style>
+										@font-face {
+											font-family: '{NOME_FONTE}';
+											src: url('{CAMINHO_FONTE}');
+										}
+									</style>
+									<!-- END FONTES_CADASTRADAS -->
+									<div class="conteudo_edicao" rel="superior">
+										<div class="flex" id="flex-input">
+											<div class="box-checkbox">
+												<input type="checkbox" name="nome" value="" id="ipt-nome" checked/>
+												<label class="ipt-checkbox ativo" for="ipt-nome" rel="nome">
+													<span><b>Nome</b> > Personalize</span>
+												</label>
+											</div>
+											<div class="box-checkbox">
+												<input type="checkbox" name="numero" value="" id="ipt-numero" checked/>
+												<label class="ipt-checkbox ativo" for="ipt-numero" rel="numero">
+													<span><b>Número</b> > Personalize</span>
+												</label>
+											</div>
+										</div>
+										<!-- BEGIN BLOCK_ICONES_NOME -->
+										<nav data-ancora="nome_verso">
+											<ul class="lista_opcoes ativo" rel="posicao_nome">
+												<li class="opcao opcao_pers" rel="superior-nome_verso_posicao-cima">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 71.6 58.5" enable-background="new 0 0 71.6 58.5" xml:space="preserve" height="58.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M55.4,58.5H16.2V23.7l-7.1,4L0,13.1L14.9,3l13-3L28,0c2.6,0.7,5.3,1,7.9,1c2.6,0,5.2-0.3,7.7-1l0.2,0l13,3
+															l14.9,10.2l-9.1,14.5l-7.1-4V58.5z M17.6,57H54V21.2l8.1,4.5l7.6-12.2L56.1,4.3L43.8,1.5c-2.6,0.6-5.2,1-7.9,1
+															c-2.7,0-5.4-0.3-8.1-1L15.5,4.3L1.9,13.5l7.6,12.2l8.1-4.5V57z"/>
+															<polygon fill="var(--cor-destaque)" class="icone-num" points="29.9,16.5 29.9,42 25.1,42 25.1,19.3 23.6,19.3 23.6,16.5 	"/>
+															<path fill="var(--cor-destaque)" class="icone-num" d="M33.3,35.7V23.4c0-4.8,2.5-7.2,7.4-7.2c4.9,0,7.4,2.2,7.4,6.6v12.4c0,4.8-2.5,7.1-7.4,7.1
+															C35.8,42.3,33.3,40.1,33.3,35.7 M38.7,19.6c-0.4,0.5-0.5,1.3-0.5,2.4v14.4c0,1.2,0.2,2,0.6,2.6c0.4,0.5,1.1,0.8,2,0.8
+															s1.5-0.3,1.9-0.8c0.4-0.5,0.6-1.4,0.6-2.6V22c0-1.2-0.2-2-0.6-2.5c-0.4-0.5-1.1-0.7-2-0.7C39.7,18.9,39,19.1,38.7,19.6"/>
+															<polygon fill="var(--cor-destaque)" points="23.5,12.4 22.4,12.4 22.4,5.8 23.6,5.8 27,9.7 27,5.8 28.1,5.8 28.1,12.4 27.1,12.4 23.5,8.6 	"/>
+															<path fill="var(--cor-destaque)" d="M35.1,7.5v3.3c0,0.6-0.2,1-0.7,1.3c-0.5,0.3-1.2,0.4-2.1,0.4c-1.9,0-2.9-0.6-2.9-1.7V7.5
+															c0-0.6,0.2-1,0.7-1.3c0.5-0.3,1.2-0.5,2.1-0.5C34.1,5.8,35.1,6.3,35.1,7.5 M32.9,11.7c0.1-0.1,0.2-0.3,0.2-0.6V7.2
+															c0-0.2,0-0.3-0.1-0.4c0-0.1-0.1-0.2-0.2-0.2c-0.1-0.1-0.2-0.1-0.3-0.1c-0.1,0-0.2,0-0.4,0c-0.1,0-0.3,0-0.4,0
+															c-0.1,0-0.2,0.1-0.2,0.1c-0.1,0.1-0.1,0.1-0.1,0.2c0,0.1,0,0.2,0,0.4v3.9c0,0.3,0.1,0.5,0.2,0.6c0.1,0.1,0.3,0.1,0.7,0.1
+															C32.5,11.8,32.7,11.8,32.9,11.7"/>
+															<polygon fill="var(--cor-destaque)" points="37.8,5.8 39.8,9.9 41.7,5.8 43.3,5.8 43.3,12.4 41.4,12.4 41.4,8.8 40,12.4 38.9,12.4 37.4,9.2 
+															37.4,12.4 36.4,12.4 36.4,5.8 	"/>
+															<polygon fill="var(--cor-destaque)" points="44.8,5.8 49.3,5.8 49.3,6.5 46.8,6.5 46.8,8.7 48.5,8.7 48.5,9.4 46.8,9.4 46.8,11.8 49.3,11.8 
+															49.3,12.4 44.8,12.4 	"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-nome_verso_posicao-baixo">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.4" enable-background="new 0 0 72.5 59.4" xml:space="preserve" height="59.4px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.4H16.4V24l-7.2,4.1L0,13.3L15.1,3l13.1-3l0.2,0c2.6,0.7,5.3,1,8,1c2.6,0,5.3-0.3,7.8-1l0.2,0
+															l13.1,3l15.1,10.3l-9.2,14.8L56.1,24V59.4z M17.9,57.9h36.8V21.6l8.2,4.6l7.7-12.4L56.8,4.4L44.3,1.5c-2.6,0.7-5.3,1-8,1
+															c-2.8,0-5.5-0.3-8.2-1L15.7,4.4L2,13.8l7.7,12.4l8.2-4.6V57.9z"/>
+															<polygon fill="var(--cor-destaque)" class="icone-num" points="30.3,7.6 30.3,33.5 25.4,33.5 25.4,10.4 23.8,10.4 23.8,7.6"/>
+															<path fill="var(--cor-destaque)" class="icone-num" d="M33.7,27.1V14.5c0-4.9,2.5-7.3,7.4-7.3c5,0,7.5,2.2,7.5,6.7v12.6c0,4.8-2.5,7.3-7.4,7.3
+															C36.2,33.8,33.7,31.5,33.7,27.1 M39.1,10.7c-0.4,0.5-0.5,1.3-0.5,2.4v14.6c0,1.2,0.2,2.1,0.6,2.6c0.4,0.5,1.1,0.8,2,0.8
+															s1.6-0.3,2-0.8c0.4-0.5,0.6-1.4,0.6-2.7V13.2c0-1.2-0.2-2-0.6-2.5c-0.4-0.5-1.1-0.7-2.1-0.7C40.2,10,39.5,10.2,39.1,10.7"/>
+															<polygon fill="var(--cor-destaque)" points="23.8,43.3 22.6,43.3 22.6,36.6 23.8,36.6 27.3,40.5 27.3,36.6 28.4,36.6 28.4,43.3 27.4,43.3 
+															23.8,39.4"/>
+															<path fill="var(--cor-destaque)" d="M35.5,38.2v3.3c0,0.6-0.2,1-0.7,1.3c-0.5,0.3-1.2,0.5-2.2,0.5c-1.9,0-2.9-0.6-2.9-1.7v-3.3
+															c0-0.6,0.2-1,0.7-1.3c0.5-0.3,1.2-0.5,2.2-0.5C34.5,36.5,35.5,37.1,35.5,38.2 M33.2,42.5c0.1-0.1,0.2-0.3,0.2-0.6V38
+															c0-0.2,0-0.3-0.1-0.4c0-0.1-0.1-0.2-0.2-0.2c-0.1-0.1-0.2-0.1-0.3-0.1c-0.1,0-0.2,0-0.4,0c-0.1,0-0.3,0-0.4,0
+															c-0.1,0-0.2,0.1-0.2,0.1c-0.1,0.1-0.1,0.1-0.1,0.2c0,0.1,0,0.2,0,0.4v3.9c0,0.3,0.1,0.5,0.2,0.6c0.1,0.1,0.3,0.2,0.7,0.2
+															C32.9,42.7,33.1,42.6,33.2,42.5"/>
+															<polygon fill="var(--cor-destaque)" points="38.3,36.6 40.3,40.7 42.2,36.6 43.8,36.6 43.8,43.3 41.9,43.3 41.9,39.6 40.5,43.3 39.3,43.3 
+															37.9,40 37.9,43.3 36.8,43.3 36.8,36.6"/>
+															<polygon fill="var(--cor-destaque)" points="45.3,36.6 49.9,36.6 49.9,37.3 47.4,37.3 47.4,39.5 49.1,39.5 49.1,40.2 47.4,40.2 47.4,42.6 
+															49.9,42.6 49.9,43.3 45.3,43.3"/>
+														</g>
+													</svg>
+												</li>
+												<input type="hidden" id="posicao_nome" value=""/>
+											</ul>	
+										</nav>
+										<nav data-ancora="numero_frente">
+											<ul class="box_selecao ativo" rel="numero_frente">
+												<li class="selecao opcao_pers" rel="superior-numero_frente-centro">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 71.9 59" enable-background="new 0 0 71.9 59" xml:space="preserve" height="59px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M55.6,59H16.3V24l-7.1,4L0,13.3L14.9,3.1L28.3,0l0.3,0.4c1.7,2.5,4.5,4,7.4,4h0c2.9,0,5.7-1.5,7.4-4L43.6,0
+															l13.3,3.1l14.9,10.2L62.7,28l-7.1-4V59z M17.7,57.5h36.4V21.4l8.1,4.6l7.6-12.3L56.3,4.4L44.3,1.7c-2,2.7-5.1,4.3-8.3,4.3h-0.1
+															c-3.2,0-6.3-1.6-8.3-4.3L15.5,4.4L2,13.7L9.6,26l8.1-4.6V57.5z"/>
+															<polygon fill="var(--cor-destaque)" points="33.4,23.9 33.4,35.1 31.3,35.1 31.3,25.1 30.6,25.1 30.6,23.9 	"/>
+															<path fill="var(--cor-destaque)" d="M34.8,32.4v-5.5c0-2.1,1.1-3.2,3.2-3.2c2.2,0,3.2,1,3.2,2.9v5.5c0,2.1-1.1,3.1-3.2,3.1
+															C35.9,35.2,34.8,34.3,34.8,32.4 M37.2,25.2C37,25.5,37,25.8,37,26.3v6.3c0,0.5,0.1,0.9,0.3,1.1c0.2,0.2,0.5,0.3,0.9,0.3
+															s0.7-0.1,0.9-0.3s0.3-0.6,0.3-1.2v-6.3c0-0.5-0.1-0.9-0.3-1.1s-0.5-0.3-0.9-0.3S37.3,25,37.2,25.2"/>
+														</g>
+													</svg>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-numero_frente-direita">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<polygon fill="var(--cor-destaque)" points="24.1,9.7 24.1,21.1 21.9,21.1 21.9,11 21.2,11 21.2,9.7 	"/>
+															<path fill="var(--cor-destaque)" d="M25.5,18.3v-5.5c0-2.1,1.1-3.2,3.3-3.2c2.2,0,3.3,1,3.3,2.9V18c0,2.1-1.1,3.2-3.3,3.2
+															C26.6,21.2,25.5,20.2,25.5,18.3 M27.9,11.1c-0.2,0.2-0.2,0.6-0.2,1.1v6.4c0,0.5,0.1,0.9,0.3,1.1c0.2,0.2,0.5,0.3,0.9,0.3
+															c0.4,0,0.7-0.1,0.9-0.3c0.2-0.2,0.3-0.6,0.3-1.2v-6.3c0-0.5-0.1-0.9-0.3-1.1c-0.2-0.2-0.5-0.3-0.9-0.3
+															C28.4,10.8,28.1,10.9,27.9,11.1"/>
+														</g>
+													</svg>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-numero_frente-esquerda">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<polygon fill="var(--cor-destaque)" points="43.4,9.7 43.4,21.1 41.3,21.1 41.3,11 40.6,11 40.6,9.7 	"/>
+															<path fill="var(--cor-destaque)" d="M44.9,18.3v-5.5c0-2.1,1.1-3.2,3.3-3.2c2.2,0,3.3,1,3.3,2.9V18c0,2.1-1.1,3.2-3.3,3.2
+															C46,21.2,44.9,20.2,44.9,18.3 M47.2,11.1c-0.2,0.2-0.2,0.6-0.2,1.1v6.4c0,0.5,0.1,0.9,0.3,1.1c0.2,0.2,0.5,0.3,0.9,0.3
+															c0.4,0,0.7-0.1,0.9-0.3c0.2-0.2,0.3-0.6,0.3-1.2v-6.3c0-0.5-0.1-0.9-0.3-1.1c-0.2-0.2-0.5-0.3-0.9-0.3
+															C47.7,10.8,47.4,10.9,47.2,11.1"/>
+														</g>
+													</svg>
+												</li>
+												<input type="hidden" id="numero_frente" value=""/>
+											</ul>
+										</nav>
+										<!-- END BLOCK_ICONES_NOME -->
+										<div class="sub-menu_edicao" id="opcoes_angulos" rel="texto">
+											<div class="opcao_edicao" rel="frente"><span>Frente</span></div>
+											<div class="opcao_edicao" rel="verso"><span>Verso</span></div>
+										</div>
+										<div class="personalizar_posicao" data-ancora="nome_frente" data-angulo="frente">
+											<div class="texto">Personalizar Posição</div>
+											<form>
+												<input type="radio" name="posicao_frente" value="direita" id="ipt-posicao_direita-frente">
+												<label for="ipt-posicao_direita-frente">Direita</label>
+												<input type="radio" name="posicao_frente" value="esquerda" id="ipt-posicao_esquerda-frente">
+												<label for="ipt-posicao_esquerda-frente">Esquerda</label>
+											</form>
+										</div>
+										<div class="personalizar_posicao" data-ancora="nome_verso" data-angulo="verso">
+											<div class="texto">Personalizar Posição</div>
+											<form>
+												<input type="radio" name="posicao_verso" value="direita" id="ipt-posicao_direita-verso">
+												<label for="ipt-posicao_direita-verso">Direita</label>
+												<input type="radio" name="posicao_verso" value="esquerda" id="ipt-posicao_esquerda-verso">
+												<label for="ipt-posicao_esquerda-verso">Esquerda</label>
+											</form>
+										</div>
+										<!-- FINALLY BLOCK_ICONES_NOME -->
+										<div class="personalizar_nome" rel="nome">
+											<div class="texto">Personalizar nome</div>
+											<div class="flex" data-ancora="nome_frente" data-angulo="frente">
+												<div class="box_ipt-texto">
+													<input type="text" placeholder="Digite seu nome aqui" class="ipt-texto" maxlength="16" rel="previewNome"/>
+												</div>
+												<div class="lista-fontes" rel="nome_frente">
+													<!-- BEGIN BLOCK_LISTA_FONTES -->
+													<nav class="fontes">
+														<div class="fonte_ativa"></div>
+														<ul class="menu_fontes">
+															<!-- BEGIN LISTA_FONTES_NOME_FRENTE -->
+															<li class="fonte_{I_FONTE}" data-nome="{NOME_FONTE}" rel="{TAMANHO_FONTE}" value="fonte_{I_FONTE}">
+																{NOME_FONTE} <span style="font-family:'{NOME_FONTE}'">ABC</span>
+															</li>
+															<!-- END LISTA_FONTES_NOME_FRENTE -->
+															<input type="hidden" id="fonte" value=""/>
+														</ul>
+													</nav>
+													<!-- END BLOCK_LISTA_FONTES -->
+												</div>
+												<div class="tamNum">
+													<input type="number" value="25" class="ipt-tamNum"/>
+													<div class="bt_tamNum">
+														<div class="bt_mais"></div>
+														<div class="bt_menos"></div>
+													</div>
+												</div>
+											</div>
+											<div class="box_cores" data-ancora="nome_frente" data-angulo="frente">
+												<div class="cores_linha"></div>
+											</div>
+											<div class="flex" data-ancora="nome_verso" data-angulo="verso">
+												<div class="box_ipt-texto">
+													<input type="text" placeholder="Digite seu nome aqui" class="ipt-texto" maxlength="16" rel="previewNome"/>
+												</div>
+												<div class="lista-fontes" rel="nome_verso">
+													<nav class="fontes">
+														<div class="fonte_ativa"></div>
+														<ul class="menu_fontes">
+															<!-- BEGIN LISTA_FONTES_NOME_VERSO -->
+															<li class="fonte_{I_FONTE}" data-nome="{NOME_FONTE}" rel="{TAMANHO_FONTE}" value="fonte_{I_FONTE}">
+																{NOME_FONTE} <span style="font-family:'{NOME_FONTE}'">ABC</span>
+															</li>
+															<!-- END LISTA_FONTES_NOME_VERSO -->
+															<input type="hidden" id="fonte_verso" value=""/>
+														</ul>
+													</nav>
+												</div>
+												<div class="tamNum">
+													<input type="number" value="30" class="ipt-tamNum" step="5"/>
+													<div class="bt_tamNum">
+														<div class="bt_mais"></div>
+														<div class="bt_menos"></div>
+													</div>
+												</div>
+											</div>
+											<div class="box_cores" data-ancora="nome_verso" data-angulo="verso">
+												<div class="cores_linha"></div>
+											</div>
+										</div>
+										<div class="personalizar_numero" rel="numero" data-angulo="frente">
+											<div class="texto">Personalizar número</div>
+											<div class="flex" data-ancora="numero">
+												<div class="tamNum">
+													<input type="number" value="10" class="ipt-texto" rel="previewNum"/>
+													<div class="bt_tamNum">
+														<div class="bt_mais"></div>
+														<div class="bt_menos"></div>
+													</div>
+												</div>
+												<div class="lista-fontes" rel="numero">
+													<nav class="fontes">
+														<div class="fonte_ativa"></div>
+														<ul class="menu_fontes">
+															<!-- BEGIN LISTA_FONTES_NUMERO -->
+															<li class="fonte_{I_FONTE}" data-nome="{NOME_FONTE}" rel="{TAMANHO_FONTE}" value="fonte_{I_FONTE}">
+																{NOME_FONTE} <span style="font-family:'{NOME_FONTE}'">10</span>
+															</li>
+															<!-- END LISTA_FONTES_NUMERO -->
+														</ul>	
+														<input type="hidden" id="fonte_num" value=""/>
+													</nav>
+												</div>
+												<div class="tamNum">
+													<input type="number" value="" class="ipt-tamNum" rel="previewNum" step="5"/>
+													<div class="bt_tamNum">
+														<div class="bt_mais"></div>
+														<div class="bt_menos"></div>
+													</div>
+												</div>
+											</div>	
+											<div class="box_cores">
+												<div class="cores_linha"></div>
+											</div>
+										</div>
+									</div>
+									<div class="conteudo_edicao" rel="inferior">
+										<div class="box-checkbox">
+											<input type="checkbox" name="numero_inferior" value="" id="ipt-numero_inferior" checked/>
+											<label class="ipt-checkbox ativo" for="ipt-numero_inferior" rel="numero">
+												<span><b>Número</b> > Personalize</span>
+											</label>
+										</div>
+										<ul class="lista_opcoes ativo" rel="posicao_numero">
+											<li class="opcao opcao_pers" rel="inferior-numero_posicao-direita">
+												<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+												viewBox="0 0 68 57.4" enable-background="new 0 0 68 57.4" xml:space="preserve" height="57.4px">
+													<g>
+														<path fill="none" stroke="var(--cor-destaque)" stroke-width="1.5" stroke-miterlimit="10" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7
+														c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5
+														c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9z"/>
+														<polygon fill="var(--cor-destaque)" points="7.3,40.9 7.3,52.2 5.2,52.2 5.2,42.1 4.5,42.1 4.5,40.9 	"/>
+														<path fill="var(--cor-destaque)" d="M8.8,49.4v-5.5c0-2.1,1.1-3.2,3.3-3.2c2.2,0,3.3,1,3.3,2.9v5.5c0,2.1-1.1,3.2-3.3,3.2
+														C9.9,52.4,8.8,51.4,8.8,49.4 M11.1,42.3c-0.2,0.2-0.2,0.6-0.2,1.1v6.4c0,0.5,0.1,0.9,0.3,1.1c0.2,0.2,0.5,0.3,0.9,0.3
+														c0.4,0,0.7-0.1,0.9-0.3c0.2-0.2,0.3-0.6,0.3-1.2v-6.3c0-0.5-0.1-0.9-0.3-1.1c-0.2-0.2-0.5-0.3-0.9-0.3
+														C11.6,41.9,11.3,42.1,11.1,42.3"/>
+													</g>
+												</svg>
+											</li>
+											<li class="opcao opcao_pers" rel="inferior-numero_posicao-esquerda">
+												<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+												viewBox="0 0 68 57.4" enable-background="new 0 0 68 57.4" xml:space="preserve" height="57.4px">
+													<g>
+														<path fill="none" stroke="var(--cor-destaque)" stroke-width="1.5" stroke-miterlimit="10" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7
+														c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5
+														c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9z"/>
+														<polygon fill="var(--cor-destaque)" points="55.4,40.9 55.4,52.2 53.3,52.2 53.3,42.1 52.6,42.1 52.6,40.9 	"/>
+														<path fill="var(--cor-destaque)" d="M56.9,49.4v-5.5c0-2.1,1.1-3.2,3.3-3.2c2.2,0,3.3,1,3.3,2.9v5.5c0,2.1-1.1,3.2-3.3,3.2
+														C58,52.4,56.9,51.4,56.9,49.4 M59.3,42.3c-0.2,0.2-0.2,0.6-0.2,1.1v6.4c0,0.5,0.1,0.9,0.3,1.1c0.2,0.2,0.5,0.4,0.9,0.4
+														c0.4,0,0.7-0.1,0.9-0.4c0.2-0.2,0.3-0.6,0.3-1.2v-6.3c0-0.5-0.1-0.9-0.3-1.1c-0.2-0.2-0.5-0.3-0.9-0.3
+														C59.7,41.9,59.4,42.1,59.3,42.3"/>
+													</g>
+												</svg>
+											</li>
+											<input type="hidden" id="inferior_numero" value=""/>
+										</ul>
+										<div class="personalizar_numero" data-angulo="verso">
+											<div class="texto">Personalizar Número</div>
+											<div class="flex">
+												<div class="lista-fontes" rel="numero_inferior">
+													<nav class="fontes">
+														<div class="fonte_ativa"></div>
+														<ul class="menu_fontes">
+															<!-- BEGIN LISTA_FONTES_NUMERO_INFERIOR -->
+															<li class="fonte_{I_FONTE}" data-nome="{NOME_FONTE}" rel="{TAMANHO_FONTE}" value="fonte_{I_FONTE}">
+																{NOME_FONTE} <span style="font-family:'{NOME_FONTE}'">10</span>
+															</li>
+															<!-- END LISTA_FONTES_NUMERO_INFERIOR -->
+														</ul>	
+														<input type="hidden" id="fonte_num_inferior" value=""/>
+													</nav>
+												</div>
+											</div>		
+											<div class="box_cores">
+												<div class="cores_linha"></div>
+											</div>
+										</div>
+									</div>
+									<div class="conteudo_edicao" rel="ferramenta_texto">
+										<div id="add-texto">(+) Adicionar Texto</div>
+										<div id="info-texto">
+											<div class="flex">
+												<input type="text" placeholder="Digite seu texto aqui" class="ipt-texto" maxlength="30" rel="texto_drag"/>
+												<div id="box_alinhamento">
+													<div class="bt_alinhamento" rel="flex-start" title="Esquerda">
+														<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+															height="20px" viewBox="0 0 30.8 25" enable-background="new 0 0 30.8 25" xml:space="preserve">
+															<path fill="#010101" d="M29.9,0h-29C0.4,0,0,0.4,0,0.9s0.4,0.9,0.9,0.9h29c0.5,0,0.9-0.4,0.9-0.9S30.4,0,29.9,0z M21.3,7.7H0.9
+															C0.4,7.7,0,8.1,0,8.6s0.4,0.9,0.9,0.9h20.4c0.5,0,0.9-0.4,0.9-0.9S21.8,7.7,21.3,7.7z M29.9,15.5h-29c-0.5,0-0.9,0.4-0.9,0.9
+															c0,0.5,0.4,0.9,0.9,0.9h29c0.5,0,0.9-0.4,0.9-0.9C30.8,15.9,30.4,15.5,29.9,15.5z M21.3,23.1H0.9c-0.5,0-0.9,0.4-0.9,0.9
+															C0,24.6,0.4,25,0.9,25h20.4c0.5,0,0.9-0.4,0.9-0.9C22.2,23.6,21.8,23.1,21.3,23.1z"/>
+														</svg>
+													</div>
+													<div class="bt_alinhamento ativo" rel="center" title="Centro">
+														<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+															height="20px" viewBox="0 0 30.8 25" enable-background="new 0 0 30.8 25" xml:space="preserve">
+															<path fill="#010101" d="M29.9,0h-29C0.4,0,0,0.4,0,0.9s0.4,0.9,0.9,0.9h29c0.5,0,0.9-0.4,0.9-0.9S30.4,0,29.9,0z M25.6,7.7H5.2
+															c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9h20.4c0.5,0,0.9-0.4,0.9-0.9S26.1,7.7,25.6,7.7z M29.9,15.5h-29c-0.5,0-0.9,0.4-0.9,0.9
+															c0,0.5,0.4,0.9,0.9,0.9h29c0.5,0,0.9-0.4,0.9-0.9C30.8,15.9,30.4,15.5,29.9,15.5z M25.6,23.1H5.2c-0.5,0-0.9,0.4-0.9,0.9
+															c0,0.5,0.4,0.9,0.9,0.9h20.4c0.5,0,0.9-0.4,0.9-0.9C26.5,23.6,26.1,23.1,25.6,23.1z"/>
+														</svg>
+													</div>
+													<div class="bt_alinhamento" rel="flex-end" title="Direita">
+														<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+															height="20px" viewBox="0 0 30.8 25" enable-background="new 0 0 30.8 25" xml:space="preserve">
+															<path fill="#010101" d="M29.9,0h-29C0.4,0,0,0.4,0,0.9s0.4,0.9,0.9,0.9h29c0.5,0,0.9-0.4,0.9-0.9S30.4,0,29.9,0z M29.9,7.7H9.5
+															C9,7.7,8.6,8.1,8.6,8.6S9,9.5,9.5,9.5h20.4c0.5,0,0.9-0.4,0.9-0.9S30.4,7.7,29.9,7.7z M29.9,15.5h-29c-0.5,0-0.9,0.4-0.9,0.9
+															c0,0.5,0.4,0.9,0.9,0.9h29c0.5,0,0.9-0.4,0.9-0.9C30.8,15.9,30.4,15.5,29.9,15.5z M29.9,23.1H9.5c-0.5,0-0.9,0.4-0.9,0.9
+															C8.6,24.6,9,25,9.5,25h20.4c0.5,0,0.9-0.4,0.9-0.9C30.8,23.6,30.4,23.1,29.9,23.1z"/>
+														</svg>
+													</div>
+												</div>
+											</div>	
+											<div class="flex" style="margin-top: 5px;">
+												<div class="lista-fontes">
+													<!-- BEGIN BLOCK_SELECT_FONTES -->
+													<nav class="fontes">
+														<div class="fonte_ativa"></div>
+														<ul class="menu_fontes">
+															<!-- BEGIN SELECT_FONTE -->
+															<li class="fonte_{I_FONTE}" data-nome="{NOME_FONTE}" rel="{TAMANHO_FONTE}" value="fonte_{I_FONTE}">
+																{NOME_FONTE} <span style="font-family:'{NOME_FONTE}'">ABC</span>
+															</li>
+															<!-- END SELECT_FONTE -->
+															<input type="hidden" id="fonte" value=""/>
+														</ul>
+													</nav>
+													<!-- END BLOCK_SELECT_FONTES -->
+												</div>
+												<div class="tamNum">
+													<input type="number" value="30" class="ipt-tamNum"/>
+													<div class="bt_tamNum">
+														<div class="bt_mais"></div>
+														<div class="bt_menos"></div>
+													</div>
+												</div>
+												<!--<div id="bt_confirma mobile">Ok</div>-->
+											</div>
+											<div class="flex" style="justify-content: center;">
+												<div class="box_cores">
+													<div class="box_cores-linha">
+														<div class="lista_camadas" rel="texto_drag" data-peca="">
+															<div class="cor_camada" rel="texto">
+																<div class="cor_atual"></div>
+																<span class="numero_camada">Cor Texto</span>
+															</div>
+															<ul class="paleta_cores" rel="">
+																<div class="camada" rel=""></div>
+																<!-- BEGIN CAIXA_COR_TEXTO -->
+																<li class="cor" style="background-color:{COD_COR};" data-i="{I}" id-cor="{ID_COR}" rel="superior" alt="{ALT_COR}" title="{NOME_COR}"></li>
+																<!-- END CAIXA_COR_TEXTO -->
+															</ul>
+														</div>
+													</div>
+												</div>
+												<!-- BEGIN CAIXA_BORDA_TEXTO -->
+												<div class="box_cores">
+													<div class="box_cores-linha">
+														<div class="lista_camadas" rel="texto_drag_borda" data-peca="">
+															<div class="cor_camada" rel="borda">
+																<div class="cor_atual"></div>
+																<span class="numero_camada">Cor Borda</span>
+															</div>
+															<ul class="paleta_cores" rel="">
+																<div class="camada" rel=""></div>
+																<li class="cor indisponivel" data-i="0" id-cor="sem_cor" rel="superior" alt="Sem Cor" title="Sem Cor"></li>
+																<!-- BEGIN CAIXA_COR_BORDA_TEXTO -->
+																<li class="cor" style="background-color:{COD_COR};" data-i="{I}" id-cor="{ID_COR}" rel="superior" alt="{ALT_COR}" title="{NOME_COR}"></li>
+																<!-- END CAIXA_COR_BORDA_TEXTO -->
+															</ul>
+														</div>
+													</div>
+												</div>
+												<!-- END CAIXA_BORDA_TEXTO -->
+											</div>
+										</div>
+										<ul class="lista_textos"></ul>
+									</div>
+								</div>
+								<div class="edicao_patrocinios">
+									<div class="cabecalho">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 51.4 51.4" enable-background="new 0 0 51.4 51.4" xml:space="preserve" height="51.4px">
+											<g>
+												<path fill="var(--cor-destaque)" class="icone-circle" d="M25.7,51.4C11.5,51.4,0,39.9,0,25.7C0,11.5,11.5,0,25.7,0c14.2,0,25.7,11.5,25.7,25.7
+												C51.4,39.9,39.9,51.4,25.7,51.4 M25.7,2C12.6,2,2,12.6,2,25.7c0,13.1,10.6,23.7,23.7,23.7c13.1,0,23.7-10.6,23.7-23.7
+												C49.4,12.6,38.8,2,25.7,2"/>
+												<path fill="var(--cor-destaque)" d="M35.6,40.5H15.9V22.9l-3.6,2l-4.6-7.4l7.5-5.1l6.7-1.5l0.1,0.2c0.9,1.3,2.2,2,3.7,2h0c1.5,0,2.8-0.8,3.7-2
+												l0.1-0.2l6.7,1.5l7.5,5.1L39.1,25l-3.6-2V40.5z M16.6,39.8h18.2V21.7l4.1,2.3l3.8-6.2l-6.8-4.7l-6-1.4c-1,1.3-2.5,2.1-4.2,2.1
+												c0,0,0,0,0,0c-1.6,0-3.2-0.8-4.1-2.1l-6,1.4l-6.8,4.7l3.8,6.2l4.1-2.3V39.8z"/>
+												<path fill="var(--cor-destaque)" class="icone-escudo" d="M31.7,17.2c-0.6-0.2-1.3-0.4-1.9-0.6c-0.6,0.2-1.3,0.4-1.9,0.6c-0.1,0.3-0.3,1.2,0,2.2
+												c0.5,1.5,1.6,2.1,1.9,2.2c0.3-0.1,1.4-0.8,1.9-2.2C32,18.4,31.8,17.5,31.7,17.2"/>
+												<path fill="var(--cor-destaque)" d="M31.1,29.7H20.3c-1,0-1.8-0.8-1.8-1.8v0c0-1,0.8-1.8,1.8-1.8h10.7c1,0,1.8,0.8,1.8,1.8v0
+												C32.9,28.9,32.1,29.7,31.1,29.7"/>
+												<path fill="var(--cor-destaque)" d="M32.2,38.9h-3.4c-0.4,0-0.8-0.3-0.8-0.8v-0.3c0-0.4,0.3-0.8,0.8-0.8h3.4c0.4,0,0.8,0.3,0.8,0.8v0.3
+												C32.9,38.5,32.6,38.9,32.2,38.9"/>
+											</g>
+										</svg>
+										<figure class="detalhe-menu_edicao"></figure>
+										<span class="titulo">Escudo e Patrocínio</span>
+
+										<div class="mobile bt_fechar">
+											<span>Fechar</span>
+											<span class="detalhe"></span>
+										</div>
+									</div>
+									<div class="sub-menu_edicao">
+										<div class="opcao_edicao" rel="superior"><span>{NOME_SUPERIOR}</span></div>
+										<div class="opcao_edicao" rel="inferior"><span>{NOME_INFERIOR}</span></div>
+									</div>
+									<div class="conteudo_edicao" rel="superior">
+										<div class="conteudo_escudo">
+											<div class="box-checkbox">
+												<input type="checkbox" name="escudo_superior" value="" id="ipt-escudo_superior"/>
+												<label class="ipt-checkbox" for="ipt-escudo_superior" rel="escudo_superior">
+													<span><b>Escudo</b> > Defina a posição</span>
+												</label>
+											</div>
+
+											<ul class="lista_opcoes" rel="escudo_superior">
+												<li class="opcao opcao_pers" rel="superior-escudo-sem" style="display:none!important;"></li>
+												<li class="opcao opcao_pers" rel="superior-escudo-esquerda">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<path fill="var(--cor-destaque)" class="icone-escudo" d="M51.6,13.3c-1.5-0.4-3-0.9-4.5-1.3c-1.5,0.4-3,0.9-4.5,1.3c-0.3,0.8-0.8,2.9,0,5.3c1.1,3.4,3.9,5,4.5,5.3
+															c0.6-0.3,3.4-1.9,4.5-5.3C52.4,16.2,51.9,14.1,51.6,13.3"/>
+															<polygon fill="none" class="icone-logo" stroke="var(--cor-destaque)" stroke-width="0.647" stroke-miterlimit="10" points="22.3,15.9 32.8,15.9 30.7,18.8 
+															20.1,18.8 	"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-escudo-esquerda_2">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<path fill="var(--cor-destaque)" class="icone-escudo" d="M51.6,13.3c-1.5-0.4-3-0.9-4.5-1.3c-1.5,0.4-3,0.9-4.5,1.3c-0.3,0.8-0.8,2.9,0,5.3c1.1,3.4,3.9,5,4.5,5.3
+															c0.6-0.3,3.4-1.9,4.5-5.3C52.4,16.2,51.9,14.1,51.6,13.3"/>
+															<polygon fill="none" stroke="var(--cor-destaque)" class="icone-logo" stroke-width="0.647" stroke-miterlimit="10" points="17.3,7.1 27.5,4.3 26.2,7.7 16,10.5 	
+															"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-escudo-centro">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve"  height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<path fill="var(--cor-destaque)" class="icone-escudo" d="M40.7,13.3c-1.5-0.4-3-0.9-4.5-1.3c-1.5,0.4-3,0.9-4.5,1.3c-0.3,0.8-0.8,2.9,0,5.3c1.1,3.4,3.9,5,4.5,5.3
+															c0.6-0.3,3.4-1.9,4.5-5.3C41.5,16.2,41,14.1,40.7,13.3"/>
+															<polygon fill="none" stroke="var(--cor-destaque)" class="icone-logo" stroke-width="0.647" stroke-miterlimit="10" points="32,7.5 42.6,7.5 40.5,10.5 29.9,10.5 	
+															"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-escudo-direita">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve"  height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M16.4,59.5h39.7V24.2l7.2,4.1l9.2-14.8L57.4,3.1L44,0l-0.3,0.4c-1.7,2.6-4.5,4-7.5,4.1h0
+															c-2.9,0-5.7-1.5-7.4-4.1L28.5,0L15.1,3.1L0,13.4l9.2,14.8l7.2-4.1V59.5z M54.6,58H17.9V21.6l-8.2,4.6L2,13.9l13.7-9.4l12.2-2.8
+															c2,2.7,5.1,4.3,8.4,4.3h0.1c3.3,0,6.3-1.6,8.4-4.3l12.2,2.8l13.7,9.4l-7.7,12.4l-8.2-4.6V58z"/>
+															<path fill="var(--cor-destaque)" class="icone-escudo" d="M20.9,13.3c1.5-0.4,3-0.9,4.5-1.3c1.5,0.4,3,0.9,4.5,1.3c0.2,0.8,0.8,2.9,0,5.3c-1.1,3.4-3.9,5-4.5,5.3
+															c-0.6-0.3-3.4-1.9-4.5-5.3C20.1,16.2,20.6,14.1,20.9,13.3"/>
+															<polygon fill="none" stroke="var(--cor-destaque)" class="icone-logo" stroke-width="0.647" stroke-miterlimit="10" points="44.6,15.8 55.1,15.8 53,18.7 
+															42.4,18.7 	"/>
+														</g>
+													</svg>
+												</li>
+												<input type="hidden" id="escudo_superior" value=""/>
+											</ul>
+											<div class="box_cores"></div>
+										</div>
+										<div class="conteudo_patrocinio">
+											<div class="box-checkbox">
+												<input type="checkbox" name="patrocinio" value="" id="ipt-patrocinio"/>
+												<label class="ipt-checkbox" for="ipt-patrocinio" data-ancora="patrocinio">
+													<span><b>Patrocínio</b> > Defina as posições</span>
+												</label>
+											</div>
+							
+											<ul class="box_selecao ativo" id="lista-patrocinio" rel="patrocinio" data-ancora="patrocinio">
+												<li class="selecao opcao_pers" rel="superior-patrocinio_cima-sem" style="display:none;"></li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_frente-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="#FFFFFF" d="M57.1,3.7c-4.3-1-8.5-2-12.8-3c-1.9,2.8-4.9,4.4-8.1,4.4c-3.2,0-6.2-1.6-8.1-4.4c-4.3,1-8.5,2-12.8,3
+															C10.6,7,5.8,10.3,1,13.6c2.8,4.5,5.6,9.1,8.5,13.6c2.6-1.4,5.1-2.9,7.7-4.3v35.8h19.1h19.1V22.8c2.6,1.4,5.1,2.9,7.7,4.3
+															c2.8-4.5,5.6-9.1,8.5-13.6C66.7,10.3,61.9,7,57.1,3.7"/>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<rect x="21.2" y="28.7" fill="var(--cor-destaque)" width="30.1" height="7.5"/>
+														</g>
+													</svg>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_omoplata-sem" style="display:none;"></li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_omoplata-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<rect x="19.1" y="5.6" fill="var(--cor-destaque)" width="10.3" height="6.1"/>
+															<rect x="42.6" y="5.6" fill="var(--cor-destaque)" width="10.3" height="6.1"/>
+														</g>
+													</svg>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_manga-sem" style="display:none;"></li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_manga-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<rect x="5.8" y="10.9" transform="matrix(0.8409 -0.5412 0.5412 0.8409 -5.4234 9.3564)" fill="var(--cor-destaque)" width="14.7" height="6.1"/>
+															<rect x="51.6" y="10.9" transform="matrix(-0.8409 -0.5412 0.5412 -0.8409 101.0202 57.5016)" fill="var(--cor-destaque)" width="14.7" height="6.1"/>
+														</g>
+													</svg>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_frente-sem" style="display:none;"></li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_cima-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.4" enable-background="new 0 0 72.5 59.4" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.4H16.4V24l-7.2,4.1L0,13.3L15.1,3l13.1-3l0.2,0c2.6,0.7,5.3,1,8,1c2.6,0,5.3-0.3,7.8-1l0.2,0
+															l13.1,3l15.1,10.3l-9.2,14.8L56.1,24V59.4z M17.9,57.9h36.8V21.6l8.2,4.6l7.7-12.4L56.8,4.4L44.3,1.5c-2.6,0.7-5.3,1-8,1
+															c-2.8,0-5.5-0.3-8.2-1L15.7,4.4L2,13.8l7.7,12.4l8.2-4.6V57.9z"/>
+															<rect x="19.6" y="6" fill="var(--cor-destaque)" width="33.3" height="7.5"/>
+														</g>
+													</svg>
+												</li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_baixo-sem" style="display:none;"></li>
+												<li class="selecao opcao_pers" rel="superior-patrocinio_baixo-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.4" enable-background="new 0 0 72.5 59.4" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.4H16.4V24l-7.2,4.1L0,13.3L15.1,3l13.1-3l0.2,0c2.6,0.7,5.3,1,8,1c2.6,0,5.3-0.3,7.8-1l0.2,0
+															l13.1,3l15.1,10.3l-9.2,14.8L56.1,24V59.4z M17.9,57.9h36.8V21.6l8.2,4.6l7.7-12.4L56.8,4.4L44.3,1.5c-2.6,0.7-5.3,1-8,1
+															c-2.8,0-5.5-0.3-8.2-1L15.7,4.4L2,13.8l7.7,12.4l8.2-4.6V57.9z"/>
+															<rect x="19.6" y="46.6" fill="var(--cor-destaque)" width="33.3" height="7.5"/>
+														</g>
+													</svg>
+												</li>
+											</ul>
+										</div>
+										<div class="conteudo_selo">
+											<div class="box-checkbox">
+												<input type="checkbox" name="selo" value="" id="ipt-selo"/>
+												<label class="ipt-checkbox" for="ipt-selo" data-ancora="selo">
+													<span><b>Selo</b> > Defina a posição</span>
+												</label>
+											</div>
+											
+											<ul class="lista_opcoes ativo" rel="selo" data-ancora="selo">
+												<li class="opcao opcao_pers" rel="superior-selo-direita">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M56.1,59.5H16.4V24.2l-7.2,4.1L0,13.4L15.1,3.1L28.5,0l0.3,0.4c1.7,2.6,4.5,4,7.5,4.1h0
+															c2.9,0,5.7-1.5,7.4-4.1L44,0l13.4,3.1l15.1,10.3l-9.2,14.8l-7.2-4.1V59.5z M17.9,58h36.7V21.6l8.2,4.6l7.7-12.4L56.8,4.5L44.6,1.7
+															c-2,2.7-5.1,4.3-8.4,4.3h-0.1c-3.3,0-6.3-1.6-8.4-4.3L15.7,4.5L2,13.9l7.7,12.4l8.2-4.6V58z"/>
+															<rect x="19.5" y="49.7" fill="var(--cor-destaque)" width="5.9" height="5.9"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-selo-esquerda">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 72.5 59.5" enable-background="new 0 0 72.5 59.5" xml:space="preserve" height="59.5px">
+														<g>
+															<path fill="var(--cor-destaque)" d="M16.4,59.5h39.7V24.2l7.2,4.1l9.2-14.8L57.4,3.1L44,0l-0.3,0.4c-1.7,2.6-4.5,4-7.5,4.1h0
+															c-2.9,0-5.7-1.5-7.4-4.1L28.5,0L15.1,3.1L0,13.4l9.2,14.8l7.2-4.1V59.5z M54.6,58H17.9V21.6l-8.2,4.6L2,13.9l13.7-9.4l12.2-2.8
+															c2,2.7,5.1,4.3,8.4,4.3h0.1c3.3,0,6.3-1.6,8.4-4.3l12.2,2.8l13.7,9.4l-7.7,12.4l-8.2-4.6V58z"/>
+															<rect x="47.1" y="49.7" fill="var(--cor-destaque)" width="5.9" height="5.9"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="superior-selo-sem" style="display:none;"></li>
+												<input type="hidden" id="selo" value=""/>
+											</ul>
+										</div>
+									</div>	
+									<div class="conteudo_edicao" rel="inferior">
+										<div class="conteudo_escudo">
+											<div class="box-checkbox">
+												<input type="checkbox" name="escudo_inferior" value="" id="ipt-escudo_inferior" checked/>
+												<label class="ipt-checkbox" for="ipt-escudo_inferior" rel="escudo_inferior">
+													<span><b>Escudo</b> > Defina a posição</span>
+												</label>
+											</div>
+											
+											<ul class="lista_opcoes" rel="escudo_inferior">
+												<li class="opcao opcao_pers" rel="inferior-escudo-sem" style="display:none!important;"></li>
+												<li class="opcao opcao_pers" rel="inferior-escudo-direita">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 68 57.4" enable-background="new 0 0 68 57.4" xml:space="preserve" height="57.4px">
+														<g>
+															<path fill="#FFFFFF" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8
+															c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0
+															c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9"/>
+															<path fill="none" stroke="var(--cor-destaque)" stroke-width="1.5" stroke-miterlimit="10" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7
+															c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5
+															c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9z"/>
+															<path class="icone-escudo" fill="var(--cor-destaque)" d="M15.1,42c-1.5-0.4-3-0.9-4.5-1.3c-1.5,0.4-3,0.9-4.5,1.3c-0.2,0.8-0.8,2.9,0,5.3c1.1,3.4,3.9,5,4.5,5.3
+															c0.6-0.3,3.4-1.9,4.5-5.3C15.9,44.9,15.4,42.8,15.1,42"/>
+															<polygon class="icone-logo" fill="none" stroke="var(--cor-destaque)" stroke-width="0.647" stroke-miterlimit="10" points="51.9,47.7 62.5,47.7 
+															60.3,50.7 49.8,50.7"/>
+														</g>
+													</svg>
+												</li>
+												<li class="opcao opcao_pers" rel="inferior-escudo-esquerda">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 68 57.4" enable-background="new 0 0 68 57.4" xml:space="preserve" height="57.4px">
+														<g>
+															<path fill="#FFFFFF" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8
+															c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0
+															c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9"/>
+															<path fill="none" stroke="var(--cor-destaque)" stroke-width="1.5" stroke-miterlimit="10" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7
+															c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5
+															c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9z"/>
+															<path class="icone-escudo" fill="var(--cor-destaque)" d="M63,42c-1.5-0.4-3-0.9-4.5-1.3c-1.5,0.4-3,0.9-4.5,1.3c-0.3,0.8-0.8,2.9,0,5.3c1.1,3.4,3.9,5,4.5,5.3
+															c0.6-0.3,3.4-1.9,4.5-5.3C63.7,44.9,63.2,42.8,63,42"/>
+															<polygon class="icone-logo" fill="none" stroke="var(--cor-destaque)" stroke-width="0.647" stroke-miterlimit="10" points="7.7,46.7 18.3,46.7 
+															16.2,49.7 5.6,49.7 	"/>
+														</g>
+													</svg>
+												</li>
+												<input type="hidden" id="escudo_inferior" value=""/>
+											</ul>
+											<div class="box_cores"></div>
+										</div>
+										<div class="conteudo_patrocinio">
+											<div class="box-checkbox">
+												<input type="checkbox" name="patrocinio_inferior" value="" id="ipt-patrocinio_inferior"/>
+												<label class="ipt-checkbox" for="ipt-patrocinio_inferior" data-ancora="patrocinio_inferior">
+													<span><b>Patrocínio</b> > Defina a posição</span>
+												</label>
+											</div>
+											<ul class="box_selecao" rel="patrocinio_inferior" data-ancora="patrocinio_inferior">
+												<li class="selecao opcao_pers" rel="inferior-patrocinio-sem" style="display:none;"></li>
+												<li class="selecao opcao_pers" rel="inferior-patrocinio-com">
+													<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													viewBox="0 0 68 57.4" enable-background="new 0 0 68 57.4" xml:space="preserve" height="57.4px">
+														<g>
+															<path fill="none" stroke="var(--cor-destaque)" stroke-width="1.5" stroke-miterlimit="10" d="M62.8,25.9c-1.5-7-3.2-13.5-5-19.5V0.8H10.2v5.7
+															c-1.8,6-3.5,12.5-5,19.5c-2.1,10-3.5,19.3-4.4,27.8c4.3,1.2,9.6,2.2,15.7,2.7c5.1,0.4,9.8,0.3,13.7,0c1.2-6.2,2.5-12.4,3.7-18.5
+															c1.3,6.2,2.7,12.4,4,18.6c3.9,0.3,8.4,0.4,13.4,0c6.1-0.5,11.4-1.5,15.7-2.7C66.3,45.2,64.9,35.9,62.8,25.9z"/>
+															<rect x="8.1" y="43" fill="var(--cor-destaque)" width="18.8" height="7.7"/>
+															<rect x="41.6" y="43" fill="var(--cor-destaque)" width="18.8" height="7.7"/>
+														</g>
+													</svg>
+												</li>
+											</ul>	
+										</div>
+									</div>
+								</div>
+								<div class="edicao_upload">
+									<div class="cabecalho">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 51.4 51.4" enable-background="new 0 0 51.4 51.4" xml:space="preserve" height="51.4px">
+											<g>
+												<path fill="var(--cor-destaque)" d="M25.7,51.4C11.5,51.4,0,39.9,0,25.7C0,11.5,11.5,0,25.7,0c14.2,0,25.7,11.5,25.7,25.7
+												C51.4,39.9,39.9,51.4,25.7,51.4 M25.7,2C12.6,2,2,12.6,2,25.7c0,13.1,10.6,23.7,23.7,23.7c13.1,0,23.7-10.6,23.7-23.7
+												C49.4,12.6,38.8,2,25.7,2"/>
+												<path fill="#224252" d="M33.9,10c-3.8,0-6.9,3.1-6.9,6.9s3.1,6.9,6.9,6.9c3.8,0,6.9-3.1,6.9-6.9S37.7,10,33.9,10"/>
+												<path fill="var(--cor-destaque)" d="M11.3,29.7c0.3,0,0.6-0.3,0.6-0.6V14.3h13.4c0.3,0,0.6-0.3,0.6-0.6c0-0.3-0.3-0.6-0.6-0.6H11.3
+												c-0.3,0-0.6,0.3-0.6,0.6v15.4C10.8,29.5,11,29.7,11.3,29.7"/>
+												<path fill="var(--cor-destaque)" d="M37,29.7c0.3,0,0.6-0.3,0.6-0.6v-4c0-0.3-0.3-0.6-0.6-0.6c-0.3,0-0.6,0.3-0.6,0.6v4
+												C36.4,29.4,36.7,29.7,37,29.7"/>
+												<path fill="var(--cor-destaque)" d="M37.8,33.6c-0.2-0.6-0.5-1.1-0.7-1.3c-2-1.9-3.9-3.9-5.9-5.8c-0.1-0.1-0.8-0.8-1.8-0.9
+												c-1.2-0.1-1.9,0.7-2,0.9c-2.3,2.3-4.7,4.7-7,7c-0.2,0.3-0.4,0.4-0.5,0.5c-0.1,0.1-0.3,0.2-0.4,0.2c-0.2,0-0.4,0-0.4,0
+												c-0.2-0.2-0.4-0.4-0.7-0.7c-0.9-0.9-1.2-1.2-1.8-1.9c-0.1-0.2-0.5-0.6-1.2-0.7c-0.7-0.2-1.3,0.1-1.5,0.1c-0.3,0.1-0.4,0.3-1,0.7
+												c-0.4,0.3-0.8,0.8-1.3,1.3c-0.1,0.1-0.2,0.2-0.4,0.4c-0.3,0.4-0.4,0.8-0.4,1v3.9c0,0.6,0.2,1,0.4,1.3c1,1.9,3.8,1.9,3.9,1.9h3.2
+												h9.6h6.7c0.4,0,1.3-0.2,2.2-1c1-0.8,1.3-1.9,1.3-2.2v-3.1C37.9,34.8,38,34.2,37.8,33.6"/>
+												<path fill="var(--cor-destaque)" d="M15.8,25.3c0,1.4,1.1,2.5,2.5,2.5c1.4,0,2.5-1.1,2.5-2.5c0-1.4-1.1-2.5-2.5-2.5
+												C16.9,22.8,15.8,23.9,15.8,25.3"/>
+												<path fill="#FFFFFF" d="M37.5,16h-2.7v-2.7c0-0.5-0.4-0.8-0.8-0.8c-0.5,0-0.8,0.4-0.8,0.8V16h-2.7c-0.5,0-0.8,0.4-0.8,0.8
+												c0,0.5,0.4,0.8,0.8,0.8h2.7v2.7c0,0.5,0.4,0.8,0.8,0.8c0.5,0,0.8-0.4,0.8-0.8v-2.7h2.7c0.5,0,0.8-0.4,0.8-0.8
+												C38.4,16.4,38,16,37.5,16"/>
+											</g>
+										</svg>
+										<figure class="detalhe-menu_edicao"></figure>
+										<span class="titulo">Upload de imagem</span>
+
+										<div class="mobile bt_fechar">
+											<span>Fechar</span>
+											<span class="detalhe"></span>
+										</div>
+									</div>
+									<div class="sub-menu_edicao">
+										<div class="opcao_edicao" rel="galeria"><span>Galeria</span></div>
+										<div class="opcao_edicao" rel="upload"><span>Upload</span></div>
+									</div>
+									<div class="conteudo_edicao" rel="galeria">
+										<div class="flex">
+											<div id="temas">
+												<!--<span>Tema:</span>-->
+												<select id="select_temas"><option>SELECIONE</option></select>
+											</div>
+											<span id="excluir_imagem" class="destaque" onclick="javascript:removerImagem()">Remover</span>
+										</div>
+										<nav id="box-imagens"></nav>
+									</div>
+									<div class="conteudo_edicao" rel="upload">
+										<p class="frase">Dica: Para logomarcas, dê preferência a imagens com extensão .png com fundo transparente.</p>
+										<div class="add-arquivo">
+											<span class="texto">Adicionar imagem</span>
+											<span class="bt-upload">Escolher Arquivo</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</nav>
+					</div>
+					<div id="box_manequim">
+						<div class="container">
+							<div id="girar-manequim">
+								<span>Frente</span>
+								<span>Verso</span>
+							</div>
+							<div id="linha_modelo_superior" style="display: none;">MODELO {NOME_SUPERIOR}: <span id="codigo_modelo_{PECA_SUPERIOR}"></span></div>
+							<div id="linha_modelo_inferior" style="display: none;">MODELO {NOME_INFERIOR}: <span id="codigo_modelo_{PECA_INFERIOR}"></span></div>
+							<div class="setas_modelos">
+								<div class="peca_superior" data-peca="{PECA_SUPERIOR}">
+									<div class="bt-seta_esquerda">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 37.5 37.5" enable-background="new 0 0 37.5 37.5" xml:space="preserve" height="37.5px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="18.75" cy="18.75" r="17.75"/>
+												<path class="cor_setas" d="M8.3,19.1C8.3,19.1,8.3,19.1,8.3,19.1C8.3,19.1,8.3,19.1,8.3,19.1c0,0.1,0,0.1,0,0.2c0,0,0,0,0,0
+												c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1l0,0c0,0.1,0.1,0.2,0.2,0.2l3.3,3.3c0.4,0.4,1,0.4,1.4,0c0.4-0.4,0.4-1,0-1.4l-1.7-1.7
+												h16.6c0.5,0,1-0.4,1-1s-0.4-1-1-1H11.7l1.7-1.7c0.4-0.4,0.4-1,0-1.4c-0.4-0.4-1-0.4-1.4,0l-3.3,3.3c-0.1,0.1-0.1,0.1-0.2,0.2
+												c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0
+												c0,0,0,0.1,0,0.1C8.3,19,8.3,19,8.3,19.1C8.3,19,8.3,19.1,8.3,19.1"/>
+												<path class="cor_setas" d="M18.7,37.5c10.3,0,18.7-8.4,18.7-18.7C37.5,8.4,29.1,0,18.7,0C8.4,0,0,8.4,0,18.7
+												C0,29.1,8.4,37.5,18.7,37.5 M18.7,2C28,2,35.5,9.5,35.5,18.7c0,9.2-7.5,16.7-16.7,16.7C9.5,35.5,2,28,2,18.7C2,9.5,9.5,2,18.7,2"/>
+											</g>
+										</svg>
+									</div>
+									<div class="bt-seta_direita">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 37.5 37.5" enable-background="new 0 0 37.5 37.5" xml:space="preserve" height="37.5px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="18.75" cy="18.75" r="17.75"/>
+												<path class="cor_setas" d="M29.2,18.4C29.2,18.4,29.2,18.4,29.2,18.4C29.2,18.4,29.2,18.3,29.2,18.4c0-0.1,0-0.1,0-0.2l0,0
+												c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0-0.1-0.1-0.2-0.2-0.2l-3.3-3.3c-0.4-0.4-1-0.4-1.4,0c-0.4,0.4-0.4,1,0,1.4
+												l1.7,1.7H9.3c-0.5,0-1,0.4-1,1c0,0.5,0.4,1,1,1h16.6l-1.7,1.7c-0.4,0.4-0.4,1,0,1.4c0.4,0.4,1,0.4,1.4,0l3.3-3.3
+												c0.1-0.1,0.1-0.1,0.2-0.2c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0
+												c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0-0.1,0-0.1C29.2,18.5,29.2,18.5,29.2,18.4C29.2,18.4,29.2,18.4,29.2,18.4"/>
+												<path class="cor_setas" d="M18.7,0C8.4,0,0,8.4,0,18.7c0,10.3,8.4,18.7,18.7,18.7c10.3,0,18.7-8.4,18.7-18.7C37.5,8.4,29.1,0,18.7,0
+												M18.7,35.5C9.5,35.5,2,28,2,18.7C2,9.5,9.5,2,18.7,2C28,2,35.5,9.5,35.5,18.7C35.5,28,28,35.5,18.7,35.5"/>
+											</g>
+										</svg>
+									</div>
+									<div class="i_modelo" style="display:none"></div>
+									<div class="cod_modelo" style="display:none"></div>
+								</div>
+								<div class="box_bloqueio">
+									<figure class="icone bloqueio">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 49.6 49.6" enable-background="new 0 0 49.6 49.6" xml:space="preserve" height="49.6px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="24.8" cy="24.8" r="23.8"/>
+												<path fill="var(--cor-principal)" d="M32.5,23.2c0-0.1,0-0.2,0-0.4v-5.4c0-4.2-3.5-7.7-7.7-7.7s-7.7,3.5-7.7,7.7v5.4c0,0.1,0,0.2,0,0.4
+												c-0.9,0.3-1.6,1.2-1.6,2.2v12c0,1.3,1,2.3,2.3,2.3h14c1.3,0,2.3-1,2.3-2.3v-12C34.1,24.4,33.4,23.5,32.5,23.2 M27.1,31
+												c0,1.3-1,2.3-2.3,2.3s-2.3-1-2.3-2.3v-1.9c0-1.3,1-2.3,2.3-2.3s2.3,1,2.3,2.3V31z M29.6,22.9c0,0.1,0,0.2,0,0.3H20
+												c0-0.1,0-0.2,0-0.3v-5.4c0-2.6,2.2-4.8,4.8-4.8c2.6,0,4.8,2.2,4.8,4.8V22.9z"/>
+											</g>
+										</svg>
+									</figure>
+									<figure class="icone bloqueio">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 49.6 49.6" enable-background="new 0 0 49.6 49.6" xml:space="preserve" height="49.6px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="24.8" cy="24.8" r="23.8"/>
+												<path fill="var(--cor-principal)" d="M32.5,23.2c0-0.1,0-0.2,0-0.4v-5.4c0-4.2-3.5-7.7-7.7-7.7s-7.7,3.5-7.7,7.7v5.4c0,0.1,0,0.2,0,0.4
+												c-0.9,0.3-1.6,1.2-1.6,2.2v12c0,1.3,1,2.3,2.3,2.3h14c1.3,0,2.3-1,2.3-2.3v-12C34.1,24.4,33.4,23.5,32.5,23.2 M27.1,31
+												c0,1.3-1,2.3-2.3,2.3s-2.3-1-2.3-2.3v-1.9c0-1.3,1-2.3,2.3-2.3s2.3,1,2.3,2.3V31z M29.6,22.9c0,0.1,0,0.2,0,0.3H20
+												c0-0.1,0-0.2,0-0.3v-5.4c0-2.6,2.2-4.8,4.8-4.8c2.6,0,4.8,2.2,4.8,4.8V22.9z"/>
+											</g>
+										</svg>
+									</figure>
+									<figure class="icone desbloqueio">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 48.6 48.6" enable-background="new 0 0 48.6 48.6" xml:space="preserve" height="48.6px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="24.3" cy="24.3" r="23.3"/>
+												<path class="cor_setas" d="M0.5,24.3H0C0,10.9,10.9,0,24.3,0c13.4,0,24.3,10.9,24.3,24.3c0,13.4-10.9,24.3-24.3,24.3
+												C10.9,48.6,0,37.7,0,24.3H0.5H1c0,12.9,10.4,23.3,23.3,23.3c12.9,0,23.3-10.4,23.3-23.3C47.6,11.4,37.2,1,24.3,1
+												C11.4,1,1,11.4,1,24.3H0.5z"/>
+												<path class="cor_setas" d="M37.4,22.7c0,0,0-0.1,0-0.1h-2.9h-9.6c0-0.1,0-0.2,0-0.3V17c0-4.2-3.5-7.7-7.7-7.7c-4.2,0-7.7,3.5-7.7,7.7
+												v5.4c0,0.1,0,0.2,0,0.3h2.9c0-0.1,0-0.2,0-0.3V17c0-2.6,2.2-4.8,4.8-4.8c2.6,0,4.8,2.2,4.8,4.8v5.4c0,0.1,0,0.2,0,0.3
+												c0,0,0,0.1,0,0.1c-0.9,0.3-1.6,1.2-1.6,2.2v12c0,1.3,1,2.3,2.3,2.3h14c1.3,0,2.3-1,2.3-2.3V25C39.1,23.9,38.4,23,37.4,22.7"/>
+											</g>
+										</svg>
+									</figure>
+									<figure class="icone desbloqueio">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 48.6 48.6" enable-background="new 0 0 48.6 48.6" xml:space="preserve" height="48.6px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="24.3" cy="24.3" r="23.3"/>
+												<path class="cor_setas" d="M0.5,24.3H0C0,10.9,10.9,0,24.3,0c13.4,0,24.3,10.9,24.3,24.3c0,13.4-10.9,24.3-24.3,24.3
+												C10.9,48.6,0,37.7,0,24.3H0.5H1c0,12.9,10.4,23.3,23.3,23.3c12.9,0,23.3-10.4,23.3-23.3C47.6,11.4,37.2,1,24.3,1
+												C11.4,1,1,11.4,1,24.3H0.5z"/>
+												<path class="cor_setas" d="M37.4,22.7c0,0,0-0.1,0-0.1h-2.9h-9.6c0-0.1,0-0.2,0-0.3V17c0-4.2-3.5-7.7-7.7-7.7c-4.2,0-7.7,3.5-7.7,7.7
+												v5.4c0,0.1,0,0.2,0,0.3h2.9c0-0.1,0-0.2,0-0.3V17c0-2.6,2.2-4.8,4.8-4.8c2.6,0,4.8,2.2,4.8,4.8v5.4c0,0.1,0,0.2,0,0.3
+												c0,0,0,0.1,0,0.1c-0.9,0.3-1.6,1.2-1.6,2.2v12c0,1.3,1,2.3,2.3,2.3h14c1.3,0,2.3-1,2.3-2.3V25C39.1,23.9,38.4,23,37.4,22.7"/>
+											</g>
+										</svg>
+									</figure>
+								</div>
+								<div class="peca_inferior" data-peca="{PECA_INFERIOR}">
+									<div class="bt-seta_esquerda">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 37.5 37.5" enable-background="new 0 0 37.5 37.5" xml:space="preserve" height="37.5px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="18.75" cy="18.75" r="17.75"/>
+												<path class="cor_setas" d="M8.3,19.1C8.3,19.1,8.3,19.1,8.3,19.1C8.3,19.1,8.3,19.1,8.3,19.1c0,0.1,0,0.1,0,0.2c0,0,0,0,0,0
+												c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1l0,0c0,0.1,0.1,0.2,0.2,0.2l3.3,3.3c0.4,0.4,1,0.4,1.4,0c0.4-0.4,0.4-1,0-1.4l-1.7-1.7
+												h16.6c0.5,0,1-0.4,1-1s-0.4-1-1-1H11.7l1.7-1.7c0.4-0.4,0.4-1,0-1.4c-0.4-0.4-1-0.4-1.4,0l-3.3,3.3c-0.1,0.1-0.1,0.1-0.2,0.2
+												c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0
+												c0,0,0,0.1,0,0.1C8.3,19,8.3,19,8.3,19.1C8.3,19,8.3,19.1,8.3,19.1"/>
+												<path class="cor_setas" d="M18.7,37.5c10.3,0,18.7-8.4,18.7-18.7C37.5,8.4,29.1,0,18.7,0C8.4,0,0,8.4,0,18.7
+												C0,29.1,8.4,37.5,18.7,37.5 M18.7,2C28,2,35.5,9.5,35.5,18.7c0,9.2-7.5,16.7-16.7,16.7C9.5,35.5,2,28,2,18.7C2,9.5,9.5,2,18.7,2"/>
+											</g>
+										</svg>
+									</div>	
+									<div class="bt-seta_direita">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 37.5 37.5" enable-background="new 0 0 37.5 37.5" xml:space="preserve" height="37.5px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="18.75" cy="18.75" r="17.75"/>
+												<path class="cor_setas" d="M29.2,18.4C29.2,18.4,29.2,18.4,29.2,18.4C29.2,18.4,29.2,18.3,29.2,18.4c0-0.1,0-0.1,0-0.2l0,0
+												c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0-0.1-0.1-0.2-0.2-0.2l-3.3-3.3c-0.4-0.4-1-0.4-1.4,0c-0.4,0.4-0.4,1,0,1.4
+												l1.7,1.7H9.3c-0.5,0-1,0.4-1,1c0,0.5,0.4,1,1,1h16.6l-1.7,1.7c-0.4,0.4-0.4,1,0,1.4c0.4,0.4,1,0.4,1.4,0l3.3-3.3
+												c0.1-0.1,0.1-0.1,0.2-0.2c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0
+												c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0-0.1,0-0.1C29.2,18.5,29.2,18.5,29.2,18.4C29.2,18.4,29.2,18.4,29.2,18.4"/>
+												<path class="cor_setas" d="M18.7,0C8.4,0,0,8.4,0,18.7c0,10.3,8.4,18.7,18.7,18.7c10.3,0,18.7-8.4,18.7-18.7C37.5,8.4,29.1,0,18.7,0
+												M18.7,35.5C9.5,35.5,2,28,2,18.7C2,9.5,9.5,2,18.7,2C28,2,35.5,9.5,35.5,18.7C35.5,28,28,35.5,18.7,35.5"/>
+											</g>
+										</svg>
+									</div>
+									<div class="i_modelo" style="display:none"></div>
+									<div class="cod_modelo" style="display:none"></div>
+								</div>
+								<div class="peca_acessorio" data-peca="{PECA_ACESSORIO}" style="top: 190px">
+									<div class="bt-seta_esquerda">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 37.5 37.5" enable-background="new 0 0 37.5 37.5" xml:space="preserve" height="37.5px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="18.75" cy="18.75" r="17.75"/>
+												<path class="cor_setas" d="M8.3,19.1C8.3,19.1,8.3,19.1,8.3,19.1C8.3,19.1,8.3,19.1,8.3,19.1c0,0.1,0,0.1,0,0.2c0,0,0,0,0,0
+												c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1l0,0c0,0.1,0.1,0.2,0.2,0.2l3.3,3.3c0.4,0.4,1,0.4,1.4,0c0.4-0.4,0.4-1,0-1.4l-1.7-1.7
+												h16.6c0.5,0,1-0.4,1-1s-0.4-1-1-1H11.7l1.7-1.7c0.4-0.4,0.4-1,0-1.4c-0.4-0.4-1-0.4-1.4,0l-3.3,3.3c-0.1,0.1-0.1,0.1-0.2,0.2
+												c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0c0,0,0,0,0,0.1c0,0,0,0,0,0
+												c0,0,0,0.1,0,0.1C8.3,19,8.3,19,8.3,19.1C8.3,19,8.3,19.1,8.3,19.1"/>
+												<path class="cor_setas" d="M18.7,37.5c10.3,0,18.7-8.4,18.7-18.7C37.5,8.4,29.1,0,18.7,0C8.4,0,0,8.4,0,18.7
+												C0,29.1,8.4,37.5,18.7,37.5 M18.7,2C28,2,35.5,9.5,35.5,18.7c0,9.2-7.5,16.7-16.7,16.7C9.5,35.5,2,28,2,18.7C2,9.5,9.5,2,18.7,2"/>
+											</g>
+										</svg>
+									</div>	
+									<div class="bt-seta_direita">
+										<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										viewBox="0 0 37.5 37.5" enable-background="new 0 0 37.5 37.5" xml:space="preserve" height="37.5px">
+											<g>
+												<circle fill="#FFFFFF" stroke="var(--cor-principal)" stroke-width="2" stroke-miterlimit="10" cx="18.75" cy="18.75" r="17.75"/>
+												<path class="cor_setas" d="M29.2,18.4C29.2,18.4,29.2,18.4,29.2,18.4C29.2,18.4,29.2,18.3,29.2,18.4c0-0.1,0-0.1,0-0.2l0,0
+												c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0-0.1-0.1-0.2-0.2-0.2l-3.3-3.3c-0.4-0.4-1-0.4-1.4,0c-0.4,0.4-0.4,1,0,1.4
+												l1.7,1.7H9.3c-0.5,0-1,0.4-1,1c0,0.5,0.4,1,1,1h16.6l-1.7,1.7c-0.4,0.4-0.4,1,0,1.4c0.4,0.4,1,0.4,1.4,0l3.3-3.3
+												c0.1-0.1,0.1-0.1,0.2-0.2c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0-0.1c0,0,0,0,0,0
+												c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0-0.1,0-0.1C29.2,18.5,29.2,18.5,29.2,18.4C29.2,18.4,29.2,18.4,29.2,18.4"/>
+												<path class="cor_setas" d="M18.7,0C8.4,0,0,8.4,0,18.7c0,10.3,8.4,18.7,18.7,18.7c10.3,0,18.7-8.4,18.7-18.7C37.5,8.4,29.1,0,18.7,0
+												M18.7,35.5C9.5,35.5,2,28,2,18.7C2,9.5,9.5,2,18.7,2C28,2,35.5,9.5,35.5,18.7C35.5,28,28,35.5,18.7,35.5"/>
+											</g>
+										</svg>
+									</div>	
+									<div class="i_modelo" style="display:none"></div>
+									<div class="cod_modelo" style="display:none"></div>
+								</div>
+							</div>
+							<div id="lista_lados">
+								<div class="conteudo">
+									<div class="manequim">
+										<div class="modelo">
+											<!-- BEGIN LUVAS_FRENTE -->
+											<div class="luva_goleiro"></div> 
+											<!-- END LUVAS_FRENTE -->
+											<div class="fundos">
+											</div>
+										</div>
+									</div>
+									<div class="manequim_verso">
+										<div class="modelo">
+											<!-- BEGIN LUVAS_COSTAS -->
+											<div class="luva_goleiro"></div>
+											<!-- END LUVAS_COSTAS -->
+											<div class="fundos">
+											</div>
+										</div>
+									</div>	
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="box_contato" id="menu_cores">
+						<div id="bt_orcamento"><span class="texto">Orçamento</span><span class="seta"></span></div>
+						<div id="box_edicao-cores">
+							<div class="edicao_cores">
+								<div class="cabecalho">
+									<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+									viewBox="0 0 39.1 39.1" enable-background="new 0 0 39.1 39.1" xml:space="preserve" height="39.1px">
+										<g>
+											<path fill="#B3519E" d="M5,6.5c-2.9,3.2-4.7,7.4-5,12h1.2c0.2-4.2,1.9-8.1,4.6-11.1L5,6.5z"/>
+											<path fill="#B3519E" d="M7.4,9c-2.3,2.6-3.7,5.9-3.9,9.5H8c0.2-2.4,1.2-4.5,2.6-6.3L7.4,9z"/>
+											<path fill="#F8991D" d="M20.6,0v1.2c4.2,0.2,8.1,1.9,11.1,4.6L32.6,5C29.4,2.1,25.2,0.2,20.6,0"/>
+											<path fill="#F8991D" d="M20.6,8c2.4,0.2,4.5,1.2,6.3,2.6l3.2-3.2c-2.6-2.3-5.9-3.7-9.5-3.9V8z"/>
+											<path fill="#6853A3" d="M8,20.6H3.5c0.2,3.6,1.7,6.9,3.9,9.5l3.2-3.2C9.2,25.2,8.3,23,8,20.6"/>
+											<path fill="#6853A3" d="M0,20.6c0.2,4.6,2.1,8.8,5,12l0.9-0.9c-2.7-3-4.4-6.8-4.6-11.1H0z"/>
+											<path fill="#EE2424" d="M12.2,10.6c1.7-1.4,3.9-2.4,6.3-2.6V3.5C14.8,3.7,11.5,5.2,9,7.4L12.2,10.6z"/>
+											<path fill="#EE2424" d="M6.5,5l0.9,0.9c3-2.7,6.8-4.4,11.1-4.6V0C13.9,0.2,9.7,2.1,6.5,5"/>
+											<path fill="#FCEE23" d="M34.1,6.5l-0.9,0.9c2.7,3,4.4,6.8,4.6,11.1h1.2C38.8,13.9,37,9.7,34.1,6.5"/>
+											<path fill="#FCEE23" d="M28.4,12.2c1.4,1.7,2.4,3.9,2.6,6.3h4.5c-0.2-3.6-1.7-6.9-3.9-9.5L28.4,12.2z"/>
+											<path fill="#4479BD" d="M6.5,34.1c3.2,2.9,7.4,4.7,12,5v-1.2c-4.2-0.2-8.1-1.9-11.1-4.6L6.5,34.1z"/>
+											<path fill="#4479BD" d="M12.2,28.4L9,31.6c2.6,2.3,5.9,3.7,9.5,3.9V31C16.1,30.8,13.9,29.9,12.2,28.4"/>
+											<path fill="#6BBE45" d="M37.8,20.6c-0.2,4.2-1.9,8.1-4.6,11.1l0.9,0.9c2.9-3.2,4.7-7.4,5-12H37.8z"/>
+											<path fill="#6BBE45" d="M31,20.6c-0.2,2.4-1.2,4.5-2.6,6.3l3.2,3.2c2.3-2.6,3.7-5.9,3.9-9.5H31z"/>
+											<path fill="#70CBD4" d="M26.9,28.4c-1.7,1.4-3.9,2.4-6.3,2.6v4.5c3.6-0.2,6.9-1.7,9.5-3.9L26.9,28.4z"/>
+											<path fill="#70CBD4" d="M31.7,33.2c-3,2.7-6.8,4.4-11.1,4.6v1.2c4.6-0.2,8.8-2.1,12-5L31.7,33.2z"/>
+										</g>
+									</svg>
+									<figure class="detalhe-menu_edicao"></figure>
+									<span class="titulo">Cores</span>
+									<div class="mobile bt_fechar">
+										<span>Fechar</span>
+										<span class="detalhe"></span>
+									</div>
+								</div>
+								<div class="conteudo_edicao cores_superior ativo">
+									<!-- BEGIN BLOCK_COR_PELE -->
+									<div class="box_cores">
+										<div class="box_cores-linha" rel="pele">
+											<div class="titulo">Tom de Pele</div>
+											<div class="lista_camadas" rel="cor_pele" data-peca="{PECA_SUPERIOR}">
+												<div class="cor_camada" rel="pele">
+													<div class="cor_atual"></div>
+												</div>
+												<ul class="paleta_cores" rel="">
+													<div class="camada" rel=""></div>
+													<li class="cor" style="background-color:#b6b8b7;" id-cor="1"></li>
+													<li class="cor" style="background-color:#FACC39;" id-cor="2"></li>
+													<li class="cor" style="background-color:#F6E0C3;" id-cor="3"></li>
+													<li class="cor" style="background-color:#C3A178;" id-cor="4"></li>
+													<li class="cor" style="background-color:#B57F62;" id-cor="5"></li>
+													<li class="cor" style="background-color:#935933;" id-cor="6"></li>
+													<li class="cor" style="background-color:#39221B;" id-cor="7"></li>
+												</ul>
+											</div>
+										</div>
+										</div>
+										<!-- END BLOCK_COR_PELE -->
+									<div class="box_cores">
+										<div class="titulo">Cores {NOME_SUPERIOR}</div>
+										<div class="lista_camadas" rel="{PECA_SUPERIOR}">
+											<div class="cor_camada" rel="">
+												<div class="cor_atual"></div>
+												<span class="numero_camada">Cor Base</span>
+											</div>
+											<div class="cor_camada" rel="_1">
+												<span class="numero_camada">1</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_2">
+												<span class="numero_camada">2</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_3">
+												<span class="numero_camada">3</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_4">
+												<span class="numero_camada">4</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_5">
+												<span class="numero_camada">5</span>
+												<div class="cor_atual"></div>
+											</div>
+											<ul class="paleta_cores" rel="">
+												<div class="camada" rel=""></div>
+												<!-- BEGIN CAIXA_COR_SUPERIOR -->
+												<li class="cor" style="background-color:{COD_COR};" data-i="{I}" id-cor="{ID_COR}" rel="superior"  alt="{ALT_COR}" title="{NOME_COR}"></li>
+												<!-- END CAIXA_COR_SUPERIOR -->
+											</ul>
+										</div>
+										<div class="titulo">Cores Detalhes</div>
+									</div>
+								</div>
+								<div class="conteudo_edicao cores_inferior">
+									<div class="box_cores">
+										<div class="titulo">Cores {NOME_INFERIOR}</div>
+										<div class="lista_camadas" rel="{PECA_INFERIOR}">
+											<div class="cor_camada" rel="">
+												<div class="cor_atual"></div>
+												<span class="numero_camada">Cor Base</span>
+											</div>
+											<div class="cor_camada" rel="_1">
+												<span class="numero_camada">1</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_2">
+												<span class="numero_camada">2</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_3">
+												<span class="numero_camada">3</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_4">
+												<span class="numero_camada">4</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_5">
+												<span class="numero_camada">5</span>
+												<div class="cor_atual"></div>
+											</div>
+											<ul class="paleta_cores" rel="">
+												<div class="camada" rel></div>
+												<!-- BEGIN CAIXA_COR_INFERIOR -->
+												<li class="cor" style="background-color:{COD_COR};" data-i="{I}" id-cor="{ID_COR}" rel="inferior" alt="{ALT_COR}" title="{NOME_COR}"></li>
+												<!-- END CAIXA_COR_INFERIOR -->
+											</ul>
+										</div>
+										<div class="titulo">Cores Detalhes</div>
+									</div>
+								</div>
+								<div class="conteudo_edicao cores_acessorio">
+									<div class="box_cores">
+										<div class="titulo">Cores {NOME_ACESSORIO}</div>
+										<div class="lista_camadas" rel="{PECA_ACESSORIO}">
+											<div class="cor_camada" rel="">
+												<div class="cor_atual"></div>
+												<span class="numero_camada">Cor Base</span>
+											</div>
+											<div class="cor_camada" rel="_1">
+												<span class="numero_camada">1</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_2">
+												<span class="numero_camada">2</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_3">
+												<span class="numero_camada">3</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_4">
+												<span class="numero_camada">4</span>
+												<div class="cor_atual"></div>
+											</div>
+											<div class="cor_camada" rel="_5">
+												<span class="numero_camada">5</span>
+												<div class="cor_atual"></div>
+											</div>
+											<ul class="paleta_cores" rel="">
+												<div class="camada" rel></div>
+												<!-- BEGIN CAIXA_COR_ACESSORIO -->
+												<li class="cor" style="background-color:{COD_COR};" data-i="{I}" id-cor="{ID_COR}" rel="acessorio" alt="{ALT_COR}" title="{NOME_COR}"></li>
+												<!-- END CAIXA_COR_ACESSORIO -->
+											</ul>
+										</div>
+										<div class="cores_linha"></div>	
+									</div>	
+								</div>
+							</div>
+						</div>
+
+						<div class="conteudo-box_contato" style="display: none;">
+							<div id="bt_orcamento_2">Orçamento</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer>
+				<nav class="nav-telefones mobile">
+					<a href="https://api.whatsapp.com/send?phone={NUM_WHATSAPP}">
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve" height="16px">
+							<g>
+								<path fill="#34B44A" d="M13.6,2.3C12.1,0.8,10.1,0,8,0C3.6,0,0.1,3.6,0.1,7.9c0,1.4,0.4,2.8,1.1,4L0,16l4.2-1.1
+								c1.2,0.6,2.5,1,3.8,1h0c4.4,0,8-3.6,8-7.9C16,5.8,15.1,3.8,13.6,2.3"/>
+								<path fill="#FFFFFF" d="M8,14.5c-1.2,0-2.3-0.3-3.4-0.9l-0.2-0.1l-2.5,0.7l0.7-2.4l-0.2-0.3c-0.7-1-1-2.3-1-3.5
+								c0-3.6,3-6.6,6.6-6.6c1.8,0,3.4,0.7,4.7,1.9c1.2,1.2,2,2.9,2,4.7C14.7,11.6,11.6,14.5,8,14.5"/>
+								<path fill="#34B44A" d="M11.6,9.6c-0.2-0.1-1.2-0.6-1.4-0.6C10.1,8.9,9.9,8.8,9.8,9C9.7,9.2,9.3,9.7,9.2,9.8C9.1,10,8.9,10,8.8,9.9
+								c-1.2-0.6-1.9-1-2.7-2.4C5.9,7.2,6.3,7.2,6.6,6.4c0.1-0.1,0-0.2,0-0.3C6.6,6,6.2,5,6,4.6C5.9,4.2,5.7,4.3,5.6,4.3
+								c-0.1,0-0.2,0-0.4,0c-0.1,0-0.3,0.1-0.5,0.2C4.5,4.7,4,5.2,4,6.2s0.7,1.9,0.8,2.1c0.1,0.1,1.4,2.1,3.4,3c1.3,0.5,1.8,0.6,2.4,0.5
+								c0.4-0.1,1.2-0.5,1.3-0.9C12,10.3,12,9.9,12,9.8C11.9,9.7,11.8,9.7,11.6,9.6"/>
+							</g>
+						</svg>
+						<span>{TELEFONE_2}</span>
+					</a>
+					<a href="tel:{NUM_TELEFONE}">
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						viewBox="0 0 16 17.3" enable-background="new 0 0 16 17.3" xml:space="preserve" height="17.3px">
+							<g>
+								<path fill="#FFFFFF" d="M12.1,13.8c-0.3-0.2-1.9-0.9-2.1-1c-0.3-0.1-0.5-0.2-0.7,0.2c-0.2,0.3-0.8,1-1,1.2
+								c-0.2,0.2-0.4,0.2-0.7,0.1c-1.8-0.9-3-1.6-4.3-3.7C3,10,3.6,10,4.2,8.9c0.1-0.2,0.1-0.4,0-0.5C4.1,8.1,3.5,6.6,3.2,6
+								C3,5.4,2.7,5.5,2.5,5.4c-0.2,0-0.4,0-0.6,0c-0.2,0-0.5,0.1-0.8,0.4C0.8,6.1,0,6.9,0,8.4c0,1.5,1.1,3,1.3,3.2
+								c0.2,0.2,2.2,3.4,5.4,4.7c2,0.9,2.8,0.9,3.8,0.8c0.6-0.1,1.9-0.8,2.1-1.5c0.3-0.7,0.3-1.4,0.2-1.5C12.6,14.1,12.4,14,12.1,13.8"/>
+								<path fill="#FFFFFF" d="M7.3,5c0.2,0,1.5-0.3,2.5,0.6c0.9,0.7,1.3,1.8,1.1,2.9c-0.1,0.4,0.2,0.8,0.7,0.9c0,0,0.1,0,0.1,0
+								c0.4,0,0.7-0.3,0.8-0.7c0.2-1.7-0.4-3.4-1.7-4.4C9.3,3.1,7.5,3.3,7,3.4C6.6,3.5,6.3,3.9,6.4,4.4C6.5,4.8,6.9,5.1,7.3,5"/>
+								<path fill="#FFFFFF" d="M13.3,1.5C10.9-0.4,8.2,0,7.4,0.1C7,0.2,6.7,0.7,6.8,1.1c0.1,0.4,0.5,0.7,0.9,0.6c0.4-0.1,2.7-0.5,4.6,1
+								c1.6,1.2,2.3,3.2,2,5.3c-0.1,0.4,0.2,0.8,0.7,0.9c0,0,0.1,0,0.1,0c0.4,0,0.7-0.3,0.8-0.7C16.3,5.6,15.3,3,13.3,1.5"/>
+							</g>
+						</svg>
+						<span>{TELEFONE}</span>
+					</a>
+				</nav>
+				<div id="box-desenvolvimento">
+					<a href="https://www.jumptec.com.br" target="_blank" class="logo_desenvolvimento"></a>
+				</div>
+			</footer>
+		</div>
+		<div id="gabarito_cores" style="display:none;padding:15px;"></div>
+		<div id="bt-trocar_modalidade"></div>
+		<div id="trocar_modalidade" style="display:none;">
+			<h3>Acesse o simulador desejado, selecione abaixo!</h3>
+			<ul id="opcoes_modalidades"></ul>
+			<div id="setas_modalidades">
+				<div class="seta" rel="anterior" onclick="mudaQuadro('anterior')"></div>
+				<div class="seta" rel="proximo" onclick="mudaQuadro('proximo')"></div>
+			</div>
+			<div id="texto__ver-mais">
+				<span>Ver mais</span>
+				<svg width="35px" height="35px" viewBox="0 0 512 511" xmlns="http://www.w3.org/2000/svg">
+					<path fill="#fff" d="m143.871094 512.484375c-10.398438 0-20.597656-4.0625-28.28125-11.734375l-97.960938-97.753906c-11.367187-11.34375-17.628906-26.433594-17.628906-42.492188s6.261719-31.152344 17.628906-42.496094l97.960938-97.753906c11.511718-11.492187 28.664062-14.886718 43.695312-8.652344 15.011719 6.226563 24.710938 20.742188 24.710938 36.976563v91.921875c158.804687 0 288.003906-129.199219 288.003906-288.003906v-31.996094c0-11.046875 8.953125-20 20-20s20 8.953125 20 20v31.996094c0 87.613281-34.117188 169.984375-96.070312 231.9375-61.953126 61.949218-144.320313 96.070312-231.933594 96.070312-22.058594 0-40.003906-17.945312-40.003906-40v-91.925781c0-.003906 0-.007813 0-.011719-.03125-.015625-.070313-.03125-.105469-.042968-.011719.015624-.027344.027343-.042969.042968l-97.960938 97.757813c-3.792968 3.785156-5.882812 8.820312-5.882812 14.179687s2.089844 10.394532 5.882812 14.179688l97.960938 97.753906.042969.042969c.035156-.011719.074219-.023438.105469-.039063 0-.003906 0-.007812 0-.015625v-21.921875c0-11.046875 8.957031-20 20.003906-20 11.042968 0 20 8.953125 20 20v21.921875c0 16.234375-9.699219 30.75-24.710938 36.976563-4.996094 2.074218-10.230468 3.082031-15.414062 3.082031zm0 0"/>
+				</svg>
+			</div>
+			<div id="quadros"></div>
+		</div>
+		
+		<div id="abrir-box_login" onclick="abrirMensagem('<div id=box_login style=width:'+parseInt($(document).width()*0.75)+'px>'+$('#box_login').html()+'</div>')"></div>
+		<div id="box_login" style="display:none;">
+        	<div class="flex">
+				<figure id="img-box_login"></figure>
+				<form id="formulario_login" method="post" onsubmit="return efetuaLogin()">
+					<p>Login</p>
+					<label class="wrap-input">
+						<figure class="icone ico-email"></figure>
+						<input type="email" name="email" id="membro-email" placeholder="E-mail" autocomplete="off"/>
+					</label>
+					<label class="wrap-input">
+						<figure class="icone ico-senha"></figure>
+						<input type="password" name="senha" id="membro-senha" placeholder="Senha" autocomplete="off"/>
+					</label>		
+					<div class="erro_senha">Senha incorreta.</div>
+					<div class="erro_email">Não há uma conta com o e-mail digitado.</div>
+					<div class="incompleto">Preencha todos os campos.</div>
+					<input class="bt-submit" type="submit" value="LOGIN"/>
+					<span id="bt-recuperar_senha" onclick="recuperarSenha()">Esqueceu sua <b><u>Senha?</u></b></span>
+					
+					<div class="bt-trocar_formulario" onclick="trocarForm()">
+						<span>Crie sua Conta</span>
+						<figure class="icone seta"></figure>
+					</div>
+				</form>
+				<form id="formulario_cadastro" method="post" onsubmit="return registrarMembro()">
+					<p>Crie uma conta</p>
+					<label class="wrap-input">
+						<input type="text" name="nome" id="registro-nome" placeholder="Digite seu nome" autocomplete="off"/>
+					</label>
+					<label class="wrap-input">
+						<input type="text" name="telefone" id="registro-telefone" placeholder="Digite seu telefone (Whatsapp)" autocomplete="off" onkeyup="maskTelefone('formulario_cadastro','registro-telefone')"/>
+					</label>
+					<label class="wrap-input">
+						<figure class="icone ico-email"></figure>
+						<input type="email" name="email" id="registro-email" placeholder="Seu endereço de E-mail" autocomplete="off"/>
+					</label>
+					<label class="wrap-input">
+						<figure class="icone ico-senha"></figure>
+						<input type="password" name="senha" id="registro-senha" placeholder="Crie uma senha" autocomplete="off"/>
+					</label>
+					<div class="email_existente">Já há uma conta com o e-mail digitado.</div>
+					<div class="incompleto">Preencha todos os campos.</div>
+					<div class="erro">Houve algum erro inesperado, tente mais tarde.</div>
+					<input class="bt-submit" type="submit" value="CRIAR CONTA"/>
+					
+					<div class="bt-trocar_formulario" onclick="trocarForm()">
+						<span>Já possui uma conta</span>
+						<figure class="icone seta"></figure>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div id="abrir-nome_simulacao" onClick="abrirMensagem('<div id=nome_simulacao>'+$('#nome_simulacao').html()+'</div>')"></div>
+		<div id="nome_simulacao" style="display:none;">
+			<p class="cor_principal">Criar nova Simulação</p>
+			<div class="flex">
+				<input type="text" maxlength="32" placeholder="NOME DA SIMULAÇÃO" id="inpt-nome_simulacao" onkeyup="verificarCampo()"/>
+				<div id="bt-salvar_nome" onClick="salvarNome()">
+					<span>Salvar</span>
+					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 49 49" style="enable-background:new 0 0 49 49;" xml:space="preserve" width="20px" height="20px">
+						<rect x="27.5" y="5" width="6" height="10" fill="#FFFFFF"/>
+						<path d="M39.914,0H0.5v49h48V8.586L39.914,0z M10.5,2h26v16h-26V2z M39.5,47h-31V26h31V47z" fill="#FFFFFF"/>
+						<path d="M13.5,32h7c0.553,0,1-0.447,1-1s-0.447-1-1-1h-7c-0.553,0-1,0.447-1,1S12.947,32,13.5,32z" fill="#FFFFFF"/>
+						<path d="M13.5,36h10c0.553,0,1-0.447,1-1s-0.447-1-1-1h-10c-0.553,0-1,0.447-1,1S12.947,36,13.5,36z" fill="#FFFFFF"/>
+						<path d="M26.5,36c0.27,0,0.52-0.11,0.71-0.29c0.18-0.19,0.29-0.45,0.29-0.71s-0.11-0.521-0.29-0.71c-0.37-0.37-1.04-0.37-1.41,0   c-0.19,0.189-0.3,0.439-0.3,0.71c0,0.27,0.109,0.52,0.29,0.71C25.979,35.89,26.229,36,26.5,36z" fill="#FFFFFF"/>
+					</svg>
+				</div>
+			</div>
+			<p class="vazio">Preencha um nome</p>
+		</div>
+
+		<div id="box_armario" style="display:none;">
+			<div id="armario">
+				<div id="preview_ativo"></div>
+			</div>
+		</div>
+		
+		<div id="box_excluir" style="display:none;">
+			<div id="msg_excluir">
+				<div class="texto">Tem certeza que deseja excluir permanentemente este arquivo?</div>
+				<div id="botoes_ecluir">
+					<div id="nao_excluir" onClick="excluirSimulacao();">Não</div>
+					<div id="excluir">
+						<span>Sim</span>
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  x="0px" y="0px" width="14px" height="14px" viewBox="0 0 438.529 438.529" style="enable-background:new 0 0 438.529 438.529;" xml:space="preserve">
+							<path d="M417.689,75.654c-1.711-1.709-3.901-2.568-6.563-2.568h-88.224L302.917,25.41c-2.854-7.044-7.994-13.04-15.413-17.989    C280.078,2.473,272.556,0,264.945,0h-91.363c-7.611,0-15.131,2.473-22.554,7.421c-7.424,4.949-12.563,10.944-15.419,17.989    l-19.985,47.676h-88.22c-2.667,0-4.853,0.859-6.567,2.568c-1.709,1.713-2.568,3.903-2.568,6.567v18.274    c0,2.664,0.855,4.854,2.568,6.564c1.714,1.712,3.904,2.568,6.567,2.568h27.406v271.8c0,15.803,4.473,29.266,13.418,40.398    c8.947,11.139,19.701,16.703,32.264,16.703h237.542c12.566,0,23.319-5.756,32.265-17.268c8.945-11.52,13.415-25.174,13.415-40.971    V109.627h27.411c2.662,0,4.853-0.856,6.563-2.568c1.708-1.709,2.57-3.9,2.57-6.564V82.221    C420.26,79.557,419.397,77.367,417.689,75.654z M169.301,39.678c1.331-1.712,2.95-2.762,4.853-3.14h90.504    c1.903,0.381,3.525,1.43,4.854,3.14l13.709,33.404H155.311L169.301,39.678z M347.173,380.291c0,4.186-0.664,8.042-1.999,11.561    c-1.334,3.518-2.717,6.088-4.141,7.706c-1.431,1.622-2.423,2.427-2.998,2.427H100.493c-0.571,0-1.565-0.805-2.996-2.427    c-1.429-1.618-2.81-4.188-4.143-7.706c-1.331-3.519-1.997-7.379-1.997-11.561V109.627h255.815V380.291z" fill="#FFFFFF"/>
+							<path d="M137.04,347.172h18.271c2.667,0,4.858-0.855,6.567-2.567c1.709-1.718,2.568-3.901,2.568-6.57V173.581    c0-2.663-0.859-4.853-2.568-6.567c-1.714-1.709-3.899-2.565-6.567-2.565H137.04c-2.667,0-4.854,0.855-6.567,2.565    c-1.711,1.714-2.568,3.904-2.568,6.567v164.454c0,2.669,0.854,4.853,2.568,6.57C132.186,346.316,134.373,347.172,137.04,347.172z" fill="#FFFFFF"/>
+							<path d="M210.129,347.172h18.271c2.666,0,4.856-0.855,6.564-2.567c1.718-1.718,2.569-3.901,2.569-6.57V173.581    c0-2.663-0.852-4.853-2.569-6.567c-1.708-1.709-3.898-2.565-6.564-2.565h-18.271c-2.664,0-4.854,0.855-6.567,2.565    c-1.714,1.714-2.568,3.904-2.568,6.567v164.454c0,2.669,0.854,4.853,2.568,6.57C205.274,346.316,207.465,347.172,210.129,347.172z    " fill="#FFFFFF"/>
+							<path d="M283.22,347.172h18.268c2.669,0,4.859-0.855,6.57-2.567c1.711-1.718,2.562-3.901,2.562-6.57V173.581    c0-2.663-0.852-4.853-2.562-6.567c-1.711-1.709-3.901-2.565-6.57-2.565H283.22c-2.67,0-4.853,0.855-6.571,2.565    c-1.711,1.714-2.566,3.904-2.566,6.567v164.454c0,2.669,0.855,4.853,2.566,6.57C278.367,346.316,280.55,347.172,283.22,347.172z" fill="#FFFFFF"/>
+						</svg>	
+					</div>
+				</div>
+			</div>
+        </div>
+		
+		<div id="box_goleiro" style="display:none;">
+			<h3>ESTAMOS QUASE LÁ</h3>
+			<p>Agora só falta escolher o uniforme de goleiro e em seguida clicar em <span>"FINALIZAR ORÇAMENTO"</span> que se encontra no canto superior direito da tela.</p>
+			<button>PERSONALIZAR GOLEIRO</button>
+		</div>
+		<div id="painel_cliente" style="display:none;">
+			<div id="painel">
+				<form id="informacoes_cadastro" method="post" action="" onsubmit="return atualizaCadastro();">
+					<div id="informacoes_pessoais">
+						<b>Contato</b>
+						<div id="contato">
+							<label>Nome Completo</label>
+							<input type="text" name="nome" id="nomeCliente"  placeholder="Nome *" autocomplete="off" value="{NOME_MEMBRO}"/>
+							<label>Telefone</label>
+							<input type="text" name="telefone" id="telefoneCliente" placeholder="Telefone *" autocomplete="off" value="{TELEFONE_MEMBRO}" onkeypress="maskTelefone('informacoes_cadastro','telefoneCliente')"/>
+							<label>Cidade</label>
+							<input type="text" name="cidade" id="cidadeCliente" placeholder="Cidade *" autocomplete="off" value=	"{CIDADE_MEMBRO}"/>
+							<label>Estado</label>
+							<input type="text" name="estado" id="estadoCliente" placeholder="Estado *" autocomplete="off" value="{ESTADO_MEMBRO}"/>
+						</div>	
+					</div>	
+					
+					<div id="informacoes_conta">
+						<b>Conta</b>
+						<div id="conta">
+							<label>Endereço de e-mail</label>
+							<input type="email" name="email" id="emailCliente" placeholder="E-mail *" autocomplete="off" value="{EMAIL_MEMBRO}" readonly/>
+							<div id="bt_alterar">
+								<span id="alterar_email" onclick="alterarEmail()">Alterar e-mail</span>
+								<span id="alterar_senha" onclick="alterarSenha()">Alterar senha</span>
+							</div>
+							<a id="bt_sair">Sair da conta</a>
+						</div>	
+					</div>
+					<div id="botoes-informacoes_cadastro">
+						<input type="submit" id="bt_atualizar" value="ATUALIZAR DADOS" onclick="atualizaCadastro()"/>
+						<input type="button" value="CANCELAR" onclick="fecharPainel()"/>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="painel-alterar_email" style="display:none;">
+			<form id="novo_email" method="post" onsubmit="return trocaEmail();">
+				<h3>Alterar E-mail</h3>
+				<span>Senha</span>
+				<input type="password" name="senha" id="senhaConfirmacao" placeholder="Confirme a senha atual" autocomplete="off"/>
+				<span style="margin-top:20px;">Insira seu novo endereço de e-mail</span>
+				<input type="email" name="email_novo" id="emailNovo" placeholder="E-mail *" autocomplete="off"/>
+				<span class="erro"></span>
+				<input type="submit" value="SALVAR ALTERAÇÃO"/>
+			</form>
+		</div>	
+		<div id="painel-alterar_senha" style="display:none;">
+			<form id="nova_senha" method="post" onsubmit="return trocaSenha();">
+				<h3>Alterar Senha</h3>
+				<span>Senha</span>
+				<input type="password" name="senha" id="senhaAtual" placeholder="Confirme a senha atual" autocomplete="off"/>
+				<span style="margin-top:10px;">Insira sua nova senha</span>
+				<input type="password" name="email_novo" id="senhaNova" placeholder="Senha *" autocomplete="off"/>
+				<span>Confirme sua nova senha</span>
+				<input type="password" name="email_novo" id="senhaNova-2" placeholder="Senha *" autocomplete="off"/>
+				<span class="erro"></span>
+				<input type="submit" value="SALVAR ALTERAÇÃO"/>
+			</form>
+		</div>	
+		
+		<div id="atencao" style="display:none;">
+			<div class="titulo">
+				<div id="ico-atencao">
+					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 59.066 59.066" style="enable-background:new 0 0 59.066 59.066;" xml:space="preserve" width="32px" height="32px">
+						<path d="M52.846,27.12C52.415,26.398,51.691,26,50.793,26c-1.667,0.006-3.673,0.667-5.235,1.724  c-1.441,0.975-3.53,2.782-5.293,5.863c-0.331,0.578-0.874,0.97-1.455,1.063c-0.002-0.134-0.001-0.287-0.001-0.431  c0-0.31,0.001-0.678-0.012-1.084V11c0-2.206-1.794-4-4-4s-4,1.794-4,4v15.5c0,0.275-0.225,0.5-0.5,0.5s-0.5-0.225-0.5-0.5V4  c0-2.206-1.794-4-4-4s-4,1.794-4,4v22.5c0,0.275-0.225,0.5-0.5,0.5s-0.5-0.225-0.5-0.5v-18c0-1.93-1.57-3.5-3.5-3.5  s-3.5,1.57-3.5,3.5v20c0,0.275-0.225,0.5-0.5,0.5s-0.5-0.225-0.5-0.5V16c0-1.93-1.57-3.5-3.51-3.5c-1.93,0-3.5,1.57-3.5,3.5  l0.002,27.197c0.968,13.983,9.545,15.869,17.808,15.869c6.846,0,12.995-3.396,16.027-8.824c0.39-0.63,1.445-2.288,2.696-4.254  c3.128-4.913,5.748-9.041,6.135-9.775c0.863-1.634,1.826-2.911,2.784-3.693c0.867-0.708,1.397-1.611,1.828-2.404  C53.289,29.704,53.483,28.189,52.846,27.12z" fill="#ff0000"/>
+					</svg>
+				</div>
+				<span>Atenção</span>
+			</div>	
+			<p class="texto">Esta página está destinada apenas para testes de funcionalidades.<br/>
+			Nenhum orçamento pode ser enviado a partir desta página.
+			</p>
+		</div>
+		
+		<div id="box_visualizar" style="display:none;">
+			<div class="bt_fechar-visualizar">X</div>
+			<div class="logo"><img src="{PASTA_RAIZ_SIMULADOR}/img/logo.webp"/></div>
+			<div class="conteudo">
+				<div class="simulacao"></div>
+				<div class="box_compartilhar">
+					<div class="box_contato">
+						<!-- BEGIN MOSTRAR_ATENDIMENTO_WHATSAPP_2 -->
+						<a href="https://api.whatsapp.com/send?phone={NUM_WHATSAPP}" target="_blank" rel="noopener noreferrer" class="atendimento">
+							<div class="bt_whatsApp">
+								<span class="texto_atendimento">Atendimento online</span>
+								<span>WhatsApp</span>
+							</div>
+							<figure class="bt_detalhe">
+								<img src="{PASTA_RAIZ_SIMULADOR}/img/icones/layout_1/detalhe-whatsapp.webp" height="65px" />
+							</figure>		
+						</a>
+						<!-- END MOSTRAR_ATENDIMENTO_WHATSAPP_2 -->
+					</div>	
+					<div class="salvar">
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 480 480" style="enable-background:new 0 0 480 480;" xml:space="preserve" width="50px" height="50px">
+							<g>
+								<path d="M378.528,214.688l-21.088-24c-5.824-6.624-15.904-7.264-22.56-1.472L272,244.32V16c0-8.832-7.168-16-16-16h-32
+								c-8.832,0-16,7.168-16,16v228.32l-62.88-55.104c-6.624-5.792-16.704-5.152-22.56,1.472l-21.088,23.968
+								c-5.856,6.656-5.184,16.8,1.472,22.624l126.528,110.752c6.048,5.28,15.04,5.28,21.088,0L377.056,237.28
+								C383.712,231.456,384.384,221.312,378.528,214.688z"/>
+							</g>
+							<g>
+								<path d="M416,416H64c-8.832,0-16,7.168-16,16v32c0,8.832,7.168,16,16,16h352c8.832,0,16-7.168,16-16v-32
+								C432,423.168,424.832,416,416,416z"/>
+							</g>
+						</svg>
+						<p>Salvar no <span class="nome_dispositivo">Computador</span></p>
+					</div>	
+				</div>
+			</div>
+		</div>
+			
+		<canvas id="canvas" style="display:none;"></canvas>
+		<canvas id="canvas_verso" style="display:none;"></canvas>
+		<canvas id="canvas_direita" style="display:none;"></canvas>
+		<canvas id="canvas_esquerda" style="display:none;"></canvas>
+		
+		<form action="{PASTA_RAIZ_SIMULADOR}/checkout?act=salvar-simulador" target="_self" method="post" id="simulador-jogo">
+			<input id="inpt-superior" name="peca_superior" type="hidden" value="">
+			<input id="inpt-inferior" name="peca_inferior" type="hidden" value="">
+			<input id="somente_superior" name="somente_superior" type="hidden" value="">
+			<input id="somente_inferior" name="somente_inferior" type="hidden" value="">
+			<input id="id_imagem" name="id_imagem" type="hidden" value="">
+			<input id="goleiro" name="goleiro" type="hidden" value="">
+			<input id="comissao_tecnica" name="comissao_tecnica" type="hidden" value="">
+			<input id="modalidade" name="modalidade" type="hidden" value="{ESPORTE_PATH}">
+			<input id="informacoes_uniforme" name="informacoes_uniforme" type="hidden" value="">
+		</form>
+		
+		<form action="procedimentos/uploadimg.php" method="post" enctype="multipart/form-data" name="formImagem" id="formImagem">
+			<input name="l_padrao" id="l_padrao" type="hidden" value="300" />
+			<input name="h_padrao" id="h_padrao" type="hidden" value="300" />
+			<input name="lado" id="lado" type="hidden" value="" />
+			<input type="file" id="upload_arquivo" name="imagem" accept="application/pdf, image/*" />
+		</form>
+
+		<!-- BEGIN WHATSAPP_FLUTUANTE -->
+		<a class="bt_whatsapp_flutuante" href="https://api.whatsapp.com/send?phone={NUM_WHATSAPP}" target="_blank" style="cursor:pointer;background:#0DC144;border-radius: 100%;width: 61px;height: 61px;position:fixed;right: 12px;bottom:105px;z-index:999;box-shadow: 0px 0px 15px rgb(0 0 0 / 30%);">
+        	<figure style="margin: 0;padding: 0;position: absolute;width: 64px;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAABsQAAAbEBYZgoDgAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAdPSURBVHic1Zt9rNZlGcc/D4cDZZBBIJwDAiOz0tUiyZmU00yYzvlSOqtVm7pizcxqhKyyNedW02XFnFu4tWqlvQmR86UsNdM0nZMZWWuExev0AMcg5CU4n/64n+fwnIfnvn/373kLv9u1c/Z7rvt6+92v13X/Kio9wEnA2cAsYBAYqNIgMA0YBrYD26p/a/RHYF03Dat0MQALgUuqdGobcv4J/LJKjwGH27asDp0OwGzgi8AHq/93GjuAXwG3AH/riES1EzRFvVndZ29wSL1DndWu7e06/hp1ubqru/5G8Yr6dfUNCRuT1M4QOBf4Pt3p6mWxC/gMcFfZhq0G4FrgVmB8yXYjwBBhtq/N+EPAFI6sDoPAjBZkA3wD+HJVTx5KdpkJhrFXBjvUH6gfUieV0LNEvV3dUlLfPerrc30q4/wJ6mOZRoyoP1LPUvtK6GhGFXWhept6MFP/8+pJnQzAG9UNmcofUN/ZptMxmq/eZQhwEXaob+pEAPrVRzIUPqee2yXHG+k09dEMm55Xj283AKsyFP1MPa5HzteoT/1Ohm33mxiGRUquKxA+ot5gGKe9dL6erlYPFNj5rVYCcJ5hxxXDPvXS/6Pj9fRew5hP4aoyAZigbiwQ+JFjwPF6ep/pnvCyOi03AF8ocP6mY8DhZnRlgd0rcwIwRd2ZELLa4jE/WX2/ulQ9Xx3fwyDcnLD9oA37g2YCbkkI2KC+LqH8VPUXhkNKPe7oYQDGqQ8lfPh5KgDz1P2JxpcnFM9UNyXavqeHQVhgerM0akuZ7vNEQuFE9alEW9U7exgADFvxGEZ7QWOjvycaLUoo+1iB8xrG34weBmCu8d68x5DLYFzdwfBtwJsjh8Z7gMcTh8qrMw6e/cAnMw+pncC/gO9GfpsEfAAYE4CLE8J+XKDs3ZlGLQX6Mnk7gZTdlwJjhsCTke5ywPT5empG969HL3ePFXVzxI4hta/WAwaA0yORehjYnYjk9JJv5bKS/O1AQjq9GaYBi2oBeAdQiTCuLVCyuaooFy+W4O0E1iR+W1ALwKwE0yMFCl4h5PdycABYlcnbKTxKPEc4kBOAzZlKcrCcThU08nGIeK8bLArAbuA/GUp+mMHzbWBlBl83sD3yfLQHDEYYtmYqeBD4RwHPxExZ3UBsiBb2gC2ZCg4TagUpfJreboTqEQvAaA+YFGHYW0LJ/cDqAp7bgEUlZHYK+yLPX1sLwMsRhmklFV1Hes6YANwNzCkpt10MRJ5vrwVgV4ShbAC2ELa7KcwgnCty7wwcR3yPkovYHDcagOEIQ9ldHsCdFM/2swmXHc4q4LuWMH5fAm5q0R6IB2Bbbc/8zch+ecQmicQM6lf/kHEu2G/IPzZLmV3fhH+voRZwYkl7GjNUNazMOc9fUlJZjWYaP4g0Yr16dl3b89XDCf6D6vfMKH0ZcoAxrKgxvTXBdGuGkpTy3CBoyNR81JDCzsFe9eMFNixLtL+ixjRO3R1heqZAQaeDUBbrCvQ/Hmn3X3VKbRIcAZ6MTBTvAk5pcfIB2ACcQ96ZohWkVqqZwBmR334PDNdnhH6SEHRNWasasAE4Dfh1m3Ka4bnEbxczNutVj5AnqOsqx5tOImbfukhQRV1R7X6dwlciuvpNJ3lP1KOzwqsTDa6PKGqFzjCk2dvFsDoY0XFNot3TNb7GRhckGu1RZ0eUtUoXqs+WcvkIDhruHTWTO1l9MdH2s0YCgCE6Mdyd4VQrw2KxoXw2lOn8VsP9o5jMGxNtNxqq39EAXFig/LwOOd6M+gxF1dvVFxx7P2FE/Y3hrfcnZJxpurz34Xr+mJBUL1jexQA00nh1jnqKOj2Df67prv+UDZXt2GXEPYml5d7ilaljOARsyuSdTKhgnZDgWUZjBrtJFGcY34ev7+HbL0MT1XsTb15D2f6ots02CZcR3zz8NPNt9BIDhNT9BQmevxKrXzaJSur+3cnHwNuup9MNK0IKO02cGhsfzDJ+seDZhCHTDcfZdq/F5lJF/ZTp2V7DjvOclKzGB59LCFvRwDtP/byhx9TmjPWGs3w3nV9i/uZpaZG8xgep7el89e3qVzMMeNCwnnfyAuVC9XeZjo949AsrDMBc491/v/mXpevxgvo1W587Fhh2dX8uoXO3elGujvoPJpYRPkbqFl4i5ByeIByPdwA7CSn5qYz9YGIOsBiYW1LHRuAi4C+5DeoD8DThU7dXKx4CLiee4m+K2no/n1ev89sItYjFlHQejgTgijYMOAz8ibwqcifxb+BLhItdq2j1g8rqZLCu5OS23/BtzlUeqRtMMtzVzakHtIN9hjrGVDuwulTUt5B3aWEPcB+hAHof6Td+MnAl8AniVZkyGK7qXAs8QPqwVgoV9QbgxsjvQ4RPVdcAvyVccSmDPmAJcCYwr44Gidf7DhNudGwlrBhrCTdQDpXUnYWKup6xhcpNBIfX0IWPlauYSFjq5hHuJgwTHN5GcL4bOpuioj5MqNiuIXTvZ3ql/FjA/wDs/HIzn2eOxwAAAABJRU5ErkJggg==');height: 64px;left: -2px;top: -1px;"></figure>
+		</a>
+		<!-- END WHATSAPP_FLUTUANTE -->
+		
+		<!-- BEGIN AVISO_COOKIES -->
+		<div id="aviso_cookie" role="dialog" aria-live="polite" aria-label="cookieconsent" aria-describedby="cookieconsent:desc" class="cc-window cc-banner cc-type-info cc-theme-classic cc-bottom cc-color-override-1444386161" style="background:white; border: 2px solid rgba(0, 0, 0, 0.2); box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;"><!--googleoff: all--><span id="cookieconsent:desc" class="cc-message"><span id="cookieconsent:desc" class="cc-message" style="overflow-wrap:break-word">Utilizamos cookies e outras tecnologias de medição para melhorar a sua experiência de navegação no nosso site, de forma a mostrar conteúdo personalizado, anúncios direcionados, analisar o tráfego do site e entender de onde vêm os visitantes. Ao utilizar este site, você concorda com o uso de cookies.</span></span><div class="cc-compliance"><a aria-label="dismiss cookie message" role="button" tabindex="0" class="cc-btn cc-DISMISS" onclick="javascript:$('#aviso_cookie').hide()">Sim, concordo</a></div><!--googleon: all--></div>
+		<style>.cc-window{opacity:1;-webkit-transition:opacity 1s ease;-moz-transition:opacity 1s ease;-ms-transition:opacity 1s ease;-o-transition:opacity 1s ease;transition:opacity 1s ease}.cc-window{position:fixed;overflow:hidden;box-sizing:border-box;font-family:Helvetica,Calibri,Arial,sans-serif;font-size:16px;line-height:1.5em;display:flex;flex-wrap:nowrap;z-index:99999}.cc-window.cc-banner{padding:40px;display:inherit;width:100%;flex-direction:row;text-align:center}.cc-btn{cursor:pointer}.cc-btn{display:block;padding:.4em .8em;font-size:.9em;font-weight:700;border-width:2px;border-style:solid;text-align:center;white-space:nowrap}.cc-bottom{bottom:1em}.cc-window.cc-banner{align-items:center}.cc-banner.cc-bottom{left:0;right:0;bottom:0}.cc-banner .cc-message{flex:1 1 auto;max-width:100%;display:contents;text-align:center}.cc-compliance{display:flex;align-items:center;justify-content:space-between;padding-top:24px;justify-content:center}.cc-btn+.cc-btn{margin-left:.5em}@media print{.cc-window{display:none}}@media screen and (max-width:414px) and (orientation:portrait),screen and (max-width:736px) and (orientation:landscape){.cc-window.cc-bottom{bottom:0}.cc-window.cc-banner{left:0;right:0}.cc-window.cc-banner{flex-direction:column;align-items:unset}.cc-window.cc-banner .cc-compliance{flex:1 1 auto}.cc-window.cc-banner .cc-message{margin-right:0;margin-bottom:1em}.cc-window .cc-message{margin-bottom:1em}}@media screen and (max-width:790px){.cc-btn:not(.cc-info):not(.cc-save){width:calc(100% - 16px)}}.cc-theme-classic{overflow:visible;justify-content:space-between}.cc-theme-classic .cc-btn{position:relative;border-radius:5px;outline:0}.cc-theme-classic .cc-btn:last-child{min-width:140px;background:#000;color:#fff}</style>
+		<!-- END AVISO_COOKIES -->
+	</body>
+	
+	<!-- BEGIN BLOCK_MOSTRAR_FRENTE_VERSO -->
+	<style>
+		@media screen and (min-width: 1200px) {
+			#lista_lados div[class^=manequim] {
+				display: block;
+			}
+			#girar-manequim {
+				display: none;
+			}
+			.manequim_verso {
+				margin-left: 30px;
+			}
+		}
+	</style>
+	<!-- BEGIN BLOCK_MOSTRAR_LUVAS -->
+	<style>
+		.luva_goleiro {
+			position: absolute;
+    		z-index: 5;
+		}
+	</style>		
+	<!-- END BLOCK_MOSTRAR_LUVAS -->
+	<style>
+		@media screen and (min-width: 1366px) {
+			.manequim_verso {
+				margin-left: 30px !important;
+				margin-top: 0px !important;
+			}
+		}
+	</style>
+	<!-- FINALLY BLOCK_MOSTRAR_LUVAS -->
+	<!-- END BLOCK_MOSTRAR_FRENTE_VERSO -->
+	<style>
+		#lista_lados .conteudo {
+			flex-direction: column;
+			justify-content: unset;
+			align-items: center;
+		}
+		#lista_lados div[class^=manequim] {
+			display: block;
+			margin: -1000%;
+		}
+		#lista_lados div[class^=manequim].ativo {
+			position: absolute;
+			margin: 0;
+		}
+	</style>
+	<script>
+		$(document).ready(function (){
+			$('.manequim').addClass('ativo');
+			$('#girar-manequim span').eq(0).addClass('ativo');
+		});
+	</script>
+	<!-- FINALLY BLOCK_MOSTRAR_FRENTE_VERSO -->
+
+	<!-- BEGIN BONE_6_GOMOS_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+		.box_cores-linha .lista_camadas {
+			justify-content: center;
+		}
+	</style>
+	<!-- END BONE_6_GOMOS_STYLE -->
+	<!-- BEGIN BONE_TRUCKER_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+		.box_cores-linha .lista_camadas {
+			justify-content: center;
+		}
+	</style>
+	<!-- END BONE_TRUCKER_STYLE -->
+	<!-- BEGIN BONE_JAPONES_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+		.box_cores-linha .lista_camadas {
+			justify-content: center;
+		}
+	</style>
+	<!-- END BONE_JAPONES_STYLE -->
+	<!-- BEGIN BONE_ABA_RETA_STYLE -->
+	<style>
+		#meio {
+			height: 805px;
+		}
+		#lista-lados__manequim li {
+			width: 111px;
+		}
+	</style>
+	<!-- END BONE_ABA_RETA_STYLE -->
+	<!-- BEGIN CICLISMO_MANGA_LONGA_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END CICLISMO_MANGA_LONGA_STYLE -->
+	<!-- BEGIN CACHECOL_STYLE -->
+	<style>
+		#meio {
+			height: 700px;
+		}
+	</style>
+	<!-- END CACHECOL_STYLE -->
+	<!-- BEGIN BODY_BABY_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+	</style>
+	<!-- END BODY_BABY_STYLE -->
+	<!-- BEGIN MANGA_LONGA_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+	</style>
+	<!-- END MANGA_LONGA_FEMININO_STYLE -->
+	<!-- BEGIN JERSEY_NBA_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+	</style>
+	<!-- END JERSEY_NBA_STYLE -->
+	<!-- BEGIN CAMISA_SOCIAL_UV_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END CAMISA_SOCIAL_UV_STYLE -->
+	<!-- BEGIN JAQUETA_PUFFER_LONGA_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END JAQUETA_PUFFER_LONGA_STYLE -->
+	<!-- BEGIN REGATA_CASUAL_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END REGATA_CASUAL_STYLE -->
+	<!-- BEGIN BERMUDA_MOLETOM_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+	</style>
+	<!-- END BERMUDA_MOLETOM_STYLE -->
+	<!-- BEGIN GORRO_STYLE -->
+	<style>
+		#meio {
+			height: 700px;
+		}
+	</style>
+	<!-- END GORRO_STYLE -->
+	<!-- BEGIN CHAPEU_BUCKET_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END CHAPEU_BUCKET_STYLE -->
+	<!-- BEGIN CHAPEU_AUSTRALIANO_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END CHAPEU_AUSTRALIANO_STYLE -->
+	<!-- BEGIN VISEIRA_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END VISEIRA_STYLE -->
+	<!-- BEGIN TOUCA_NATACAO_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END TOUCA_NATACAO_STYLE -->
+	<!-- BEGIN WIND_BANNER_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END WIND_BANNER_STYLE -->
+	<!-- BEGIN CALCA_SOCIAL_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>
+	<!-- END CALCA_SOCIAL_STYLE -->
+	<!-- BEGIN CAMISA_BASEBALL_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 700px;
+			padding: 0 20px;
+		}
+	</style>
+	<!-- END CAMISA_BASEBALL_STYLE -->
+	<!-- BEGIN FUTEBOL_AMERICANO_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 650px;
+		}
+	</style>
+	<!-- END FUTEBOL_AMERICANO_STYLE -->
+	<!-- BEGIN TOP_BASICO_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 650px;
+		}
+	</style>
+	<!-- END TOP_BASICO_STYLE -->
+	<!-- BEGIN TOP_NADADOR_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 650px;
+		}
+	</style>
+	<!-- END TOP_NADADOR_STYLE -->
+	<!-- BEGIN CALCA_MOLETOM_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END CALCA_MOLETOM_STYLE -->
+	<!-- BEGIN CALCA_MOLETOM_PUNHO_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 700px;
+		}
+	</style>
+	<!-- END CALCA_MOLETOM_PUNHO_STYLE -->
+	<!-- BEGIN CALCA_TACTEL_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END CALCA_TACTEL_STYLE -->
+	<!-- BEGIN CALCA_BAILARINA_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END CALCA_BAILARINA_STYLE -->
+	<!-- BEGIN BODY_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 650px;
+		}
+	</style>
+	<!-- END BODY_STYLE -->
+	<!-- BEGIN CROPPED_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 650px;
+		}
+	</style>
+	<!-- END CROPPED_STYLE -->
+	<!-- BEGIN MOLETOM_CROPPED_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 650px;
+		}
+	</style>
+	<!-- END MOLETOM_CROPPED_STYLE -->
+	<!-- BEGIN MOLETOM_CANGURU_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 700px;
+			padding: 0 15px;
+		}
+	</style>
+	<!-- END MOLETOM_CANGURU_STYLE -->
+	<!-- BEGIN SHORTS_DOLL_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END SHORTS_DOLL_STYLE -->
+	<!-- BEGIN SAMBA_CANCAO_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END SAMBA_CANCAO_STYLE -->
+	<!-- BEGIN LEGGING_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END LEGGING_STYLE -->
+	<!-- BEGIN JAQUETA_CORTA_VENTO_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END JAQUETA_CORTA_VENTO_STYLE -->
+	<!-- BEGIN CALCA_BRIM_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 600px;
+		}
+	</style>
+	<!-- END CALCA_BRIM_STYLE -->
+	<!-- BEGIN BOLSA_ESPORTIVA_STYLE -->
+	<style>
+		#meio {
+			height: 805px;
+		}
+		#lista-lados__manequim {
+			top: 420px;
+		}
+		#lista-lados__manequim div[class^=manequim] {
+			transform: scale(0.15,0.15);
+			transform-origin: 2.5% center;
+		}
+	</style>
+	<!-- END BOLSA_ESPORTIVA_STYLE -->
+	<!-- BEGIN BOLSA_FARDAMENTO_STYLE -->
+	<style>
+		#meio {
+			height: 1050px;
+		}
+		#lista-lados__manequim {
+			top: 570px;
+		}
+		#lista-lados__manequim div[class^=manequim] {
+			transform: scale(0.15,0.15);
+			transform-origin: 2.5% center;
+		}
+		.cores_superior .box_cores-linha {
+			margin-bottom: 20px;
+		}
+	</style>
+	<!-- END BOLSA_FARDAMENTO_STYLE -->
+	<!-- BEGIN POLO_MASCULINO_MANGA_LONGA_STYLE -->
+	<style>
+		#meio {
+			height: 805px;
+		}
+	</style>
+	<!-- END POLO_MASCULINO_MANGA_LONGA_STYLE -->
+	<!-- BEGIN POLO_FEMININO_MANGA_LONGA_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END POLO_FEMININO_MANGA_LONGA_STYLE -->
+	<!-- BEGIN FUTEVOLEI_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END FUTEVOLEI_STYLE -->
+	<!-- BEGIN RUGBY_STYLE -->
+	<!-- END RUGBY_STYLE -->
+	<!-- BEGIN SUETER_STYLE -->
+	<style>
+		#meio {
+			height: 530px;
+		}
+	</style>
+	<!-- END SUETER_STYLE -->
+	<!-- BEGIN MANGA_LONGA_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+		#box_manequim .container {
+			margin-top: 15px;
+		}
+		#lista_lados {
+			transform: scale(1.3);
+			transform-origin: center top;
+		}
+		@media screen and (max-width: 479px) {
+			#lista_lados {
+				transform: scale(1.2);
+			}
+		}
+	</style>
+	<!-- END MANGA_LONGA_MASCULINO_STYLE  -->
+	<!-- BEGIN JAQUETA_PUFFER_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>
+	<!-- END JAQUETA_PUFFER_STYLE -->
+	<!-- BEGIN JAQUETA_COLETE_PUFFER_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>
+	<!-- END JAQUETA_COLETE_PUFFER_STYLE -->
+	<!-- BEGIN JAQUETA_COLETE_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>
+	<!-- END JAQUETA_COLETE_STYLE -->
+	<!-- BEGIN JAQUETA_BOMBER_STYLE -->
+	<style>
+		#meio {
+			height: 780px;
+		}
+	</style>
+	<!-- END JAQUETA_BOMBER_STYLE -->
+	<!-- BEGIN JAQUETA_SIMPLES_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>
+	<!-- END JAQUETA_SIMPLES_STYLE -->
+	<!-- BEGIN MACACAO_STYLE -->
+	<style>
+		#meio {
+			height: 1050px;
+		}
+	</style>
+	<!-- END MACACAO_STYLE -->
+	<!-- BEGIN CONJUNTO_MOLETOM_STYLE -->
+	<style>
+		#meio {
+			height: 1050px;
+		}
+	</style>
+	<!-- END CONJUNTO_MOLETOM_STYLE -->
+	<!-- BEGIN BOLSA_ECOLOGICA_STYLE -->
+	<style>
+		#meio {
+			height: 870px;
+		}
+	</style>
+	<!-- END BOLSA_ECOLOGICA_STYLE -->
+	<!-- BEGIN GYM_SACK_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END GYM_SACK_STYLE -->
+	<!-- BEGIN MOLETOM_BASICO_STYLE -->
+	<style>
+		#meio_conteudo {
+			height: 680px;
+			padding: 0 15px;
+		}
+	</style>
+	<!-- END MOLETOM_BASICO_STYLE -->
+	<!-- BEGIN COPO_LONGDRINK_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+		#meio_conteudo {
+			min-height: 550px;
+		}
+	</style>
+	<!-- END COPO_LONGDRINK_STYLE -->
+	<!-- BEGIN COPO_TWISTER_STYLE -->
+	<style>
+		#meio {
+			height: 600px;
+		}
+		#meio_conteudo {
+			min-height: 550px;
+		}
+	</style>
+	<!-- END COPO_TWISTER_STYLE -->
+	<!-- BEGIN COPO_TERMICO_STYLE -->
+	<style>
+		#meio {
+			height: 600px;
+		}
+		#meio_conteudo {
+			min-height: 550px;
+		}
+	</style>
+	<!-- END COPO_TERMICO_STYLE -->
+	<!-- BEGIN CANECA_GEL_STYLE -->
+	<style>
+		#meio {
+			height: 530px;
+		}
+	</style>
+	<!-- END CANECA_GEL_STYLE -->
+	<!-- BEGIN CANECA_ALUMINIO_STYLE -->
+	<style>
+		#meio {
+			height: 530px;
+		}
+	</style>
+	<!-- END CANECA_ALUMINIO_STYLE -->
+	<!-- BEGIN XICARA_STYLE -->
+	<style>
+		#meio {
+			height: 530px;
+		}
+		#box_manequim .container {
+			margin-top: 30px;
+		}
+	</style>
+	<!-- END XICARA_STYLE -->
+	<!-- BEGIN GARRAFA_TERMICA_STYLE -->
+	<style>
+		#meio {
+			height: 530px;
+		}
+	</style>
+	<!-- END GARRAFA_TERMICA_STYLE -->
+	<!-- BEGIN TACA_GIN_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+	</style>
+	<!-- END TACA_GIN_STYLE -->
+	<!-- BEGIN TACA_CHAMPAGNE_STYLE -->
+	<style>
+		#meio {
+			height: 530px;
+		}
+	</style>
+	<!-- END TACA_CHAMPAGNE_STYLE -->
+	<!-- BEGIN AVENTAL_MEIO_CORPO_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END AVENTAL_MEIO_CORPO_STYLE -->
+	<!-- BEGIN AVENTAL_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END AVENTAL_FEMININO_STYLE -->
+	<!-- BEGIN AVENTAL_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END AVENTAL_MASCULINO_STYLE -->
+	<!-- BEGIN JALECO_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>
+	<!-- END JALECO_FEMININO_STYLE -->
+	<!-- BEGIN JALECO_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+	</style>
+	<!-- END JALECO_MASCULINO_STYLE -->
+	<!-- BEGIN CANECA_CERAMICA_STYLE -->
+	<style>
+		#meio {
+			height: 790px;
+		}
+	</style>
+	<!-- END CANECA_CERAMICA_STYLE -->
+	<!-- BEGIN CANECA_CHOPP_STYLE -->
+	<style>
+		#meio {
+			height: 900px;
+		}
+	</style>
+	<!-- END CANECA_CHOPP_STYLE -->
+	<!-- BEGIN FUTEBOL_MASCULINO_STYLE -->
+	<style>
+		.setas_modelos {
+			top: 165px;
+		}
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+	</style>
+	<!-- END FUTEBOL_MASCULINO_STYLE -->
+	<!-- BEGIN FUTEBOL_MASCULINO_2_STYLE -->
+	<style>
+		.setas_modelos {
+			top: 165px;
+		}
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+	</style>
+	<!-- END FUTEBOL_MASCULINO_2_STYLE -->
+	<!-- BEGIN FUTEBOL_MASCULINO_3_STYLE -->
+	<style>
+		.setas_modelos {
+			top: 165px;
+		}
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+	</style>
+	<!-- END FUTEBOL_MASCULINO_3_STYLE -->
+	<!-- BEGIN FUTEBOL_MASCULINO_ML_STYLE -->
+	<style>
+		.setas_modelos {
+			top: 165px;
+		}
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+	</style>	
+	<!-- END FUTEBOL_MASCULINO_ML_STYLE -->
+	<!-- BEGIN FUTEBOL_FEMININO_STYLE -->
+	<style>
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+		.setas_modelos {
+			top: 130px
+		}
+	</style>		
+	<!-- END FUTEBOL_FEMININO_STYLE -->
+	<!-- BEGIN FUTEBOL_INFANTIL_STYLE -->
+	<style>	
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+		.setas_modelos {
+			top: 165px
+		}
+	</style>		
+	<!-- END FUTEBOL_INFANTIL_STYLE -->
+	<!-- BEGIN BASQUETE_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+		.setas_modelos {
+			top: 165px
+		}	
+	</style>
+	<!-- END BASQUETE_MASCULINO_STYLE -->
+	<!-- BEGIN BASQUETE_FEMININO_STYLE -->
+	<style>
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+		.setas_modelos {
+			top: 165px
+		}
+	</style>		
+	<!-- END BASQUETE_FEMININO_STYLE -->
+	<!-- BEGIN VOLEI_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+		.setas_modelos {
+			top: 165px;
+		}
+	</style>	
+	<!-- END VOLEI_MASCULINO_STYLE -->
+	<!-- BEGIN VOLEI_FEMININO_STYLE -->
+	<style>
+		#meio {
+			padding-bottom: 45px;
+			height: 1050px;
+		}
+		.setas_modelos {
+			top: 145px;
+		}
+	</style>	
+	<!-- END VOLEI_FEMININO_STYLE -->
+	<!-- BEGIN ABADA_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>	
+	<!-- END ABADA_STYLE -->
+	<!-- BEGIN RUNNING_MASCULINO_STYLE -->
+	<style>
+		body {
+			background-color: #E6E6E5;
+		}
+		#meio {
+			height: 1020px;
+		}
+		.setas_modelos .bloqueio::before, .setas_modelos .bloqueio::after {
+			display: none;
+		}
+	</style>	
+	<!-- END RUNNING_MASCULINO_STYLE -->
+	<!-- BEGIN RUNNING_FEMININO_STYLE -->
+	<style>
+		body {
+			background-color: #E6E6E5;
+		}
+		#meio {
+			height: 1000px;	
+		}
+		.setas_modelos .bloqueio::before, .setas_modelos .bloqueio::after {
+			display: none;
+		}
+	</style>	
+	<!-- END RUNNING_FEMININO_STYLE -->
+	<!-- BEGIN COLETE_STYLE -->
+	<style>		
+		#meio {
+			height: 850px;
+		}
+	</style>	
+	<!-- END COLETE_STYLE -->
+	<!-- BEGIN AGASALHO_STYLE -->
+	<style>
+		#meio {
+			height: 1000px;
+		}
+	</style>	
+	<!-- END AGASALHO_STYLE -->
+	<!-- BEGIN HANDEBOL_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 1100px;
+		}
+	</style>
+	<!-- END HANDEBOL_MASCULINO_STYLE -->
+	<!-- BEGIN HANDEBOL_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 1100px;
+		}
+	</style>
+	<!-- END HANDEBOL_FEMININO_STYLE -->
+	<!-- BEGIN CICLISMO_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 1005px;
+		}
+		.setas_modelos {
+			top: 165px;
+		}
+	</style>
+	<!-- END CICLISMO_MASCULINO_STYLE -->
+	<!-- BEGIN CICLISMO_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+		.setas_modelos {
+			top: 165px;
+		}
+	</style>
+	<!-- END CICLISMO_FEMININO_STYLE -->
+	<!-- BEGIN PESCA_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>
+	<!-- END PESCA_MASCULINO_STYLE -->
+	<!-- BEGIN PESCA_FEMININO_STYLE -->	
+	<style>
+		#meio {
+			height: 850px;
+		}
+	</style>	
+	<!-- END PESCA_FEMININO_STYLE -->
+	<!-- BEGIN MOTOCROSS_STYLE -->
+	<style>
+		#meio {
+			height: 885px;
+		}
+	</style>	
+	<!-- END MOTOCROSS_STYLE -->
+	<!-- BEGIN POLO_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 865px;
+		}
+	</style>	
+	<!-- END POLO_MASCULINO_STYLE -->
+	<!-- BEGIN POLO_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 865px;
+		}
+	</style>	
+	<!-- END POLO_FEMININO_STYLE -->
+	<!-- BEGIN JAQUETA_COLLEGE_STYLE -->
+	<style>
+		#meio {
+			height: 800px;
+		}
+	</style>	
+	<!-- END JAQUETA_COLLEGE_STYLE -->
+	<!-- BEGIN MOLETOM_CAPUZ_STYLE -->
+	<style>
+		#meio {
+			height: 780px;
+		}
+		
+		@media screen and (max-width: 374px){
+			#meio {
+				height: 760px;
+			}
+			.setas_modelos {
+				display: none;
+			}
+		}
+	</style>	
+	<!-- END MOLETOM_CAPUZ_STYLE -->
+	<!-- BEGIN ARTES_MARCIAIS_STYLE -->
+	<style>
+		#meio {
+			height: 795px;
+		}
+	</style>	
+	<!-- END ARTES_MARCIAIS_STYLE -->
+	<!-- BEGIN MACHAO_STYLE -->
+	<style>
+		#meio {
+			height: 770px;
+		}	
+	</style>	
+	<!-- END MACHAO_STYLE -->
+	<!-- BEGIN REGATA_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 805px;
+		}
+	</style>		
+	<!-- END REGATA_MASCULINO_STYLE -->
+	<!-- BEGIN REGATA_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 805px;
+		}
+	</style>	
+	<!-- END REGATA_FEMININO_STYLE -->
+	<!-- BEGIN SOCIAL_MASCULINO_ML_STYLE -->
+	<style>
+		#meio {
+			height: 780px;
+		}
+	</style>	
+	<!-- END SOCIAL_MASCULINO_ML_STYLE -->
+	<!-- BEGIN SOCIAL_MASCULINO_MC_STYLE -->
+	<style>
+		#meio {
+			height: 780px;
+		}
+	</style>	
+	<!-- END SOCIAL_MASCULINO_MC_STYLE -->
+	<!-- BEGIN SOCIAL_FEMININO_MC_STYLE -->
+	<style>
+		#meio {
+			height: 760px;
+		}
+	</style>	
+	<!-- END SOCIAL_FEMININO_MC_STYLE -->
+	<!-- BEGIN SOCIAL_FEMININO_ML_STYLE -->	
+	<style>
+		#meio {
+			height: 700px;
+		}
+	</style>	
+	<!-- END SOCIAL_FEMININO_ML_STYLE -->
+	<!-- BEGIN TSHIRT_MASCULINO_STYLE -->
+	<style>
+		#meio {
+			height: 820px;
+		}
+	</style>	
+	<!-- END TSHIRT_MASCULINO_STYLE -->
+	<!-- BEGIN TSHIRT_FEMININO_STYLE -->
+	<style>
+		#meio {
+			height: 865px;
+		}
+	</style>	
+	<!-- END TSHIRT_FEMININO_STYLE -->
+	<!-- BEGIN MASCARA_STYLE -->
+	<style>
+		#meio {
+			height: 950px;
+		}
+		.ipt-texto {
+			margin-bottom: 5px;
+		}
+	</style>	
+	<!-- END MASCARA_STYLE -->
+	<!-- BEGIN BONE_STYLE -->
+	<style>
+		#meio {
+			height: 805px;
+		}
+	</style>	
+	<!-- END BONE_STYLE -->
+</html>

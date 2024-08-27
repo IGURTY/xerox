@@ -1,0 +1,286 @@
+<script type="text/javascript" src="../../biblioteca/apprise-1.5.min.js"></script>
+<link rel="stylesheet" href="../../biblioteca/css/apprise.min.css" type="text/css" />
+		
+<table width="100%" border="0" cellspacing="0" cellpadding="4" id="tbl-camada">
+	<tr class="bg-titulos">
+		<!-- BEGIN BLOCK_CAMPO_SUB -->
+		<td height="20" align="left" valign="middle"><strong>{CAMPO_SUB}</strong></td>
+		<!-- END BLOCK_CAMPO_SUB -->
+		<!-- BEGIN BLOCK_CAMPO_SUB_EXCLUIR -->
+		<td height="20" align="left" valign="middle"><strong>Excluir</strong></td>
+		<!-- END BLOCK_CAMPO_SUB_EXCLUIR -->
+	</tr>
+	<!--  BEGIN BLOCK_VALORES_CAMPO -->	
+	<tr class="bg-valores" id="idreg{IDREGISTRO_CAMADA}" data-camada="{N_CAMADA}" data-angulo="{ANGULO}">
+		<input name="desenho_camada[]" type="hidden" value="{IDREGISTRO_CAMADA}" />
+		
+		<!--  BEGIN BLOCK_VALOR_CAMPO -->
+		<td height="12" align="left" valign="top">
+			<!-- BEGIN BLOCK_VARCHAR_VALOR_CAMPO -->
+			<input class="n_camada" name="desenho_camada_{NOMECAMPO}[]" type="text" value="{VALOR_CAMPO}" readonly />
+			<!-- END BLOCK_VARCHAR_VALOR_CAMPO -->
+			<!-- BEGIN BLOCK_ANGULO_VALOR_CAMPO -->
+			<input name="desenho_camada_{NOMECAMPO}[]" type="hidden" value="{VALOR_CAMPO}" />
+			<input type="text" value="{NOME_CAMPO}" readonly />
+			<!-- END BLOCK_ANGULO_VALOR_CAMPO -->
+			<!--  BEGIN BLOCK_SELECTBOX_VALOR_CAMPO -->
+			<select class="opcao_idcor" name="desenho_camada_{NOMECAMPO}[]" onchange="mudarCor(this)">
+				<option value="">SELECIONE</option>
+				<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_CAMPO -->
+				<option value="{VALOR_CAMPO}" {COLOR} {SELECTED}>{LABEL_CAMPO}</option>
+				<!--  END BLOCK_SELECTBOX_LISTA_VALOR_CAMPO -->
+			</select>
+			<!-- END BLOCK_SELECTBOX_VALOR_CAMPO -->
+			<!--  BEGIN BLOCK_UPLOAD_VALOR_CAMPO -->
+			<input name="desenho_camada_{NOMECAMPO}[]" type="file" class="file_1"/><br />
+			<!-- BEGIN BLOCK_PREVIA_IMG_CAMPO -->
+			<img src="../../imagens/{TABELA}/{ENDERECO_ARQUIVO}" style="margin-top:10px;"  />
+			<!-- END BLOCK_PREVIA_IMG_CAMPO -->
+			<!-- END BLOCK_UPLOAD_VALOR_CAMPO -->
+		</td>
+		<!-- END BLOCK_VALOR_CAMPO -->
+		<!-- BEGIN BLOCK_EXCLUIR_CAMADA -->
+		<td height="12" align="left" valign="top">
+			<!--$('#idreg{IDREGISTRO_ITEM}').remove();-->
+			<!--class="icon-2 info-tooltip"-->
+			<span class="icone-excluir" title="Excluir"></span>
+		</td>
+		<!-- END BLOCK_EXCLUIR_CAMADA -->
+	</tr>
+	<!--  END BLOCK_VALORES_CAMPO -->
+</table>
+<div id="addCamada" onclick="addCamada()">(+) ADICIONAR CAMADA</div>
+
+<style>
+	#addCamada {
+		display: flex;
+		width: fit-content;
+		padding: 8px;
+		margin: 30px auto 10px;
+		text-align: center;
+		font-weight: 900;
+		background-color: #ddd;
+		border: 1px solid #CCC;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+	tr input[type='text'] {
+		border: none;
+		font-weight: bold;
+		outline: none;
+	}
+	#tbl-camada tr:even {}
+	#tbl-camada tr:nth-child(odd), #tbl-camada tr:nth-child(even) input[type='text'] {}
+</style>
+<script type="text/javascript">
+	function mudarCor(x){
+		var val_final = $(x).val();
+		var select_camada = $(x).parent().parent().attr("data-camada");
+		
+		$('tr[data-camada='+select_camada+'] select option').each(function(){
+			if ($(this).val() == val_final) {
+				$(this).attr('selected', true);
+				$(this).parent().parent().find(".selectBox-label").html($(this).html());
+
+				if ($(this).attr("color") === undefined)
+					$(this).parent().parent().find(".selectBox-color").hide();
+				else if ($(this).attr("color") == "")
+					$(this).parent().parent().find(".selectBox-color").show().addClass("colorido").removeAttr("alt").css("background-color", "#fff");
+				else	
+					$(this).parent().parent().find(".selectBox-color").show().removeClass("colorido").attr("alt", $(this).html()).css("background-color", $(this).attr("color"));
+			}
+		});
+	}
+
+	function removerCamada(camada, ids, idregistro){
+		var i = 1;
+		var n_camadas = $("tr[data-camada='"+camada+"']").length;
+		var novo_i = 1;
+	
+		$.ajax({
+			url:"../procedimentos/removerCamada.php",
+			type:"POST",
+			data: ({num_ids: ids, iddesenho: idregistro}), //estamos enviando o valor do input
+			success:function(resposta){
+				$("tr[data-camada='"+camada+"']").each(function() {
+					$(this).trigger("remove");
+				});
+				$("#tbl-camada tr").not(".bg-titulos").each(function() {
+					$(this).attr("data-camada", novo_i);
+					$(this).find(".n_camada").attr("value", novo_i);
+					
+					if (i % n_camadas == 0) 
+						novo_i++;
+					
+					i++;
+				});
+			}
+	   });
+	}
+	
+	<!-- BEGIN BLOCK_REMOVER_ANGULOS -->
+	var rotacionar = 0;
+	<!-- END BLOCK_REMOVER_ANGULOS -->
+	<!-- BEGIN BLOCK_REMOVER_VERSO -->
+	var verso = 0;
+	<!-- END BLOCK_REMOVER_VERSO -->
+	
+	function addCamada() {
+		if ($("#idtipo_modalidade").val() > 0) {
+			if ($('#tbl-camada tr').not(".bg-titulos").length > 0) {
+				var n_camada = $('#tbl-camada tr:last-child').find(".n_camada").val();
+				n_camada++;
+			}	
+			else {
+				var n_camada = 1;
+			}
+			
+			if (n_camada > 5) {
+				apprise('O limite de camadas foi atingido.', confirm);
+			}
+			else {
+				if ($(".bg-titulos").css("display") == "none") {
+					$(".bg-titulos").show();
+				}
+				var trvazia = "";
+				<!--  BEGIN BLOCK_VALORES_CAMPO_VAZIO -->	
+				trvazia += "<tr data-camada='"+n_camada+"' data-angulo='{ANGULO}'>";
+					<!--  BEGIN BLOCK_CAMPO_VAZIO -->
+					trvazia += '<td height="12" align="left" valign="middle">';
+						<!--  BEGIN BLOCK_VARCHAR_VALOR_CAMPO_VAZIO -->
+						trvazia += "<input class='n_camada' name='desenho_camada_{NOMECAMPO_VAZIO}[]' type='text' value='"+n_camada+"' readonly/>";
+						<!--  END BLOCK_VARCHAR_VALOR_CAMPO_VAZIO -->
+						<!--  BEGIN BLOCK_ANGULO_VALOR_CAMPO_VAZIO -->
+						trvazia += '<input name="desenho_camada_{NOMECAMPO_VAZIO}[]" type="hidden" value="{VALOR_CAMPO_VAZIO}" />';
+						trvazia += '<input type="text" value="{NOME_CAMPO_VAZIO}" readonly/>';
+						<!--  END BLOCK_ANGULO_VALOR_CAMPO_VAZIO -->
+						<!-- BEGIN BLOCK_SELECTBOX_VALOR_VAZIO_CAMPO -->
+						trvazia += '<select name="desenho_camada_{NOMECAMPO_VAZIO}[]" class="opcao_idcor styledselect_form_1" onchange="mudarCor(this)"><option value="0">SELECIONE</option>';
+							<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_CAMPO -->
+							trvazia += '<option value="{VALOR_VAZIO_CAMPO}" {COLOR_VAZIO}>{LABEL_VAZIO_CAMPO}</option>';
+							<!--  END BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_CAMPO -->
+						trvazia += '</select>';
+						<!-- END BLOCK_SELECTBOX_VALOR_VAZIO_CAMPO -->
+						<!--  BEGIN BLOCK_UPLOAD_VALOR_CAMPO_VAZIO -->
+						trvazia += '<input name="desenho_camada_{NOMECAMPO_VAZIO}[]" type="file" accept="*.svg" class="file_1" /><br />';
+						<!-- END BLOCK_UPLOAD_VALOR_CAMPO_VAZIO -->
+					trvazia += '</td>';
+					<!-- END BLOCK_CAMPO_VAZIO -->
+				trvazia += "</tr>";
+				<!--  END BLOCK_VALORES_CAMPO_VAZIO -->
+				var campos = jQuery('#tbl-camada');
+				campos.append(trvazia);
+				initSelects();
+				initClasses();
+				
+				if (rotacionar !== undefined && rotacionar == 0) 
+					$("tr[data-camada='"+n_camada+"'][data-angulo^='lateral_']").trigger("remove");
+				
+				if (verso !== undefined && verso == 0) 
+					$("tr[data-camada='"+n_camada+"'][data-angulo='verso']").trigger("remove");
+			}	
+		}
+		else {
+			$("html, body").animate({ scrollTop: 0 }, "slow");
+			apprise('Escolha a modalidade primeiro.', confirm);
+		}
+	}
+	
+	$(document).ready(function(){
+		if ($("#idtipo_modalidade").val() == 0) {
+			$("label[for^='idcor_']:not([for='idcor_base']), label[for='goleiro']").closest('tr').hide();
+			$("select[name='idtipo_item']").closest('tr').hide();
+		}	
+		else {
+			if ($("select[name='idtipo_item'] option").length < 3)
+				$("select[name='idtipo_item']").closest('tr').hide();
+		}
+
+		$('#tbl-desenho_camadas tr[class="bg-valores"]:even').css('background-image', 'linear-gradient(transparent, #e1e1e1)');
+		$('#tbl-desenho_camadas tr[class="bg-valores"]:odd').css('background-image', 'linear-gradient(#e1e1e1, transparent)');
+		$('#tbl-desenho_camadas tr[class="bg-valores"] input').css('background', 'transparent');
+		$('.bg-valores').each(function(i, e){
+			if ($(e).find('td').length == 4)
+				$(e).find('td').last().attr('colspan', '2');
+		});
+
+		if ($(".bg-valores").length == 0)
+			$(".bg-titulos").hide();
+		
+		$("#idtipo_modalidade").change(function() {
+			$(".tipo_item-selectBox-dropdown-menu li").hide();
+			$("label[for='goleiro']").closest('tr').hide();
+
+			if ($("#idtipo_modalidade option:selected").text().indexOf('Futebol') > -1)
+				$("label[for='goleiro']").closest('tr').show("fast");
+
+			$.ajax({
+				url:"../procedimentos/atualizaCampos.php",
+				type:"POST",
+				data: ({idmodalidade: $("#idtipo_modalidade").val(), tabela: tabela}),
+				success:function(data){
+					var arr_data = JSON.parse(data);
+					var c_i = 0; // contador de itens visíveis 
+					$.each(arr_data, function(i, v) {
+						$.each(arr_data[i], function(index, value) {
+							if (i == "angulos_camada") {
+								rotacionar = arr_data[i][index]["rotacionar"];
+								verso = arr_data[i][index]["verso"];
+							}
+							else if (i == "itens") {
+								$(".tipo_item-selectBox-dropdown-menu li a[rel="+value+"]").parent().show().removeClass("selectBox-disabled ");
+								$("#idtipo_item option[value="+value+"]").removeAttr("disabled");
+								
+								if (c_i == 0) {
+									$('.tipo_item-selectBox-dropdown-menu li').removeClass('selectBox-selected');
+									$('.tipo_item-selectBox-dropdown-menu li a[rel='+value+']').parent().addClass('selectBox-selected');
+									$('select[name=idtipo_item] option[value='+value+']').attr('selected', true);
+									$("#idtipo_item").change();
+									var option_selecionado = $('select[name=idtipo_item] option[value='+value+']').html();
+									$(".selectBox.tipo_item").find(".selectBox-label").html(option_selecionado);
+								}
+								c_i++;
+							}
+						});
+					});
+
+					if (c_i > 1)
+						$("select[name='idtipo_item']").closest('tr').show();
+					else 
+						$("select[name='idtipo_item']").closest('tr').hide();
+				}
+			});
+		});
+
+		$("#idtipo_item").change(function() {
+			$.ajax({
+				url:"../procedimentos/procurarDetalhes.php",
+				type:"POST",
+				data: ({idmodalidade: $("#idtipo_modalidade").val(), iditem: $("#idtipo_item").val()}),
+				success:function(data){
+					var arr_data = JSON.parse(data);
+					$("label[for^='idcor_']:not([for='idcor_base'])").closest('tr').hide();
+
+					$.each(arr_data, function(index, value) {
+						$("label[for='idcor_"+value+"']").closest('tr').show("fast");
+					});
+				}
+		   });
+		});
+		
+		$(".icone-excluir").click(function() {
+			var ids = "";
+			var camada = $(this).parent().parent().attr("data-camada");
+			$("tr[data-camada='"+camada+"']").each(function() {
+				ids = ids + "," + $(this).attr("id").substring('idreg'.length);
+			});
+
+			apprise('Tem certeza que deseja excluir esta camada?', {'verify':true}, function(r) {
+				if (r)
+				 	removerCamada(camada, ids, "{IDREGISTRO}");
+				else
+					return false;
+			});
+		});
+	});
+</script>

@@ -1,0 +1,19 @@
+<style>
+	#tbl-modalidades {
+		column-count: 2;
+		width: 50%;
+    	margin: 20px auto;
+	}
+	#tbl-modalidades .modalidades_item {
+		margin: 5px 0;
+	}
+</style>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="tbl-modalidades">
+	<!-- BEGIN BLOCK_LISTA_MODALIDADES -->
+	<div class="modalidades_item">
+		<strong><label for="cb_modalidade_{ID_MODALIDADE}">{NOME_MODALIDADE}</label></strong>
+		<input type="checkbox" name="cb_modalidade[]" id="cb_modalidade_{ID_MODALIDADE}" value="{ID_MODALIDADE}" {CHECK_MODALIDADE} />          
+		<input type="hidden" name="cb_idmodalidade[]" value="{ID_MODALIDADE}" />
+	</div>
+	<!-- END BLOCK_LISTA_MODALIDADES -->
+</table>

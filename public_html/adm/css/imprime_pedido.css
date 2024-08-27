@@ -1,0 +1,56 @@
+body {
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+.tabela{
+	border:1px solid #CCC;
+	
+}
+
+.titulo{
+	background-color: #666666;
+	height: 60px;
+}
+
+.titulo_carrinho{
+	background-color:#EBEBEB;
+	border-bottom:2px solid #C8C8C8;
+	height:40px;
+	font-size:18px;
+	color:#666;
+}
+
+.subtotal{
+	background-color:#F2F2F2;
+	height:30px;
+	padding:5px;
+	text-align:right;
+	font-family:arial;
+	font-size:13px;
+}
+
+.box_pagamento {
+	background-color:#E5E5E5;
+	border:1px solid #CCCCCC;
+	font-size:16px;
+}
+
+.total{
+	background-color:#CCCCCC;
+	height:50px;
+	line-height:40px;
+	font-size:20px;
+	font-weight:bold;
+	text-align:right;
+	font-family:arial;
+	padding:5px;
+}
+
+.linha_carrinho{
+	border-bottom:1px solid #ebebeb;
+	height:25px;
+	line-height:25px;
+	font-family:arial;
+	font-size:12px;
+	color:#333;
+}

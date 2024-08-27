@@ -1,0 +1,6 @@
+<?php
+/*
+Copyright (c) 2024 Jumptec
+Se quiser obter a licença para esse produto, acesse https://www.jumptec.com.br
+*/
+ include("../adm/includes/configuracoes.php");$vebf2cbc420eb=f42e3f489802e($_POST['email']);$v58f82c268a63=f42e3f489802e($_POST['senha']);$vcca8ddec70ac="SELECT email, senha FROM cliente WHERE email='".$vebf2cbc420eb."' AND senha<>''";$v3db8b7c50ff6=mysqli_query($connection, $vcca8ddec70ac);$vdde92da76643=mysqli_num_rows($v3db8b7c50ff6);$vdf067e778f37="SELECT cliente.id, cliente.nome, armario.id AS armario_id FROM cliente   LEFT JOIN armario ON armario.idcliente=cliente.id  WHERE email='".$vebf2cbc420eb."' AND senha='".md5($v58f82c268a63)."' LIMIT 1;";$v0d16de3f6e53=mysqli_query($connection, $vdf067e778f37) or die(mysqli_error($connection));$vd98b6018ce96=mysqli_num_rows($v0d16de3f6e53);if($vd98b6018ce96==1){$vbe395f9ff3dc=mysqli_fetch_array($v0d16de3f6e53);$vda131204afe6=explode(' ', $vbe395f9ff3dc['nome']); $_SESSION['idCliente']=$vbe395f9ff3dc['id'];$_SESSION['nomeCliente']=$vda131204afe6[0]; $_SESSION['idArmario']=$vbe395f9ff3dc['armario_id']; echo "ok";}else{if($vdde92da76643>0) echo "erro_senha";else echo "erro_email";}mysqli_close($connection);?>

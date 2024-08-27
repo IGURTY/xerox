@@ -1,0 +1,127 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="5" id="tbl-itens-adicionais">
+	<tr class="bg-titulos">
+		<!--  BEGIN BLOCK_CAMPO_ITEM_ADICIONAL -->
+		<td height="20" align="left" valign="middle"><strong>{CAMPO_ITEM_ADICIONAL}</strong></td>
+		<!-- END BLOCK_CAMPO_ITEM_ADICIONAL -->
+		<td height="20" align="left" valign="middle">
+			<strong>Excluir</strong>
+		</td>
+	</tr>
+
+	<!--  BEGIN BLOCK_LISTA_VALORES_ITEM_ADICIONAL -->
+	<input name="pacote_item_adicional_id[]" type="hidden" value="{IDREGISTRO_ITEM_ADICIONAL}" />
+
+	<tr id="idreg{IDREGISTRO_ITEM_ADICIONAL}">
+		<!--  BEGIN BLOCK_VALOR_ITEM_ADICIONAL -->
+		<td height="12" align="left" valign="middle">
+			<!--  BEGIN BLOCK_SELECTBOX_VALOR_ITEM_ADICIONAL -->
+			<select name="pacote_item_adicional_{NOMECAMPO_ITEM_ADICIONAL}[]" class="{NOMECAMPO_ITEM_ADICIONAL} styledselect_form_1">
+				<option value="">SELECIONE</option>
+				<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_ITEM_ADICIONAL -->
+				<option value="{VALOR_ITEM_ADICIONAL}" {SELECTED} {DISABLED}>{LABEL_ITEM_ADICIONAL}</option>
+				<!--  END BLOCK_SELECTBOX_LISTA_VALOR_ITEM_ADICIONAL -->
+			</select>
+			<!-- END BLOCK_SELECTBOX_VALOR_ITEM_ADICIONAL -->
+			<!--  BEGIN BLOCK_VARCHAR_VALOR_ITEM_ADICIONAL -->
+			<input name="pacote_item_adicional_{NOMECAMPO_ITEM_ADICIONAL}[]" type="text" value="{VALOR_ITEM_ADICIONAL}"  class="inp-form" />
+			<!-- END BLOCK_VARCHAR_VALOR_ITEM_ADICIONAL -->
+		</td>
+		<!-- END BLOCK_VALOR_ITEM_ADICIONAL -->
+
+		<td height="12" align="left" valign="middle">
+			<!--$('#idreg{IDREGISTRO_ITEM}').remove();-->
+			<!--class="icon-2 info-tooltip"-->
+			<span class="icone-excluir" onclick="excluirAdicional('{IDREGISTRO_ITEM_ADICIONAL}')" title="Excluir"></span>
+		</td>
+	</tr>
+	<!-- END BLOCK_LISTA_VALORES_ITEM_ADICIONAL -->
+</table>
+<span id="add_item_adicional">Adicionar ITEM ADICIONAL</span>
+
+<script type="text/javascript">
+	// guarda informacoes de itens visiveis
+	var arr_ites_ativos = new Array();
+
+	$(document).ready(function(){
+		if ($("#idtipo_modalidade").val() == 0) {
+			$(".idtipo_item-selectBox-dropdown-menu li:not(:first-child)").hide();
+		}
+		else {
+			$("select[class^=idtipo_item]").eq(0).find("option:not(:disabled)").each(function( index ) {
+				if ($( this ).attr("value") != 0)
+					arr_ites_ativos.push( $(this).attr("value") );
+			});
+		}
+
+		$("#idtipo_modalidade").change(function() {
+			$(".idtipo_item-selectBox-dropdown-menu li:not(:first-child)").hide();
+			arr_ites_ativos = [];
+
+			$.ajax({
+				url:"../procedimentos/atualizaCampos.php",
+				type:"POST",
+				data: ({idmodalidade: $("#idtipo_modalidade").val(), tabela: tabela}),
+				success:function(data){
+					var arr_data = JSON.parse(data);
+					$.each(arr_data, function(i, v) {
+						$(".idtipo_item-selectBox-dropdown-menu li a[rel=0]").parent().show().removeClass("selectBox-disabled");
+						$.each(arr_data[i], function(index, value) {
+							if (i == "itens") {
+								$(".idtipo_item-selectBox-dropdown-menu li a[rel="+value+"]").parent().show().removeClass("selectBox-disabled");
+
+								arr_ites_ativos.push(value);
+							}
+						});
+					});
+					$("select[class='idtipo_item']").closest('tr').show();
+				}
+		   });
+		});
+	});
+
+	function excluirAdicional(reg){
+		apprise('Deseja excluir este registro?', {'verify':true}, function(r) {
+			if (r) {
+				$('#idreg'+reg).fadeOut('slow', function(){
+					$.get('acao.php?tabela=pacote_item_adicional&id='+reg+'&acao=excluir', function() {});
+				}); 
+			}
+			else { 
+				return false;
+			}	
+		});	
+	}
+
+	$('#add_item_adicional').click(function() {
+		var trvazia = "<tr>";
+			<!--  BEGIN BLOCK_VALOR_VAZIO_ITEM_ADICIONAL -->
+			trvazia += '<td height="12" align="left" valign="middle">';
+				<!--  BEGIN BLOCK_SELECTBOX_VALOR_VAZIO_ITEM_ADICIONAL -->
+				trvazia += '<select name="pacote_item_adicional_{NOMECAMPO_VAZIO_ITEM_ADICIONAL}[]" class="{NOMECAMPO_VAZIO_ITEM_ADICIONAL} styledselect_form_1" rel="vazio">';
+					<!-- BEGIN BLOCK_SELECTBOX_VALOR_ITEM_ADICIONAL_SELECIONE -->
+					trvazia += '<option value="0">SELECIONE</option>';
+					<!-- END BLOCK_SELECTBOX_VALOR_ITEM_ADICIONAL_SELECIONE -->
+					<!--  BEGIN BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_ITEM_ADICIONAL -->
+					if (arr_ites_ativos.indexOf('{VALOR_VAZIO_ITEM_ADICIONAL}') != -1) {
+						trvazia += '<option value="{VALOR_VAZIO_ITEM_ADICIONAL}">{LABEL_VAZIO_ITEM_ADICIONAL}</option>';
+					}
+					else {
+						trvazia += '<option value="{VALOR_VAZIO_ITEM_ADICIONAL}" disabled="disabled">{LABEL_VAZIO_ITEM_ADICIONAL}</option>';
+					}
+					<!--  END BLOCK_SELECTBOX_LISTA_VALOR_VAZIO_ITEM_ADICIONAL -->
+				trvazia += '</select>';
+				<!-- END BLOCK_SELECTBOX_VALOR_VAZIO_ITEM_ADICIONAL -->
+				<!--  BEGIN BLOCK_VARCHAR_VALOR_VAZIO_ITEM_ADICIONAL -->
+				trvazia += '<input name="pacote_item_adicional_{NOMECAMPO_VAZIO_ITEM_ADICIONAL}[]" type="text" class="inp-form" onkeydown="bloquearLeitor()" />';
+				<!-- END BLOCK_VARCHAR_VALOR_VAZIO_ITEM_ADICIONAL -->
+			trvazia += '</td>'
+			<!-- END BLOCK_VALOR_VAZIO_ITEM_ADICIONAL -->
+		trvazia += "</tr>";
+		var campos_itens_adicionais = jQuery('#tbl-itens-adicionais');
+		campos_itens_adicionais.append(trvazia);		
+
+		initSelects();
+		initClasses();
+		return false;
+	});
+</script>

@@ -1,0 +1,129 @@
+<input type="hidden" id="idcarrinho" name="idcarrinho" value="{IDCARRINHO}" />
+
+<script type="text/javascript">
+function abreInput(input){
+	$("#"+input).toggle();
+	$("."+input.replace('carrinho','mostra')).toggle();
+	$("."+input.replace('carrinho','mostra')).html($("#"+input).val());
+	$("#"+input).focus();
+
+	if(input.indexOf("precoun") >= 0) {
+		$.get("/adm/procedimentos/atualizaPedido.php?id="+input.replace('carrinho_precoun-','')+"&campo=valor&valor="+$("#"+input).val());
+	}
+	else if(input.indexOf("quantidade") >= 0) {
+		$.get("/adm/procedimentos/atualizaPedido.php?id="+input.replace('carrinho_quantidade_','')+"&campo=quantidade&valor="+$("#"+input).val(), function(data) {
+			if(data != '') {
+				window.alert(data);
+			}
+		});
+	}
+}
+function updateFunction() {
+	$.colorbox.close();
+	location.reload();
+}
+</script>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="5" align="left" valign="middle">
+        <div class="top-main" id="top-main-car"><strong>Produtos Orçados</strong></div>
+        <script>
+        $('#top-main-car').click(function() {
+            $('#tbl-itens-car').slideToggle('fast', function() {});
+        });
+		$(window).load( function() {
+			$('.remover_produto').click(function() {
+				$.get("/adm/procedimentos/atualizaPedido.php?act=excluir&id="+$(this).attr('rel'), function(data){
+					location.reload();
+				});
+			});
+			
+			$('.personalizacao_produto').click(function() {
+				$.get("/adm/procedimentos/atualizaPedido.php?idcondicao="+$(this).attr('rel')+'&obs=PERSONALIZAR&idcarrinho={RE_IDCARRINHO}', function(data){
+					location.reload();
+				});
+			});
+			
+			$('.obs_gravacao').blur(function() {
+				$.post("/adm/procedimentos/atualizaPedido.php", { id: $(this).attr('rel'), campo: "obs", valor: $(this).val() });
+			});
+			
+			$(".informacao_uniforme .mostrar_mais").click(function() {
+				$(this).parent().find("li").toggleClass("toggle");
+				if($(this).parent().find("li").hasClass("toggle")){
+					$(this).parent().find(".mostrar_mais").html("Ver menos -");
+				} else {
+					$(this).parent().find(".mostrar_mais").html("Ver mais +");
+				}
+			});
+			
+			$(document).ready(function() {
+				$(".bt_abrir-pers").click(function(e) {
+					$(this).parent().find(".info_pers").toggleClass("ativo");
+					$(this).toggleClass("ativo");
+					e.stopPropagation();
+				});
+				$(".info_pers").click(function(e) {
+					e.stopPropagation();
+				});
+				$(document).click(function(){
+					$(".bt_abrir-pers, .info_pers").removeClass('ativo');
+				});
+			});
+		});
+        </script>
+    </td>
+</tr>
+<tr>
+	<td id="tbl-itens-car">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:12px;">
+          <tr>
+          	<td height="20" align="center" valign="bottom" bgcolor="#CCCCCC">&nbsp;</td>
+           	<td width="10%" height="30" align="left" valign="bottom" bgcolor="#CCCCCC"><strong>PRODUTO</strong></td>
+			<td width="20%" height="30" align="center" valign="bottom" bgcolor="#CCCCCC"><strong>INFORMAÇÕES</strong></td>
+            <td width="15%" height="30" align="center" valign="bottom" bgcolor="#CCCCCC"><strong>PACOTE</strong></td>
+			<td width="15%" height="30" align="center" valign="bottom" bgcolor="#CCCCCC"><strong>PERSONALIZAÇÃO</strong></td>
+			<td width="10%" align="center" valign="bottom" bgcolor="#CCCCCC"><strong>QUANT.</strong></td>
+            <td width="10%" align="center" valign="bottom" bgcolor="#CCCCCC"><strong>PREÇO UN.</strong></td>
+            <td width="20%" align="center" valign="bottom" bgcolor="#CCCCCC"><strong>TOTAL</strong></td>
+          </tr>
+          
+          <!-- BEGIN BLOCK_LISTA_PROD_CARR -->
+          <tr bgcolor="{COR_LINHA}">
+            <td width="2%" height="80" align="center" valign="bottom">&nbsp;</td>
+            <td>{CAR_NOME} {CAR_OBS}<br />
+        		<!-- BEGIN BLOCK_LINK_IMG -->
+				<br /><a href="../../geradas/modelo/{IDIMAGEM}.jpg" target="_blank">Veja o preview</a>
+        		<div id="detalhes_{CAR_ID}" style="display:none;">{DETALHES}</div>
+        		<!-- END BLOCK_LINK_IMG -->
+                <br /><br />
+                <!-- BEGIN BLOCK_PERS_REMOVE --><!-- END BLOCK_PERS_REMOVE -->
+        	</td>
+			<td align="center">
+                <div style="cursor:pointer; color:black;">{CAR_INFO}</div>
+            </td>
+			<td align="center">
+                <div style="cursor:pointer; color:black;">{CAR_PACOTE}</div>
+            </td>
+			<td align="center">
+				<!-- BEGIN MOSTRAR_PERS -->
+				<div class="bt_abrir-pers">{TEXTO_PERS}</div>
+                <div class="info_pers" style="cursor:pointer; color:black;">{CAR_PERSONALIZACAO}</div>
+				<!-- END MOSTRAR_PERS -->
+            </td>
+            <td align="center">
+            <div style="font-weight:bold; cursor:pointer; color:black;" class="mostra_quantidade_{CAR_REG_ID}">{CAR_QUANT}</div>
+            <input name="carrinho_quantidade_{CAR_REG_ID}" type="text" value="{CAR_QUANT}" class="inp-form-int" id="carrinho_quantidade_{CAR_REG_ID}" style="display:none; text-align:center;" onblur="abreInput(this.id)" />
+            </td>
+            <td align="center">
+            <div style="font-weight:bold; cursor:pointer; color:black;" class="mostra_precoun-{CAR_REG_ID}">{CAR_PRECO_UN}</div>
+            <input name="carrinho_precoun_{CAR_REG_ID}" type="text" value="{CAR_PRECO_UN}" class="inp-form-int" id="carrinho_precoun-{CAR_REG_ID}" style="display:none; text-align:center;" onblur="abreInput(this.id)" />
+            </td>
+            <td align="center">{CAR_PRECO_TOTAL}</td>
+          </tr>
+          <!-- END BLOCK_LISTA_PROD_CARR -->
+        </table>
+	</td>
+</tr>
+</table>

@@ -1,0 +1,18 @@
+.cursor-rotate {
+   cursor: url(cursor.png), auto;
+}
+.ui-rotatable-handle {
+    height: 21px;
+    width: 17px;
+    cursor: cursor-rotate;
+    background-image: url(img/rotate.png);
+    background-size: 100%;
+	background-repeat:no-repeat;
+    right: -1px;
+    top: -1px;
+    right: -23px;
+    top: -23px;
+    z-index: 1;
+    position: absolute;
+    display: none;
+}

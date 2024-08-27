@@ -1,0 +1,1393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>{TITULO}</title>
+		<link rel="stylesheet" href="../css/screen.css" type="text/css" media="screen" title="default" />
+		<!--[if IE]><link rel="stylesheet" media="all" type="text/css" href="../css/pro_dropline_ie.css" /><![endif]-->
+
+		<!--  jquery core -->
+		<!--<script src="../js/jquery/jquery-1.4.1.min.js" type="text/javascript"></script>-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		<script src="../biblioteca/jquery.colorbox-min.js"></script>
+		<link rel="stylesheet" href="../biblioteca/css/colorbox.css" />
+		<script type="text/javascript">
+			var tabela = "{TABELA}";
+			var modelagem = '2d';
+			
+			$(window).load( function() {
+				$(".popup_pagina").colorbox({iframe:true, width:700, height:400});
+			});
+		</script>
+
+		<script type="text/javascript" src="../../biblioteca/apprise-1.5.min.js"></script>
+		<link rel="stylesheet" href="../../biblioteca/css/apprise.min.css" type="text/css" />
+
+		<script type="text/javascript" src="../biblioteca/jquery.wysiwyg.js"></script>
+		<link rel="stylesheet" href="../biblioteca/css/jquery.wysiwyg.css" type="text/css" />
+
+		<!--  checkbox styling script -->
+		<script src="../js/jquery/ui.core.js" type="text/javascript"></script>
+		<script src="../js/jquery/ui.checkbox.js" type="text/javascript"></script>
+		<script src="../js/jquery/jquery.bind.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			dados = new Array();
+
+			$(document).ready(function() {
+				$('#toggle-all').click(function(){
+					$('#toggle-all').toggleClass('toggle-checked');
+					//$('input[type=checkbox]').checkBox('toggle');
+					$('input[type=radio]').checkBox('toggle');
+					return false;
+				});
+
+				$("#id-form select").each(function(){
+					if ("{TABELA}" == "pacote") {
+						if ($(this).find("option").length < 3) {
+							$(this).find("option").eq(1).attr('selected', true);
+							$(this).closest('td').css("pointer-events","none");
+						}
+					}
+					else {
+						if ($(this).find("option:not([disabled])").length < 3 && $(this).attr("id") == "idtipo_item") {
+							$(this).closest('tr').hide();
+						}
+					}
+				});
+	
+				<!-- BEGIN BLOCK_LISTA_CONDICAO -->
+				{JAVASCRIPT}
+				<!-- END BLOCK_LISTA_CONDICAO -->
+				
+				initClasses();
+
+				setTimeout(function(){
+					$(".selectBox-menuShowing .selectBox-options").each(function(){
+						$(this).find("li").eq(0).find("a").html("TODOS");
+						$(this).find("li").eq(0).click(function(){
+							var select = $(this).parent().parent().prev("select");
+							var nome_modal = $("#idtipo_modalidade").find('option:selected').text()+" - ";
+
+							$(this).parent().find("li").each(function(){
+								if($(this).index() > 0 && $(this).is( ":visible" )) {
+									select.find("option[value='"+$(this).find("a").attr("rel")+"'][rel^='"+nome_modal+"']").prop("selected", true);
+									$(this).attr("class", "selectBox-selected");
+								}
+							});
+						});
+					});
+				}, 1500);
+					
+				if ("{TABELA}" == "colecao") {
+					if ($("#idtipo_modalidade").val() == 0) {
+						$("select[name^=lista_desenho]").closest('tr').hide();
+						$("select[name^=lista_gola]").closest('tr').hide();
+						$("label[for^=mostrar_]").closest('tr').hide();
+					}
+					else {
+						setTimeout(function(){
+							$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li").show();
+							$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li:not(:contains('"+ $("#idtipo_modalidade").find('option:selected').text() +" - '))").hide();
+							$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li:first").show();
+
+							$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing li").hide();
+							$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing li:first").show();
+
+							var i_gola = 0;
+							$("select[name^=lista_gola]").find("option[data-modalidade='"+$("#idtipo_modalidade").val()+"']").each(function(){
+								i_gola++;
+								$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing a[rel='"+$(this).val()+"']").parent().show();
+							});
+							if (i_gola == 0) $("select[name^=lista_gola]").closest('tr').hide();
+							else $("select[name^=lista_gola]").closest('tr').show();
+						}, 1500);
+					}
+
+					$("#idtipo_modalidade").change(function(){
+						$("label[for^=mostrar_]").closest('tr').hide();
+						$("select[name^=lista_desenho]").closest('tr').show();
+						$("select[name^=lista_desenho] option").prop("selected", false);
+						$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li").removeClass("selectBox-selected");
+
+						$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li").show();
+						$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li:not(:contains('"+ $(this).find('option:selected').text() +"'))").hide();
+						$("select[name^=lista_desenho]").parent().find(".selectBox-menuShowing li:first").show();
+
+						var i_gola = 0;
+						$("select[name^=lista_gola] option").prop("selected", false);
+						$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing li").removeClass("selectBox-selected");
+
+						$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing li").hide();
+						$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing li:first").show();
+						$("select[name^=lista_gola]").find("option[data-modalidade='"+$("#idtipo_modalidade").val()+"']").each(function(){
+							i_gola++;
+							$("select[name^=lista_gola]").parent().find(".selectBox-menuShowing a[rel='"+$(this).val()+"']").parent().show();
+						});
+						if (i_gola == 0) $("select[name^=lista_gola]").closest('tr').hide();
+						else $("select[name^=lista_gola]").closest('tr').show();
+
+						// mostrar opções de personalização - colecao
+						$.get("../procedimentos/buscaDetalhes.php", {modal: $("#idtipo_modalidade").val()}, function(data){
+							var arr_data = JSON.parse(data);
+							$.each(arr_data, function(index, value) {
+								$("label[for="+value+"]").closest('tr').show();
+							});
+						});
+					});
+				}
+				else if ("{TABELA}" == "tipo_modalidade") {
+					$("#idtipo_modalidade_linha").change(function(){
+						if ($(this).val() == 1 && $("#mostrar_galeria1").prop('checked')) {
+							$('#idgaleria_simulador_categoria').closest('tr').show();
+							$('*[name=idgaleria_simulador_categoria]').closest('tr').show();
+						}
+						else {
+							$('#idgaleria_simulador_categoria').val([]);
+							$("#idgaleria_simulador_categoria option").prop("selected", false);
+							$('#idgaleria_simulador_categoria').closest('tr').hide();
+							$('*[name=idgaleria_simulador_categoria]').closest('tr').hide();
+						}
+					});	
+
+					$("input[name=mostrar_galeria]").change(function(){
+						if ($(this).val() == 1 && $("#idtipo_modalidade_linha option:selected").text() == "Uniformes") {
+							$('#idgaleria_simulador_categoria').closest('tr').show();
+							$('*[name=idgaleria_simulador_categoria]').closest('tr').show();
+						}
+						else {
+							$('#idgaleria_simulador_categoria').closest('tr').hide();
+							$('*[name=idgaleria_simulador_categoria]').closest('tr').hide();
+						}
+					});
+				}
+				else if ("{TABELA}" == "galeria_simulador") {
+					$("#idgaleria_simulador_categoria").change(function(){
+						if ($(this).find('option:selected').attr("data-linha") == 1)
+							$('label[for=file_miniatura], label[for=file_imagem_verso]').closest('tr').show();
+						else 
+							$('label[for=file_miniatura], label[for=file_imagem_verso]').closest('tr').hide();
+					});	
+				}
+				else if ("{TABELA}" == "desenho") {
+					if ($('label[for="idcor_gola_5"]').closest('tr').css('display') == 'none' && $('label[for="idcor_gola"]').closest('tr').css('display') != 'none') {
+						$('<tr><td></td><td><div id="add-cor_gola" style="cursor:pointer;">(+) Adicionar Cor Gola</div></td><td valign="bottom"></td></tr>').insertAfter($('label[for="idcor_gola_5"]').closest('tr'));
+						var n_golas = $('label[for^="idcor_gola_"]:visible').length;
+						var cor_gola = (n_golas > 0) ? (n_golas + 1) : 1;
+						$('body').delegate('#add-cor_gola', 'click', function(){
+							if (cor_gola < 5) {
+								cor_gola++;
+								$('label[for="idcor_gola_'+cor_gola+'"]').closest('tr').show();
+
+								if (cor_gola == 5)
+									$('#add-cor_gola').closest('tr').hide();
+							}
+						});
+					}
+				}
+				else if ("{TABELA}" == "gola_3d") {
+					$('img').css('max-width', '50%');
+				}
+				else if ("{TABELA}" == "desenho_3d") {
+					$('img').css('max-width', '100%');
+				}
+			});
+
+			function initClasses() {
+				$('input').checkBox();
+				<!-- BEGIN BLOCK_PRICE_FORMAT -->
+				$("input[name*=preco][type=text]:not([name^=pacote_item_preco_a_partir_de])").priceFormat({
+					prefix: '{CIFRA} ',
+					centsSeparator: ',',
+					thousandsSeparator: '.'
+				});
+				<!-- END BLOCK_PRICE_FORMAT -->
+				$("input[name*=valor]").priceFormat({
+					<!-- BEGIN BLOCK_OUTRA_TABELA -->
+					prefix: '{CIFRA} ',
+					<!-- END BLOCK_OUTRA_TABELA -->
+					centsSeparator: ',',
+					thousandsSeparator: '.'
+				});
+			}
+		</script>  
+
+		<link type="text/css" rel="stylesheet" href="../css/jquery.selectBox.css" />
+		<script src="../../adm/js/jquery/jquery.selectBox.js" type="text/javascript"></script>
+
+		<script type="text/javascript">
+			function initSelects() {
+				$("SELECT").selectBox();
+			}
+
+			$(window).load( function() {
+				initSelects();
+				if ($('#bt_preview').length) {
+					modelagem = '3d';
+					initObjeto();
+				}
+
+				if ('{TABELA}' == 'desenho_3d') {
+					if ($('#idtipo_modalidade').val() == 0) {
+						$('label[for^="idcor_"], label[for="goleiro"]').closest('tr').hide();
+						$('select[name="idtipo_item"]').closest('tr').hide();
+					}
+					else {
+						if ($('select[name="idtipo_item"] option').length < 3)
+							$('select[name="idtipo_item"]').closest('tr').hide();
+					}
+
+					$('#idtipo_modalidade').change(function() {
+						mudaModalidade();
+					});
+					function mudaModalidade() {
+						$('.tipo_item-selectBox-dropdown-menu li').hide();
+						$('label[for="goleiro"]').closest('tr').hide();
+
+						if ($('#idtipo_modalidade option:selected').text().indexOf('Futebol') > -1)
+							$('label[for="goleiro"]').closest('tr').show('fast');
+
+						$.ajax({
+							url: '../procedimentos/atualizaCampos.php',
+							type: 'POST',
+							data: ({idmodalidade: $('#idtipo_modalidade').val(), tabela: tabela}),
+							success:function(data){
+								var arr_data = JSON.parse(data);
+								var c_i = 0; // contador de itens visíveis 
+								$.each(arr_data, function(i, v) {
+									$.each(arr_data[i], function(index, value) {
+										if (i == 'angulos_camada') {
+											rotacionar = arr_data[i][index]['rotacionar'];
+											verso = arr_data[i][index]['verso'];
+										}
+										else if (i == 'itens') {
+											$('.tipo_item-selectBox-dropdown-menu li a[rel="'+value+'"]').parent().show().removeClass('selectBox-disabled ');
+											$('#idtipo_item option[value="'+value+'"]').removeAttr('disabled');
+											
+											if (c_i == 0) {
+												$('.tipo_item-selectBox-dropdown-menu li').removeClass('selectBox-selected');
+												$('.tipo_item-selectBox-dropdown-menu li a[rel="'+value+'"]').parent().addClass('selectBox-selected');
+												$('select[name="idtipo_item"] option[value="'+value+'"]').attr('selected', true);
+												$('#idtipo_item').change();
+												var option_selecionado = $('select[name="idtipo_item"] option[value="'+value+'"]').html();
+												$('.selectBox.tipo_item').find('.selectBox-label').html(option_selecionado);
+											}
+											c_i++;
+										}
+									});
+								});
+
+								if (c_i > 1)
+									$('select[name="idtipo_item"]').closest('tr').show();
+								else 
+									$('select[name="idtipo_item"]').closest('tr').hide();
+							}
+						});
+					}
+
+					$('#idtipo_item').change(function() {
+						if ($('#file_svg')[0].files.length > 0)
+							$('#bt_preview').show();
+
+						$.ajax({
+							url: '../procedimentos/procurarDetalhes.php',
+							type: 'POST',
+							data: ({idmodalidade: $('#idtipo_modalidade').val(), iditem: $('#idtipo_item').val(), tipo_modelagem:modelagem}),
+							success:function(data){
+								var arr_data = JSON.parse(data);
+								$('label[for^="idcor_"]').closest('tr').hide();
+
+								$.each(arr_data, function(index, value) {
+									$('label[for="idcor_'+value+'"]').closest('tr').show('fast');
+								});
+							}
+						});
+					});
+
+					// Preview
+					$('td[data-ancora="file_svg"]').css({'display': 'flex', 'align-items': 'center', 'flex-wrap': 'wrap'});
+					$('td[data-ancora="file_svg"] div:not("#bt_preview, #box_preview, #box_preview *")}').css('position', 'relative');
+					$('#file_svg').change(function(){
+						if ($('#idtipo_item').val() != 0)
+							$('#bt_preview').show();
+
+						const reader = new FileReader();
+						reader.readAsDataURL(this.files[0]);
+						reader.onload = function (theFile) {
+							var svg_load = atob(theFile.target.result.replace(/data:image\/svg\+xml;base64,/, ''));
+							svg_carregado = svg_load;
+
+							var image = new Image();
+							image.src = theFile.target.result;
+							image.onload = function() {
+								tag_image = '<image href="'+this.src+'" width="'+this.width+'" height="'+this.height+'" />';
+
+								canvas = document.createElement('canvas');
+								ctx = canvas.getContext('2d');
+								canvas.width = this.width; 
+								canvas.height = this.height; 
+								ctx.drawImage(image, 0, 0);
+							};
+						};
+					});
+					$('#bt_preview').click(function(){
+						var peca = stringtourl($('#idtipo_item option[value="'+$('#idtipo_item').val()+'"]').attr('rel'));
+						$(svg).find('#'+peca+' g').html(tag_image);
+
+						scene.visible = false;
+						render();
+						initPreview(svg);
+					});
+					$('#overlayClose').click(function(){
+						$('#cboxOverlay').removeAttr('style').hide();
+						$('td[data-ancora="file_svg"] #box_preview').hide();
+					});
+					// Fim
+				}
+			});
+		</script>
+
+		<!--  styled file upload script --> 
+		<script src="../js/jquery/jquery.filestyle.js" type="text/javascript"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+				$("input.file_1").filestyle({ 
+				image: "../../adm/images/forms/upload_file.gif",
+				imageheight : 29,
+				imagewidth : 78,
+				width : 300
+				});
+			});
+		</script> 
+
+		<!-- Custom jquery scripts -->
+		<script src="../js/jquery/custom_jquery.js" type="text/javascript"></script>
+ 
+		<!-- Tooltips -->
+		<script src="../js/jquery/jquery.tooltip.js" type="text/javascript"></script>
+		<script src="../js/jquery/jquery.dimensions.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(function() {
+				$('a.info-tooltip ').tooltip({
+					track: true,
+					delay: 0,
+					fixPNG: true, 
+					showURL: false,
+					showBody: " - ",
+					top: -35,
+					left: 5
+				});
+			});
+		</script> 
+
+		<!--  date picker script -->
+		<link rel="stylesheet" href="../css/datePicker.css" type="text/css" />
+		<script src="../js/jquery/date.js" type="text/javascript"></script>
+		<script src="../js/jquery/jquery.datePicker.js" type="text/javascript"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(function(){
+				<!-- BEGIN BLOCK_INICIAR_DATA -->
+				$('#{NOME_CAMPO_DATA}date-pick')
+					.datePicker(
+						// associate the link with a date picker
+						{
+							createButton:false,
+							startDate:'01/01/1920',
+							endDate:'31/12/2020'
+						}
+					).bind(
+						// when the link is clicked display the date picker
+						'click',
+						function()
+						{
+							updateSelects($(this).dpGetSelected()[0], '{NOME_CAMPO_DATA}');
+							$(this).dpDisplay();
+							return false;
+						}
+					).bind(
+					// when a date is selected update the SELECTs
+					'dateSelected',
+					function(e, selectedDate, $td, state)
+					{
+						updateSelects(selectedDate, '{NOME_CAMPO_DATA}');
+					}
+					).bind(
+						'dpClosed',
+						function(e, selected)
+						{
+							updateSelects(selected[0],'{NOME_CAMPO_DATA}');
+						}
+					);
+	
+				var updateSelects = function (selectedDate, campo)
+					{
+						var selectedDate = new Date(selectedDate);
+						
+						var diaselected = selectedDate.getDate();
+						var messelected = selectedDate.getMonth()+1;
+						var anoselected = selectedDate.getFullYear();
+						
+						if(messelected < 10) messelected = '0'+messelected;
+						if(diaselected < 10) diaselected = '0'+diaselected;
+						
+						//alert('atualizando');
+						$('#'+campo+'d option[value='+diaselected+']').attr('selected', 'selected');
+						$('#'+campo+'m option[value='+messelected+']').attr('selected', 'selected');
+						$('#'+campo+'y option[value='+anoselected+']').attr('selected', 'selected');
+						
+						/*$('#{NOME_CAMPO_DATA}d option[value=' + selectedDate.getDate() + ']').attr('selected', 'selected');
+						$('#{NOME_CAMPO_DATA}m option[value=' + (Number(selectedDate.getMonth())+Number(1)) + ']').attr('selected', 'selected');
+						$('#{NOME_CAMPO_DATA}y option[value=' + selectedDate.getFullYear() + ']').attr('selected', 'selected');*/
+					}
+				$('#{NOME_CAMPO_DATA}d, #{NOME_CAMPO_DATA}m, #{NOME_CAMPO_DATA}y')
+					.bind(
+						'change',
+						function()
+						{
+							var d = new Date(
+									$('#{NOME_CAMPO_DATA}y').val(),
+									$('#{NOME_CAMPO_DATA}m').val()-1,
+									$('#{NOME_CAMPO_DATA}d').val()
+								);
+							$('#{NOME_CAMPO_DATA}date-pick').dpSetSelected(d.asString());
+						}
+					);
+
+				/*var today = new Date();
+				updateSelects(today.getTime());*/
+
+				$('#{NOME_CAMPO_DATA}d').trigger('change');
+
+				$('#{NOME_CAMPO_DATA}d option[value={VALOR_D_DATA}]').attr('selected', 'selected');
+				$('#{NOME_CAMPO_DATA}m option[value={VALOR_M_DATA}]').attr('selected', 'selected');
+				$('#{NOME_CAMPO_DATA}y option[value={VALOR_Y_DATA}]').attr('selected', 'selected');
+
+				var d = new Date(
+					$('#{NOME_CAMPO_DATA}y').val(),
+					$('#{NOME_CAMPO_DATA}m').val()-1,
+					$('#{NOME_CAMPO_DATA}d').val()
+				);
+				$('#{NOME_CAMPO_DATA}date-pick').dpSetSelected(d.asString());
+				<!-- END BLOCK_INICIAR_DATA -->
+			});
+		</script>
+		<script src="../js/jquery/jquery.pngFix.pack.js" type="text/javascript"></script>
+		<script type="text/javascript" src="../../adm/js/jquery/jquery.mask.preco.min.js"></script>
+		<!--<script type="text/javascript" src="../../adm/js/jquery/jquery.mask.min.js"></script>-->
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#d option[value={DIA_ATUAL}]').attr('selected', 'selected');
+				$('#m option[value={MES_ATUAL}]').attr('selected', 'selected');
+				$('#y option[value={ANO_ATUAL}]').attr('selected', 'selected');
+				
+				$(document).pngFix( );
+				<!-- BEGIN BLOCK_PRICE_FORMAT_2 -->
+				$("input[name*=preco][type=text]:not([name^=pacote_item_preco_a_partir_de])").priceFormat({
+					prefix: '{CIFRA} ',
+					centsSeparator: ',',
+					thousandsSeparator: '.'
+				});
+				<!-- END BLOCK_PRICE_FORMAT_2 -->
+				
+				<!-- BEGIN BLOCK_ESCONDER_CAMPO -->
+				if ($("#fundo_cor_base1").prop('checked')) {
+					$("#codigo_cor_fundo").parent().parent().hide();
+				}
+				else {
+					$("#codigo_cor_fundo").parent().parent().show();
+				}	
+				<!-- END BLOCK_ESCONDER_CAMPO -->
+				
+				$("input[name=fundo_cor_base]").change(function(){
+					if ($(this).val() == 0) {
+						$("#codigo_cor_fundo").parent().parent().show();
+					}
+					else {
+						$("#codigo_cor_fundo").parent().parent().hide();
+					}
+				});
+
+				if ("{TABELA}" == "cor") {
+					$("input[name=codigo]").keyup(function(){
+						if ($(this).val().indexOf("#") != 0) {
+							var val = $(this).val();
+							$(this).val("#"+val);
+						}
+					});
+				}
+			});
+
+			var valida1 = '';
+			var valida2 = '';
+			var valida3 = '';
+			function verificaForm() {
+				<!-- BEGIN BLOCK_VERIFICA_EMAIL -->
+				function verificaEmail(campo, valor) {
+					if (valor.search(/\b[\w]+@[\w]+\.[\w]+/) == -1) {
+						$('#'+campo).addClass('inp-form-error');
+						
+						$('#aviso'+campo).hide();
+						$('#esqerro'+campo).show();
+						$('#msgerro'+campo).show();
+						$('#msgerro'+campo).html('O email é inválido.');
+						valida1 = 'erro';
+						
+						$('#'+campo).focus();
+					}
+					else {
+						$('#'+campo).removeClass('inp-form-error');
+						
+						$('#aviso'+campo).show();
+						$('#esqerro'+campo).hide();
+						$('#msgerro'+campo).hide();
+						valida1 = '';
+					}
+				}
+	
+				verificaEmail('{CAMPO}',$('#{CAMPO}').val());
+				<!-- END BLOCK_VERIFICA_EMAIL -->
+				<!-- BEGIN BLOCK_VERIFICA_PRECO -->
+				function verificaPreco(campo, valor) {
+					if($('input[name='+campo+']').val() == '' || $('input[name='+campo+']').val() == '{CIFRA} 0,00') {
+						$('input[name='+campo+']').addClass('inp-form-error');
+						
+						$('#aviso'+campo).hide();
+						$('#esqerro'+campo).show();
+						$('#msgerro'+campo).show();
+						$('#msgerro'+campo).html('Preencha com um valor acima de {CIFRA} 0,00.');
+						valida3 = 'erro';
+						$('input[name='+campo+']').focus();
+					}
+					else {
+						$('input[name='+campo+']').removeClass('inp-form-error');
+						
+						$('#aviso'+campo).show();
+						$('#esqerro'+campo).hide();
+						$('#msgerro'+campo).hide();
+						valida3 = '';
+					}
+				}
+				verificaPreco('{CAMPO}',$('#{CAMPO}').val());
+				<!-- END BLOCK_VERIFICA_PRECO -->
+				<!-- BEGIN BLOCK_VERIFICA_OBRIGATORIO -->
+				function verificaCampo(campo, valor) {
+					if ($('#'+campo).val() == '') {
+						
+						$('#'+campo).addClass('inp-form-error');
+						
+						$('#aviso'+campo).hide();
+						$('#esqerro'+campo).show();
+						$('#msgerro'+campo).show();
+						$('#msgerro'+campo).html('Este campo é obrigatório.');
+						valida2 = 'erro';
+						$('#'+campo).focus();
+					}
+					else {
+						$('#'+campo).removeClass('inp-form-error');
+						
+						$('#aviso'+campo).show();
+						$('#esqerro'+campo).hide();
+						$('#msgerro'+campo).hide();
+						valida2 = '';
+					}
+				}
+				verificaCampo('{CAMPO}',$('#{CAMPO}').val());
+				<!-- END BLOCK_VERIFICA_OBRIGATORIO -->
+				<!-- BEGIN BLOCK_VERIFICA_OBRIGATORIOS -->
+				function verificaCampos(campo) {
+					$campos_vazios = 0;
+					$('.inpt-'+campo).each(function(){
+						if ($(this).val() == '') {
+							$(this).addClass('inp-form-int-error').focus();
+							valida2 = 'erro';
+							$campos_vazios++;
+						}	
+					});
+
+					if ($campos_vazios == 0) {
+						$('.inpt-'+campo).removeClass('inp-form-int-error');
+						valida2 = '';
+					}
+				}
+				verificaCampos('{CAMPO}');
+				<!-- END BLOCK_VERIFICA_OBRIGATORIOS -->
+				
+				<!-- BEGIN BLOCK_VERIFICA_PACOTE_ITEM -->
+				if ($("#tbl-itens-sub .styledselect_form_1").val() > 0 && $("#tbl-itens-sub .inp-form-int").val() > 0 
+				&& $("#tbl-itens-sub .inp-form-int").eq(1).val() != "0.00") {
+					return true;
+				}
+				else {
+					apprise("Preencha no mínimo um item antes de salvar.", {'textOk':'Ok'}, function(){});
+					$("#tbl-itens-sub").show();
+					$("#tbl-itens-sub .styledselect_form_1, #tbl-itens-sub .inp-form-int").css("outline", "auto");
+					return false;
+				}
+				<!-- END BLOCK_VERIFICA_PACOTE_ITEM -->
+				
+				<!-- BEGIN BLOCK_VERIFICA_CAMADA -->
+				function verificaCor(campo) {
+					$("#tbl-camada select."+campo).each(function(i){
+						if ($(this).val() == '' || $(this).val() == 0) {
+							valida2 = 'erro';
+							apprise('Cadastre as cores das camadas.', confirm);
+							return false;
+						}
+						valida2 = '';
+					}).promise().done(function () { 
+						/*if (valida2 == '')
+							verificaSvg('file');*/
+					});
+				}
+				/*function verificaSvg(campo) {
+					$("#tbl-camada input."+campo).each(function(i){
+						if ($(this).val() == '' && $(this).parent().find("img").length == 0) {
+							valida3 = 'erro';
+							apprise('Cadastre os arquivos svgs das camadas.', confirm);
+							return false;
+						}
+						valida3 = '';
+					});
+				}*/
+				verificaCor('opcao_idcor');
+				<!-- END BLOCK_VERIFICA_CAMADA -->
+
+				// zerar campos escondidos antes de salvar
+				$("select[id^='idcor_']:not([id='idcor_base'])").each(function(){
+					if ($(this).closest('tr').css("display") == "none")
+						$(this).val("0");
+				});
+
+	
+				if(valida1 == '' && valida2 == '' && valida3 == '') {
+					return true;
+				}
+				else {
+					return false;
+				}
+				/*if(verificaCampo('{CAMPO}', '{VALOR}') == true && verificaEmail('{CAMPO}', '{VALOR}') == true) {
+					return true; // envia form
+				}*/
+			}
+		</script>
+	</head>
+	<body> 
+
+		{TOPO}
+ 
+		<!-- start content-outer -->
+		<div id="content-outer">
+			<!-- start content -->
+			<div id="content">
+
+				<div id="page-heading"><h1>{TITULO_FORM}</h1></div>
+
+				<!-- BEGIN BLOCK_IMPRIMIR -->
+				<div id="page-heading">
+					<a href="../../adm/telas/imprimirPedido.php?id={ID}&c={RE_IDCLIENTE}&p={RE_IDCARRINHO}" target="_blank">
+						<img src="../images/shared/imprimir_pedido.jpg" width="142" height="37" style="clear:both" border="0" />
+					</a>
+				</div>
+				<!-- END BLOCK_IMPRIMIR -->
+
+				<form action="acao.php?tabela={TABELA}&acao={ACAO}&id={ID}" onsubmit="return verificaForm();" method="post" enctype="multipart/form-data" name="formCadastro" id="formCadastro" style="margin:0" target="_self">
+
+					<!-- BEGIN BLOCK_ERRO -->
+					<div id="message-red">
+						<table border="0" width="100%" cellpadding="0" cellspacing="0">
+							<tr>
+								<td class="red-left">{MSG_ERRO}</td>
+								<td class="red-right">
+									<a class="close-red"><img src="../images/table/icon_close_red.gif" alt="" /></a>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<!-- END BLOCK_ERRO -->
+
+					<table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
+						<tr>
+							<th rowspan="3" class="sized">
+								<img src="../images/shared/side_shadowleft.jpg" width="20" height="300" alt="" />
+							</th>
+							<th class="topleft"></th>
+							<td id="tbl-border-top">&nbsp;</td>
+							<th class="topright"></th>
+							<th rowspan="3" class="sized">
+								<img src="../images/shared/side_shadowright.jpg" width="20" height="300" alt="" />
+							</th>
+						</tr>
+						<tr>
+							<td id="tbl-border-left"></td>
+							<td>
+								<!--  start content-table-inner -->
+								<div id="content-table-inner">
+	
+									<table border="0" width="100%" cellpadding="0" cellspacing="0">
+										<tr valign="top">
+											<td>
+	
+												<!--  BEGIN BLOCK_INFO -->
+												<div id="step-holder">
+													<div class="step-no">1</div>
+													<div class="step-dark-left"><a href="">{ACAO_DESC}</a></div>
+													<div class="step-dark-right">&nbsp;</div>
+													<div class="step-no-off">2</div>
+													<div class="step-light-left">Select related products</div>
+													<div class="step-light-right">&nbsp;</div>
+													<div class="step-no-off">3</div>
+													<div class="step-light-left">Preview</div>
+													<div class="step-light-round">&nbsp;</div>
+													<div class="clear"></div>
+												</div>
+												<!--  END BLOCK_INFO -->
+	
+												<!-- start id-form -->
+												<table width="100%" border="0" cellpadding="0" cellspacing="0"  id="id-form">
+												
+													<!-- BEGIN BLOCK_CARRINHO -->
+													<tr>
+														<td colspan="3">{CARRINHO}</td>
+													</tr>
+													<!-- END BLOCK_CARRINHO -->
+        
+													<!-- BEGIN BLOCK_DADOS_CLIENTE -->
+													<tr>
+														<td colspan="3">{DADOS_CLIENTE}</td>
+													</tr>
+													<!-- END BLOCK_DADOS_CLIENTE -->
+        
+													<!-- BEGIN BLOCK_DADOS_ENTREGA -->
+													<tr>
+														<td colspan="3">{DADOS_ENTREGA}</td>
+													</tr>
+													<!-- END BLOCK_DADOS_ENTREGA -->
+													
+													<!-- BEGIN BLOCK_DADOS_PAGAMENTO -->
+													<tr>
+														<td colspan="3">{DADOS_PAGAMENTO}</td>
+													</tr>
+													<!-- END BLOCK_DADOS_PAGAMENTO -->
+        
+        
+													<!-- BEGIN BLOCK_CAMPO -->
+													<tr {OCULTO}>
+														<th valign="top">
+															<label for="{NOME_CAMPO_ORG}">{NOME_CAMPO}:</label>
+														</th>
+														<td>
+														<!-- BEGIN BLOCK_CAMPO_VARCHAR -->
+														<input name="{NOME_CAMPO_ORG}" id="{NOME_CAMPO_ORG}" maxlength="{MAX_CARACTERES}" value="{VALOR_INICIAL}" type="text" class="inp-form" />
+														<!-- END BLOCK_CAMPO_VARCHAR -->
+														
+														<!-- BEGIN BLOCK_CAMPO_SENHA -->
+														<input name="{NOME_CAMPO_ORG}" value="{VALOR_SENHA}" maxlength="{MAX_CARACTERES}" type="password" class="inp-form" />
+														<!-- END BLOCK_CAMPO_SENHA -->
+                
+														<!-- BEGIN BLOCK_CAMPO_NUMERO -->
+														<input name="{NOME_CAMPO_ORG}" maxlength="{MAX_CARACTERES}" value="{VALOR_INICIAL}" type="text" class="inp-form-int" />
+														<!-- END BLOCK_CAMPO_NUMERO -->
+														
+														<!-- BEGIN BLOCK_CAMPO_TEXTO -->
+														<textarea name="{NOME_CAMPO_ORG}" class="form-textarea" id="campo{C_ID}">{VALOR_INICIAL}</textarea>
+                
+														<!-- BEGIN BLOCK_EDITOR_TEXTO -->
+														<script type="text/javascript">
+															(function($)
+																{
+																	$('#campo{C_ID}').wysiwyg({
+																		controls: {
+																			strikeThrough : { visible : true },
+																			underline     : { visible : true },
+                          
+																			separator00 : { visible : true },
+                          
+																			justifyLeft   : { visible : true },
+																			justifyCenter : { visible : true },
+																			justifyRight  : { visible : true },
+																			justifyFull   : { visible : true },
+                          
+																			separator01 : { visible : true },
+                          
+																			indent  : { visible : true },
+																			outdent : { visible : true },
+                          
+																			separator02 : { visible : true },
+                          
+																			subscript   : { visible : true },
+																			superscript : { visible : true },
+																		  
+																			separator03 : { visible : true },
+																		  
+																			undo : { visible : true },
+																			redo : { visible : true },
+																		  
+																			separator04 : { visible : true },
+																		  
+																			insertOrderedList    : { visible : true },
+																			insertUnorderedList  : { visible : true },
+																			insertHorizontalRule : { visible : true },
+																		  
+																			h4mozilla : { visible : true && $.browser.mozilla, className : 'h4', command : 'heading', arguments : ['h4'], tags : ['h4'], tooltip : "Header 4" },
+																			h5mozilla : { visible : true && $.browser.mozilla, className : 'h5', command : 'heading', arguments : ['h5'], tags : ['h5'], tooltip : "Header 5" },
+																			h6mozilla : { visible : true && $.browser.mozilla, className : 'h6', command : 'heading', arguments : ['h6'], tags : ['h6'], tooltip : "Header 6" },
+																		  
+																			h4 : { visible : true && !( $.browser.mozilla ), className : 'h4', command : 'formatBlock', arguments : ['<H4>'], tags : ['h4'], tooltip : "Header 4" },
+																			h5 : { visible : true && !( $.browser.mozilla ), className : 'h5', command : 'formatBlock', arguments : ['<H5>'], tags : ['h5'], tooltip : "Header 5" },
+																			h6 : { visible : true && !( $.browser.mozilla ), className : 'h6', command : 'formatBlock', arguments : ['<H6>'], tags : ['h6'], tooltip : "Header 6" },
+																		  
+																			separator07 : { visible : true },
+																		  
+																			cut   : { visible : true },
+																			copy  : { visible : true },
+																			paste : { visible : true }
+																		}
+																	});
+																}
+															)(jQuery);
+														</script>
+														<!-- END BLOCK_EDITOR_TEXTO -->
+														<!-- END BLOCK_CAMPO_TEXTO -->
+                
+														<!-- BEGIN BLOCK_CAMPO_SELECTBOX -->
+														<select {MULTIPLO} id="{NOME_CAMPO_ORG}" name="{NOME_CAMPO_ORG}{CAMPO_ARRAY}">
+															<option value="0">SELECIONE</option>
+															<!-- BEGIN BLOCK_CAMPO_SELECTBOX_ITEM -->
+															<option value="{VALOR}" rel="{NOME}" {COLOR} {LINHA_REL} {MODALIDADE_REL} {SELECTED} {DISABLED}>{NOME}</option>
+															<!-- END BLOCK_CAMPO_SELECTBOX_ITEM -->
+														</select>
+														<!-- BEGIN BLOCK_SELECTBOX_TIPO_ITEM -->
+														<script>
+															$(document).ready(function(){
+																$("select[name='idtipo_item']").addClass("tipo_item");
+															});
+														</script>
+														<!-- END BLOCK_SELECTBOX_TIPO_ITEM -->
+														<!-- END BLOCK_CAMPO_SELECTBOX -->
+
+
+														<!-- BEGIN BLOCK_CAMPO_SELECTBOX_GRP -->
+														<select id="{NOME_CAMPO_ORG}" name="{NOME_CAMPO_ORG}">
+															<option value="">SELECIONE</option>
+															<!-- BEGIN BLOCK_CAMPO_SELECTBOX_LISTA_GRP -->
+															<optgroup label="{NOME_GRUPO}">
+																<!-- BEGIN BLOCK_CAMPO_SELECTBOX_LISTA_GRP_ITEM -->
+																<option value="{VALOR}" {SELECTED}>{NOME}</option>
+																<!-- END BLOCK_CAMPO_SELECTBOX_LISTA_GRP_ITEM -->
+															</optgroup>
+															<!-- END BLOCK_CAMPO_SELECTBOX_LISTA_GRP -->
+														</select>
+														<!-- END BLOCK_CAMPO_SELECTBOX_GRP -->                
+                
+														<!-- BEGIN BLOCK_CAMPO_DATA -->
+														<table border="0" cellpadding="0" cellspacing="0">
+															<tr  valign="top">
+																<td>
+																<!--<form id="chooseDateForm" action="#">-->
+																<select id="{NOME_CAMPO_ORG}d" name="{NOME_CAMPO_ORG}d" class="styledselect-day">
+																	<option value="">dd</option>
+																	<option value="01">1</option>
+																	<option value="02">2</option>
+																	<option value="03">3</option>
+																	<option value="04">4</option>
+																	<option value="05">5</option>
+																	<option value="06">6</option>
+																	<option value="07">7</option>
+																	<option value="08">8</option>
+																	<option value="09">9</option>
+																	<option value="10">10</option>
+																	<option value="11">11</option>
+																	<option value="12">12</option>
+																	<option value="13">13</option>
+																	<option value="14">14</option>
+																	<option value="15">15</option>
+																	<option value="16">16</option>
+																	<option value="17">17</option>
+																	<option value="18">18</option>
+																	<option value="19">19</option>
+																	<option value="20">20</option>
+																	<option value="21">21</option>
+																	<option value="22">22</option>
+																	<option value="23">23</option>
+																	<option value="24">24</option>
+																	<option value="25">25</option>
+																	<option value="26">26</option>
+																	<option value="27">27</option>
+																	<option value="28">28</option>
+																	<option value="29">29</option>
+																	<option value="30">30</option>
+																	<option value="31">31</option>
+																</select>
+															</td>
+															<td>
+																<select id="{NOME_CAMPO_ORG}m" name="{NOME_CAMPO_ORG}m" class="styledselect-month">
+																	<option value="">mmm</option>
+																	<option value="01">Jan</option>
+																	<option value="02">Fev</option>
+																	<option value="03">Mar</option>
+																	<option value="04">Abr</option>
+																	<option value="05">Mai</option>
+																	<option value="06">Jun</option>
+																	<option value="07">Jul</option>
+																	<option value="08">Ago</option>
+																	<option value="09">Set</option>
+																	<option value="10">Out</option>
+																	<option value="11">Nov</option>
+																	<option value="12">Dez</option>
+																</select>
+															</td>
+															<td>
+																<select id="{NOME_CAMPO_ORG}y" name="{NOME_CAMPO_ORG}Y"  class="styledselect-year">
+																	<option value="">Ano</option>
+																	<!-- BEGIN BLOCK_LISTA_ANO -->
+																	<option value="{ANO}">{ANO}</option>
+																	<!-- END BLOCK_LISTA_ANO -->
+																</select>
+															  <!--</form>-->
+															</td>
+															<td>
+																<a href=""  id="{NOME_CAMPO_ORG}date-pick">
+																	<img src="../images/forms/icon_calendar.jpg" alt="" />
+																</a>
+															</td>
+														</tr>
+													</table>
+													<!-- END BLOCK_CAMPO_DATA -->
+                
+													<!-- BEGIN BLOCK_CAMPO_YN -->
+													<div class="divesq">
+														<input id="{NOME_CAMPO_ORG}1" {CHECKEDY} name="{NOME_CAMPO_ORG}" type="radio" value="1"/>
+														<label for="{NOME_CAMPO_ORG}1">&nbsp;Sim</label>
+													</div>
+													<div class="divesq">
+														<input id="{NOME_CAMPO_ORG}0" {CHECKEDN} name="{NOME_CAMPO_ORG}"  type="radio" value="0"/>
+														<label for="{NOME_CAMPO_ORG}0">&nbsp;N&atilde;o</label>
+													</div>
+													<!-- END BLOCK_CAMPO_YN -->
+                
+													<!-- BEGIN BLOCK_EXPLICACAO -->
+													<div class="bubble-pai" id="aviso{NOME_CAMPO_ORG}">
+														<div class="bubble-icone" onmouseover="javascript:$(this).next().show('fast')" onmouseout="javascript:$('.bubble-info').hide('fast')"></div>
+														<div class="bubble-info">
+															<div class="bubble-left"></div>
+															<div class="bubble-inner">{MENSAGEM}</div>
+															<div class="bubble-right"></div>
+														</div>
+													</div>
+													<!-- END BLOCK_EXPLICACAO -->
+													
+													<!-- BEGIN BLOCK_CAMPO_INVISIVEL -->
+													<script type="text/javascript">
+													$('#{NOME_CAMPO_ORG}').closest('tr').hide();
+													$('*[name={NOME_CAMPO_ORG}]').closest('tr').hide();
+													</script>
+													<!-- END BLOCK_CAMPO_INVISIVEL -->
+												</td>
+												<td valign="bottom">
+            
+													<div id="esqerro{NOME_CAMPO_ORG}" class="error-left"></div>
+													<div id="msgerro{NOME_CAMPO_ORG}" class="error-inner">ERRO</div>
+            
+												</td>
+											</tr>
+											<!-- END BLOCK_CAMPO -->
+        
+											<!-- BEGIN BLOCK_CAMPO_FILE -->
+											<tr>
+												<th valign="top"><label for="{NOME_CAMPO_ORG}">{NOME_CAMPO}:</label></th>
+												<td colspan="2" data-ancora="{NOME_CAMPO_ORG}">
+													<input name="{NOME_CAMPO_ORG}" id="{NOME_CAMPO_ORG}" type="file" class="file_1" /><br />
+													<!-- BEGIN BLOCK_PREVIEW_3D -->
+													<div id="bt_preview">Pré visualizar</div>
+													<div class="container" id="box_preview">
+														<div class="conteudo">
+															<span id="aguarde">Aguarde...</span>
+															<div id="overlayClose">X</div>
+															<div id="bt_gerar-miniatura" onclick="gerarMiniatura();">Gerar Thumb</div>
+														</div>
+													</div>
+													<!-- END BLOCK_PREVIEW_3D -->
+													<br />
+													<!-- BEGIN BLOCK_PREVIA_IMG -->
+													<script type="text/javascript">
+														$(document).ready(function() {
+															if ("{TABELA}" == "tipo_modalidade") {
+																$('td[data-ancora="file_svg"] img').css('width', '50px');
+															}
+														});
+													</script>
+													<img src="../../imagens/{TABELA}/{ENDERECO_ARQUIVO}" style="margin-top:10px;"  />
+													<!-- END BLOCK_PREVIA_IMG -->
+													<!-- BEGIN BLOCK_PREVIA_FLASH -->
+													<object type="application/x-shockwave-flash" data="../../imagens/{TABELA}/{ENDERECO_ARQUIVO}" width="{WIDTH_FLASH}" height="{HEIGHT_FLASH}">
+														<param name="movie" value="../../../../imagens/{TABELA}/{ENDERECO_ARQUIVO}"/>
+														<param name="wmode" value="transparent" />
+													</object>
+													<!-- END BLOCK_PREVIA_FLASH -->
+
+													<!-- BEGIN BLOCK_CAMPO_FILE_INVISIVEL -->
+													<script type="text/javascript">
+													$('#{NOME_CAMPO_ORG}').closest('tr').hide();
+													$('*[name={NOME_CAMPO_ORG}]').closest('tr').hide();
+													</script>
+													<!-- END BLOCK_CAMPO_FILE_INVISIVEL -->
+												</td>
+											</tr>
+											<!-- END BLOCK_CAMPO_FILE -->
+        
+											<!-- BEGIN BLOCK_PRODUTO_VENDA_CASADA -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main-venda-casada">
+														<strong>Venda Casada</strong>
+													</div>
+													<div class="tbl-itens-sub" id="tbl-itens-venda-casada">
+														{PRODUTO_VENDA_CASADA}
+													</div>
+													<script>
+													$('#top-main-venda-casada').click(function() {
+														$('#tbl-itens-venda-casada').slideToggle('fast', function() {});
+													});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_PRODUTO_VENDA_CASADA -->
+        
+											<!-- BEGIN BLOCK_PRODUTO_FOTO -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main-foto"><strong>Fotos</strong></div>
+													<div class="tbl-itens-sub" id="tbl-itens-foto">
+														{PRODUTO_FOTO}
+													</div>
+													<script>
+														$('#top-main-foto').click(function() {
+															$('#tbl-itens-foto').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_PRODUTO_FOTO -->
+        
+											<!-- BEGIN BLOCK_PRODUTO_SUB -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main"><strong>Sub-Produtos</strong></div>
+													<div class="tbl-itens-sub" id="tbl-itens-sub">
+														{PRODUTO_SUB}
+													</div>
+													<script>
+														$('#top-main').click(function() {
+															$('#tbl-itens-sub').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_PRODUTO_SUB -->
+		
+											<!-- BEGIN BLOCK_PRODUTO -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main"><strong>Itens</strong></div>
+													<div class="tbl-itens-sub" id="tbl-itens-sub">
+														{PRODUTO_SUB}
+													</div>
+													<script>
+														$('#top-main').click(function() {
+															$('#tbl-itens-sub').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_PRODUTO -->
+
+											<!-- BEGIN BLOCK_ITEM_PRECOS -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main-itens_preco">
+														<strong>Itens Preços</strong>
+													</div>
+													<div class="tbl-itens_preco" id="tbl-itens_preco">
+														{ITEM_PRECO}
+													</div>
+													<script>
+														$('#top-main-itens_preco').click(function() {
+															$('#tbl-itens_preco').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_ITEM_PRECOS -->
+											
+											<!-- BEGIN BLOCK_ITEM_ADICIONAL -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main-itens_adicionais">
+														<strong>Itens Adicionais</strong>
+													</div>
+													<div class="tbl-itens_adicionais" id="tbl-itens_adicionais">
+														{ITEM_ADICIONAL}
+													</div>
+													<script>
+														$('#top-main-itens_adicionais').click(function() {
+															$('#tbl-itens_adicionais').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_ITEM_ADICIONAL -->
+											
+											<!-- BEGIN BLOCK_DESENHO_CAMADA -->
+											<tr>
+												<td colspan="3">
+													<div class="top-main" id="top-main-desenho_camadas">
+														<strong>Camadas</strong>
+													</div>
+													<div id="tbl-desenho_camadas">
+														{DESENHO_CAMADA}
+													</div>
+													<script>
+														$('#tbl-desenho_camadas').show();
+														
+														$('#top-main-desenho_camadas').click(function() {
+															$('#tbl-desenho_camadas').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_DESENHO_CAMADA -->
+		
+											<!-- BEGIN BLOCK_EMPRESA_SERVICO -->
+											<tr>
+												<td colspan="3">
+													<div class="top-main">
+														<strong>Serviços contratados</strong>
+													</div>
+													<div>
+													{EMPRESA_SERVICO}
+													</div>
+												</td>
+											</tr>
+											<!-- END BLOCK_EMPRESA_SERVICO -->
+											
+											<!-- BEGIN BLOCK_EMPRESA_ENDERECO -->
+											<tr>
+												<td colspan="3">
+													<div class="top-main">
+														<strong>Endereço</strong>
+													</div>
+													<div>
+													{EMPRESA_ENDERECO}
+													</div>
+												</td>
+											</tr>
+											<!-- END BLOCK_EMPRESA_ENDERECO -->
+
+											<!-- BEGIN BLOCK_MODALIDADE_DETALHES -->
+											<tr>
+												<td colspan="3">
+													<div class="top-main" id="top-main-itens_modalidade">
+														<strong>Itens</strong>
+													</div>
+													<div id="tbl-itens_modalidade">
+														{MODALIDADE_DETALHES}
+													</div>
+													<script>
+														$('#tbl-itens_modalidade').show();
+														
+														$('#top-main-itens_modalidade').click(function() {
+															$('#tbl-itens_modalidade').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_MODALIDADE_DETALHES -->
+
+											<!-- BEGIN BLOCK_MODALIDADES -->
+											<tr>
+												<td colspan="3">
+													<div class="top-main" id="top-main-modalidades">
+														<strong>Modalidades</strong>
+													</div>
+													<div id="tbl-modalidades">
+														{TBL_MODALIDADES}
+													</div>
+													<script>
+														$('#tbl-modalidades').show();
+														
+														$('#top-main-modalidades').click(function() {
+															$('#tbl-modalidades').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_MODALIDADES -->
+											
+											<!-- BEGIN BLOCK_ENVIA_MSG -->
+											<tr>
+												<td colspan="3">
+													{MENSAGEM}
+												</td>
+											</tr>
+											<!-- END BLOCK_ENVIA_MSG -->
+        
+											<!-- BEGIN BLOCK_PERMISSAO -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main-permissao">
+														<strong>Permissão</strong>
+													</div>
+													<div class="tbl-itens-sub" id="tbl-itens-permissao">
+														{PERMISSAO}
+													</div>
+													<script>
+														$('#top-main-permissao').click(function() {
+															$('#tbl-itens-permissao').slideToggle('fast', function() {});
+														});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_PERMISSAO -->
+        
+											<!-- BEGIN BLOCK_LOG -->
+											<tr>
+												<td colspan="3" align="left" valign="middle">
+													<div class="top-main" id="top-main-log"><strong>Logs</strong></div>
+													<div class="tbl-itens-sub" id="tbl-itens-log">
+														{LOG}
+													</div>
+													<script>
+													$('#top-main-log').click(function() {
+														$('#tbl-itens-log').slideToggle('fast', function() {});
+													});
+													</script>
+												</td>
+											</tr>
+											<!-- END BLOCK_LOG -->
+        
+											<tr>
+												<th>&nbsp;</th>
+												<td valign="top">
+													<input type="submit" value="" class="form-submit" />
+													<input type="reset" value="" class="form-reset"  />
+												</td>
+												<td></td>
+											</tr>
+										</table>
+										<!-- end id-form  -->
+
+									</td>
+	
+									<!-- BEGIN BLOCK_ATIVIDADES_RELACIONADAS -->
+									<td>
+
+										<div id="related-activities">
+		
+											<!--  start related-act-top -->
+											<div id="related-act-top">
+												<img src="../images/forms/header_related_act.gif" width="271" height="43" alt="" />
+											</div>
+											<!-- end related-act-top -->
+		
+											<!--  start related-act-bottom -->
+											<div id="related-act-bottom">
+		
+												<!--  start related-act-inner -->
+												<div id="related-act-inner">
+			
+													<div class="left">
+														<a href="">
+															<img src="../images/forms/icon_plus.gif" width="21" height="21" alt="" />
+														</a>
+													</div>
+												<div class="right">
+													<h5>Add another product</h5>
+													Lorem ipsum dolor sit amet consectetur
+													adipisicing elitsed do eiusmod tempor.
+													<ul class="greyarrow">
+														<li><a href="">Click here to visit</a></li> 
+														<li><a href="">Click here to visit</a></li>
+													</ul>
+												</div>
+				
+												<div class="clear"></div>
+												<div class="lines-dotted-short"></div>
+				
+												<div class="left">
+													<a href="">
+														<img src="../images/forms/icon_minus.gif" width="21" height="21" alt="" />
+													</a>
+												</div>
+												<div class="right">
+													<h5>Delete products</h5>
+													Lorem ipsum dolor sit amet consectetur
+													adipisicing elitsed do eiusmod tempor.
+													<ul class="greyarrow">
+														<li><a href="">Click here to visit</a></li> 
+														<li><a href="">Click here to visit</a> </li>
+													</ul>
+												</div>
+				
+												<div class="clear"></div>
+												<div class="lines-dotted-short"></div>
+				
+												<div class="left">
+													<a href="">
+														<img src="../images/forms/icon_edit.gif" width="21" height="21" alt="" />
+													</a>
+												</div>
+												<div class="right">
+													<h5>Edit categories</h5>
+													Lorem ipsum dolor sit amet consectetur
+													adipisicing elitsed do eiusmod tempor.
+													<ul class="greyarrow">
+														<li><a href="">Click here to visit</a></li> 
+														<li><a href="">Click here to visit</a> </li>
+													</ul>
+												</div>
+												
+												<div class="clear"></div>
+				
+											</div>
+											<!-- end related-act-inner -->
+			
+											<div class="clear"></div>
+		
+										</div>
+										<!-- end related-act-bottom -->
+	
+									</div>
+								</td>
+								<!-- END BLOCK_ATIVIDADES_RELACIONADAS -->
+
+							</tr>
+						</table>
+ 
+								<div class="clear"></div>
+     
+    
+							</div>
+							<!--  end content-table-inner  -->
+						</td>
+						<td id="tbl-border-right"></td>
+						</tr>
+						<tr>
+							<th class="sized bottomleft"></th>
+							<td id="tbl-border-bottom">&nbsp;</td>
+							<th class="sized bottomright"></th>
+						</tr>
+					</table>
+
+				</form> <!-- fim do form acao.php -->
+
+				<div class="clear">&nbsp;</div>
+
+			</div>
+			<!--  end content -->
+			<div class="clear">&nbsp;</div>
+		</div>
+		<!--  end content-outer -->
+
+		{RODAPE}
+ 
+	</body>
+</html>
